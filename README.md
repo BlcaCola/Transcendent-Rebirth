@@ -17,7 +17,6 @@
   <img src="https://img.shields.io/badge/Vue-3-4FC08D?style=flat-square&logo=vue.js&logoColor=white" alt="Vue 3"/>
   <img src="https://img.shields.io/badge/TypeScript-blue?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript"/>
   <img src="https://img.shields.io/badge/Pinia-yellow?style=flat-square&logo=vue.js&logoColor=white" alt="Pinia"/>
-  <img src="https://img.shields.io/badge/Webpack-5-8DD6F9?style=flat-square&logo=webpack&logoColor=black" alt="Webpack"/>
   <img src="https://img.shields.io/badge/Python-FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI"/>
 </p>
 
@@ -113,4 +112,5 @@
 - 前端无法请求后端：检查 BACKEND_BASE_URL（webpack 定义）或后端地址是否可达
 
 ---
-本项目基于https://github.com/qianye60/XianTu获得授权大量修改后使用GPL3二次开源
+本项目基于<a href="[#项目结构](https://github.com/qianye60)">qianye60</a> •获得授权后大量修改，使用GPL3二次开源
+
