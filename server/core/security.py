@@ -37,7 +37,7 @@ def get_password_hash(password: str) -> str:
 
 
 def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta] = None) -> str:
-    """创建访问令牌"""
+    """创建访问密码"""
     to_encode = data.copy()
     if expires_delta:
         expire = get_beijing_time() + expires_delta
@@ -50,7 +50,7 @@ def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta]
 
 
 def decode_access_token(token: str) -> Dict[str, Any]:
-    """解码访问令牌"""
+    """解码访问密码"""
     try:
         payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
         return payload

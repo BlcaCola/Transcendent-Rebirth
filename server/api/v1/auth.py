@@ -154,14 +154,14 @@ async def login(data: LoginRequest):
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="用户名或令牌错误"
+            detail="用户名或密码错误"
         )
     
     # 验证密码
     if not verify_password(data.password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="用户名或令牌错误"
+            detail="用户名或密码错误"
         )
     
     # 验证是否激活
