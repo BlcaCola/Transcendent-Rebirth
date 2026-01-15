@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="#超凡新生（Transcendent Rebirth）">介绍</a> •
+  <a href="#项目结构">介绍</a> •
   <a href="#二次开发指引">二次开发指引</a> •
 </p>
 

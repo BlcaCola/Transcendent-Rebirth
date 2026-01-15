@@ -1,0 +1,335 @@
+/*
+ * 超凡新生 - 仪表板面板科技风格
+ * Dashboard Panels Tech Style
+ * 针对 SettingsPanel, APIManagementPanel 等面板的科技风格覆盖
+ */
+
+/* ========== SettingsPanel 科技风格 ========== */
+
+.settings-panel {
+  background: var(--tech-background) !important;
+  color: var(--tech-primary);
+}
+
+.panel-header {
+  background: linear-gradient(135deg, rgba(15, 21, 53, 0.8), rgba(10, 14, 39, 0.8)) !important;
+  border: 2px solid var(--tech-primary) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.1) !important;
+  position: relative;
+}
+
+.panel-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--tech-primary), transparent);
+}
+
+.panel-title {
+  color: var(--tech-primary) !important;
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.4) !important;
+}
+
+.settings-subtitle {
+  color: rgba(0, 217, 255, 0.6) !important;
+}
+
+.action-btn {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(157, 0, 255, 0.05)) !important;
+  border: 1px solid var(--tech-border) !important;
+  color: var(--tech-primary) !important;
+  border-radius: 4px !important;
+  transition: all 0.3s ease !important;
+}
+
+.action-btn:hover {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(157, 0, 255, 0.1)) !important;
+  border-color: var(--tech-primary) !important;
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.3) !important;
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(157, 0, 255, 0.1)) !important;
+  border-color: var(--tech-primary) !important;
+  color: #fff !important;
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.3) !important;
+}
+
+.action-btn.primary:hover {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.3), rgba(157, 0, 255, 0.15)) !important;
+  box-shadow: 0 0 30px rgba(0, 217, 255, 0.4) !important;
+}
+
+.settings-container {
+  scrollbar-color: rgba(0, 217, 255, 0.3) transparent !important;
+}
+
+.settings-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--tech-primary), var(--tech-secondary)) !important;
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.3) !important;
+}
+
+.settings-section {
+  background: linear-gradient(135deg, rgba(15, 21, 53, 0.7), rgba(10, 14, 39, 0.7)) !important;
+  border: 1px solid var(--tech-border) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.05) !important;
+}
+
+.section-header {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(157, 0, 255, 0.05)) !important;
+  border-bottom: 1px solid var(--tech-border) !important;
+}
+
+.section-title {
+  color: var(--tech-primary) !important;
+  text-shadow: 0 0 8px rgba(0, 217, 255, 0.3) !important;
+}
+
+.setting-item {
+  border-radius: 4px !important;
+  transition: all 0.3s ease !important;
+}
+
+.setting-item:hover {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.08), rgba(157, 0, 255, 0.05)) !important;
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.1) !important;
+}
+
+.setting-name {
+  color: var(--tech-primary) !important;
+  font-weight: 600 !important;
+}
+
+.setting-desc {
+  color: rgba(0, 217, 255, 0.6) !important;
+}
+
+/* 表单控件 */
+.setting-select,
+.setting-input,
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+  background: linear-gradient(135deg, rgba(10, 14, 39, 0.6), rgba(15, 21, 53, 0.6)) !important;
+  border: 1px solid var(--tech-border) !important;
+  color: var(--tech-primary) !important;
+  border-radius: 4px !important;
+  transition: all 0.3s ease !important;
+}
+
+.setting-select::placeholder,
+.setting-input::placeholder,
+input::placeholder,
+textarea::placeholder {
+  color: rgba(0, 217, 255, 0.3) !important;
+}
+
+.setting-select:focus,
+.setting-input:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none !important;
+  border-color: var(--tech-primary) !important;
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.3), inset 0 0 10px rgba(0, 217, 255, 0.1) !important;
+  background: linear-gradient(135deg, rgba(10, 14, 39, 0.8), rgba(15, 21, 53, 0.8)) !important;
+}
+
+/* 开关按钮 */
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--tech-primary) !important;
+}
+
+/* 滑块 */
+.setting-range,
+input[type="range"] {
+  accent-color: var(--tech-primary) !important;
+}
+
+input[type="range"] {
+  background: linear-gradient(90deg, var(--tech-primary), var(--tech-accent)) !important;
+}
+
+/* 按钮 */
+.settings-panel button:not(.action-btn),
+.settings-panel .btn {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(157, 0, 255, 0.1)) !important;
+  border: 2px solid var(--tech-primary) !important;
+  color: var(--tech-primary) !important;
+  border-radius: 4px !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.2) !important;
+}
+
+.settings-panel button:not(.action-btn):hover,
+.settings-panel .btn:hover {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(157, 0, 255, 0.15)) !important;
+  box-shadow: 0 0 30px rgba(0, 217, 255, 0.4) !important;
+}
+
+/* ========== APIManagementPanel 科技风格 ========== */
+
+.api-management-panel,
+[class*="api-panel"],
+[class*="APIManagement"] {
+  background: var(--tech-background) !important;
+  color: var(--tech-primary);
+}
+
+.api-panel-header,
+[class*="api-header"],
+[class*="panel-header"] {
+  background: linear-gradient(135deg, rgba(15, 21, 53, 0.8), rgba(10, 14, 39, 0.8)) !important;
+  border: 2px solid var(--tech-primary) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.1) !important;
+}
+
+.api-form,
+[class*="form"] {
+  background: linear-gradient(135deg, rgba(15, 21, 53, 0.7), rgba(10, 14, 39, 0.7)) !important;
+  border: 1px solid var(--tech-border) !important;
+  border-radius: 4px !important;
+}
+
+.api-form-group,
+[class*="form-group"],
+[class*="form-item"] {
+  border-radius: 4px !important;
+}
+
+.api-form-group label,
+[class*="form-group"] label {
+  color: var(--tech-primary) !important;
+  font-weight: 600 !important;
+  text-shadow: 0 0 5px rgba(0, 217, 255, 0.3) !important;
+}
+
+/* ========== 其他面板通用样式 ========== */
+
+.right-sidebar,
+.dashboard-panel,
+[class*="panel"],
+[class*="Panel"] {
+  background: var(--tech-background) !important;
+  color: var(--tech-primary);
+}
+
+[class*="panel-title"],
+[class*="panel"] h2,
+[class*="panel"] h3,
+[class*="panel"] h4 {
+  color: var(--tech-primary) !important;
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.3) !important;
+}
+
+[class*="panel"] .card,
+[class*="panel-content"] .card {
+  background: linear-gradient(135deg, rgba(15, 21, 53, 0.7), rgba(10, 14, 39, 0.7)) !important;
+  border: 1px solid var(--tech-border) !important;
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.05) !important;
+  border-radius: 4px !important;
+}
+
+[class*="panel"] .card:hover,
+[class*="panel-content"] .card:hover {
+  box-shadow: 0 0 25px rgba(0, 217, 255, 0.15) !important;
+  border-color: var(--tech-primary) !important;
+}
+
+[class*="panel"] button,
+[class*="panel"] .btn {
+  border-radius: 4px !important;
+}
+
+/* ========== 标签和徽章 ========== */
+
+[class*="tag"],
+[class*="badge"],
+[class*="label"] {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.15), rgba(157, 0, 255, 0.1)) !important;
+  border: 1px solid var(--tech-border) !important;
+  color: var(--tech-primary) !important;
+  border-radius: 3px !important;
+}
+
+/* ========== 文本颜色 ========== */
+
+[class*="panel"] .text-muted,
+[class*="panel"] .text-secondary {
+  color: rgba(0, 217, 255, 0.6) !important;
+}
+
+[class*="panel"] .text-primary {
+  color: var(--tech-primary) !important;
+}
+
+[class*="panel"] .text-success {
+  color: var(--tech-success) !important;
+}
+
+[class*="panel"] .text-warning {
+  color: var(--tech-warning) !important;
+}
+
+[class*="panel"] .text-danger {
+  color: var(--tech-danger) !important;
+}
+
+/* ========== 分割线 ========== */
+
+[class*="panel"] .divider,
+[class*="panel"] hr {
+  background: linear-gradient(90deg, transparent, var(--tech-border), transparent) !important;
+  border: none !important;
+}
+
+/* ========== Select 下拉菜单选项 ========== */
+
+[class*="panel"] select option,
+.settings-panel select option,
+.dashboard-panel select option {
+  background: #0a0e27 !important;
+  color: var(--tech-primary) !important;
+  border: none;
+  padding: 8px 6px;
+}
+
+[class*="panel"] select option:hover,
+[class*="panel"] select option:focus,
+[class*="panel"] select option:checked,
+.settings-panel select option:hover,
+.settings-panel select option:focus,
+.settings-panel select option:checked,
+.dashboard-panel select option:hover,
+.dashboard-panel select option:focus,
+.dashboard-panel select option:checked {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(157, 0, 255, 0.15)) !important;
+  color: var(--tech-primary) !important;
+}
+
+/* ========== 响应式调整 ========== */
+
+@media (max-width: 768px) {
+  .settings-panel {
+    padding: 0.75rem !important;
+  }
+
+  .panel-header {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+  }
+
+  .header-actions {
+    width: 100% !important;
+    justify-content: flex-end !important;
+  }
+}

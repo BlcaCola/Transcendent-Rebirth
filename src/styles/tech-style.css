@@ -1,0 +1,598 @@
+/*
+ * 超凡新生 - 科技风格主题
+ * Futuristic Tech Style Theme
+ *
+ * 特性：
+ * - 高对比度的蓝色/紫色/青色配色
+ * - 发光效果和渐变
+ * - 网格和线条元素
+ * - 现代化的动画和过渡
+ * - 极简但富有科技感的设计
+ */
+
+:root {
+  /* ========== 科技色彩系统 ========== */
+  /* 替换传统色彩为科技色彩 */
+  --tech-primary: #00d9ff;      /* 亮青色 */
+  --tech-primary-dark: #0099cc; /* 深青色 */
+  --tech-secondary: #9d00ff;    /* 紫色 */
+  --tech-accent: #00ffaa;       /* 翠绿色 */
+  --tech-warning: #ff6b00;      /* 橙色 */
+  --tech-danger: #ff0055;       /* 玫红色 */
+  --tech-success: #00ff88;      /* 绿色 */
+  --tech-background: #0a0e27;   /* 深蓝黑 */
+  --tech-surface: #0f1535;      /* 稍亮的深蓝 */
+  --tech-border: #1a2a5e;       /* 蓝色边框 */
+  --tech-glow: rgba(0, 217, 255, 0.3);
+  --tech-glow-strong: rgba(0, 217, 255, 0.6);
+}
+
+:root[data-theme='light'] {
+  /* 浅色主题的科技风格 */
+  --tech-primary: #00d9ff;
+  --tech-primary-dark: #0088bb;
+  --tech-secondary: #7d2fd9;
+  --tech-accent: #00cc66;
+  --tech-warning: #ff6b00;
+  --tech-danger: #ff0055;
+  --tech-success: #00dd66;
+  --tech-background: #f5f7ff;
+  --tech-surface: #eef2ff;
+  --tech-border: #c5d3ff;
+  --tech-glow: rgba(0, 217, 255, 0.2);
+  --tech-glow-strong: rgba(0, 217, 255, 0.4);
+}
+
+:root[data-theme='dark'] {
+  /* 暗色主题的科技风格 */
+  --tech-primary: #00d9ff;
+  --tech-primary-dark: #0099cc;
+  --tech-secondary: #b366ff;
+  --tech-accent: #00ffaa;
+  --tech-warning: #ff7700;
+  --tech-danger: #ff3366;
+  --tech-success: #00ff88;
+  --tech-background: #0a0e27;
+  --tech-surface: #0f1535;
+  --tech-border: #1a3a6e;
+  --tech-glow: rgba(0, 217, 255, 0.3);
+  --tech-glow-strong: rgba(0, 217, 255, 0.6);
+}
+
+/* ========== 全局样式覆盖 ========== */
+
+/* 背景网格效果 */
+#app::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(0deg, transparent 24%, rgba(0, 217, 255, 0.03) 25%, rgba(0, 217, 255, 0.03) 26%, transparent 27%, transparent 74%, rgba(0, 217, 255, 0.03) 75%, rgba(0, 217, 255, 0.03) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(0, 217, 255, 0.03) 25%, rgba(0, 217, 255, 0.03) 26%, transparent 27%, transparent 74%, rgba(0, 217, 255, 0.03) 75%, rgba(0, 217, 255, 0.03) 76%, transparent 77%, transparent);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: -1;
+  animation: grid-animation 20s linear infinite;
+}
+
+@keyframes grid-animation {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 50px 50px;
+  }
+}
+
+/* ========== 按钮科技风格 ========== */
+
+.btn {
+  position: relative;
+  border: 2px solid var(--tech-primary);
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(157, 0, 255, 0.1));
+  color: var(--tech-primary);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.2), inset 0 0 20px rgba(0, 217, 255, 0.1);
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn:hover {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.25), rgba(157, 0, 255, 0.2));
+  box-shadow: 0 0 30px rgba(0, 217, 255, 0.6), inset 0 0 30px rgba(0, 217, 255, 0.2);
+  border-color: var(--tech-primary);
+  color: #fff;
+  text-shadow: 0 0 20px rgba(0, 217, 255, 0.8);
+}
+
+.btn::before:hover {
+  left: 100%;
+}
+
+.btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.4), inset 0 0 10px rgba(0, 217, 255, 0.3);
+}
+
+.btn.btn-primary {
+  border-color: var(--tech-primary);
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.15), rgba(0, 217, 255, 0.08));
+  color: var(--tech-primary);
+}
+
+.btn.btn-primary:hover {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.3), rgba(0, 217, 255, 0.15));
+  box-shadow: 0 0 40px var(--tech-glow-strong), inset 0 0 30px rgba(0, 217, 255, 0.2);
+}
+
+.btn.btn-secondary {
+  border-color: var(--tech-secondary);
+  color: var(--tech-secondary);
+  background: linear-gradient(135deg, rgba(157, 0, 255, 0.1), rgba(157, 0, 255, 0.05));
+}
+
+.btn.btn-secondary:hover {
+  background: linear-gradient(135deg, rgba(157, 0, 255, 0.2), rgba(157, 0, 255, 0.1));
+  box-shadow: 0 0 30px rgba(157, 0, 255, 0.4), inset 0 0 20px rgba(157, 0, 255, 0.1);
+}
+
+.btn.btn-success {
+  border-color: var(--tech-success);
+  color: var(--tech-success);
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 255, 136, 0.05));
+}
+
+.btn.btn-success:hover {
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 255, 136, 0.1));
+  box-shadow: 0 0 30px rgba(0, 255, 136, 0.4);
+}
+
+.btn.btn-danger {
+  border-color: var(--tech-danger);
+  color: var(--tech-danger);
+  background: linear-gradient(135deg, rgba(255, 0, 85, 0.1), rgba(255, 0, 85, 0.05));
+}
+
+.btn.btn-danger:hover {
+  background: linear-gradient(135deg, rgba(255, 0, 85, 0.2), rgba(255, 0, 85, 0.1));
+  box-shadow: 0 0 30px rgba(255, 0, 85, 0.4);
+}
+
+.btn:disabled {
+  border-color: rgba(0, 217, 255, 0.3);
+  color: rgba(0, 217, 255, 0.5);
+  background: rgba(0, 217, 255, 0.05);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* ========== 卡片科技风格 ========== */
+
+.card,
+.card-panel {
+  background: linear-gradient(135deg, rgba(15, 21, 53, 0.8), rgba(15, 21, 53, 0.6));
+  border: 2px solid var(--tech-border);
+  border-radius: 4px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 217, 255, 0.1), inset 0 0 20px rgba(0, 217, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.card::before,
+.card-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--tech-primary), transparent);
+  opacity: 0.5;
+}
+
+.card:hover,
+.card-panel:hover {
+  border-color: var(--tech-primary);
+  box-shadow: 0 8px 40px rgba(0, 217, 255, 0.3), inset 0 0 30px rgba(0, 217, 255, 0.1);
+}
+
+/* ========== 输入框科技风格 ========== */
+
+.input,
+input,
+textarea,
+select {
+  background: linear-gradient(135deg, rgba(10, 14, 39, 0.6), rgba(15, 21, 53, 0.6));
+  border: 1px solid var(--tech-border);
+  color: var(--tech-primary);
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.input::placeholder,
+input::placeholder,
+textarea::placeholder {
+  color: rgba(0, 217, 255, 0.3);
+}
+
+.input:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  background: linear-gradient(135deg, rgba(10, 14, 39, 0.8), rgba(15, 21, 53, 0.8));
+  border-color: var(--tech-primary);
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.3), inset 0 0 10px rgba(0, 217, 255, 0.1);
+  outline: none;
+}
+
+/* ========== Select 下拉菜单选项 ========== */
+select option {
+  background: #0a0e27;
+  color: var(--tech-primary);
+  border: none;
+  padding: 8px 6px;
+}
+
+select option:hover,
+select option:focus,
+select option:checked {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(157, 0, 255, 0.15));
+  color: var(--tech-primary);
+}
+
+/* ========== 标签页科技风格 ========== */
+
+.tab-trigger {
+  position: relative;
+  color: rgba(0, 217, 255, 0.6);
+  border: 1px solid transparent;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.tab-trigger::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--tech-primary);
+  transition: width 0.3s ease;
+}
+
+.tab-trigger:hover {
+  color: var(--tech-primary);
+}
+
+.tab-trigger:hover::after {
+  width: 100%;
+}
+
+.tab-trigger[data-state="active"],
+.tab-trigger.active {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.15), rgba(157, 0, 255, 0.1));
+  border: 1px solid var(--tech-border);
+  color: var(--tech-primary);
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
+}
+
+.tab-trigger[data-state="active"]::after,
+.tab-trigger.active::after {
+  width: 100%;
+}
+
+/* ========== 徽章科技风格 ========== */
+
+.badge {
+  border: 1px solid var(--tech-border);
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(157, 0, 255, 0.05));
+  color: var(--tech-primary);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
+}
+
+.badge-primary {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(0, 217, 255, 0.1));
+  border-color: var(--tech-primary);
+  color: var(--tech-primary);
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.3);
+}
+
+.badge-success {
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 255, 136, 0.1));
+  border-color: var(--tech-success);
+  color: var(--tech-success);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+}
+
+.badge-warning {
+  background: linear-gradient(135deg, rgba(255, 107, 0, 0.2), rgba(255, 107, 0, 0.1));
+  border-color: var(--tech-warning);
+  color: var(--tech-warning);
+  box-shadow: 0 0 15px rgba(255, 107, 0, 0.3);
+}
+
+.badge-danger {
+  background: linear-gradient(135deg, rgba(255, 0, 85, 0.2), rgba(255, 0, 85, 0.1));
+  border-color: var(--tech-danger);
+  color: var(--tech-danger);
+  box-shadow: 0 0 15px rgba(255, 0, 85, 0.3);
+}
+
+/* ========== 滚动条科技风格 ========== */
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(10, 14, 39, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--tech-primary), var(--tech-secondary));
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--tech-primary), var(--tech-accent));
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.5);
+}
+
+/* ========== 模态对话框科技风格 ========== */
+
+.modal-dialog,
+.author-modal {
+  background: linear-gradient(135deg, rgba(15, 21, 53, 0.95), rgba(10, 14, 39, 0.95));
+  border: 2px solid var(--tech-primary);
+  box-shadow: 0 25px 50px rgba(0, 217, 255, 0.2), inset 0 0 40px rgba(0, 217, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-radius: 4px;
+}
+
+.modal-dialog::before,
+.author-modal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--tech-primary), transparent);
+}
+
+/* ========== 顶部按钮科技风格 ========== */
+
+.theme-toggle,
+.fullscreen-toggle,
+.global-actions button {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(157, 0, 255, 0.1));
+  border: 1px solid var(--tech-border);
+  color: var(--tech-primary);
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.2);
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.theme-toggle:hover,
+.fullscreen-toggle:hover,
+.global-actions button:hover {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(157, 0, 255, 0.15));
+  box-shadow: 0 0 25px rgba(0, 217, 255, 0.4);
+  border-color: var(--tech-primary);
+}
+
+/* ========== 进度条科技风格 ========== */
+
+.progress-bar {
+  background: rgba(0, 217, 255, 0.1);
+  border: 1px solid var(--tech-border);
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: inset 0 0 10px rgba(0, 217, 255, 0.1);
+}
+
+.progress-fill {
+  background: linear-gradient(90deg, var(--tech-primary), var(--tech-accent));
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.6);
+  transition: width 0.3s ease;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: progress-shimmer 2s infinite;
+}
+
+@keyframes progress-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ========== 列表项科技风格 ========== */
+
+.list-item {
+  background: linear-gradient(135deg, rgba(15, 21, 53, 0.5), rgba(10, 14, 39, 0.5));
+  border: 1px solid var(--tech-border);
+  transition: all 0.3s ease;
+}
+
+.list-item:hover {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(157, 0, 255, 0.08));
+  border-color: var(--tech-primary);
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
+}
+
+.list-item.active {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.15), rgba(157, 0, 255, 0.1));
+  border-color: var(--tech-primary);
+  box-shadow: 0 0 30px rgba(0, 217, 255, 0.3);
+}
+
+/* ========== 统计卡片科技风格 ========== */
+
+.stat-card {
+  background: linear-gradient(135deg, rgba(15, 21, 53, 0.7), rgba(10, 14, 39, 0.7));
+  border: 1px solid var(--tech-border);
+  box-shadow: 0 8px 32px rgba(0, 217, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 217, 255, 0.2);
+  border-color: var(--tech-primary);
+}
+
+.stat-icon {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(157, 0, 255, 0.15));
+  border: 1px solid var(--tech-border);
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+  color: var(--tech-primary);
+}
+
+.stat-value {
+  color: var(--tech-primary);
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+}
+
+/* ========== 文字科技风格 ========== */
+
+.genesis-title,
+.main-title,
+h1, h2, h3, h4, h5, h6 {
+  color: var(--tech-primary);
+  text-shadow: 0 0 20px rgba(0, 217, 255, 0.4);
+}
+
+.text-primary {
+  color: var(--tech-primary) !important;
+}
+
+.text-success {
+  color: var(--tech-success) !important;
+}
+
+.text-warning {
+  color: var(--tech-warning) !important;
+}
+
+.text-danger {
+  color: var(--tech-danger) !important;
+}
+
+/* ========== 动画效果 ========== */
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(0, 217, 255, 0.6);
+  }
+}
+
+@keyframes cyber-flicker {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes neon-glow {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(0, 217, 255, 0.8);
+  }
+}
+
+.glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+.cyber-flicker {
+  animation: cyber-flicker 0.15s infinite;
+}
+
+.neon-text {
+  animation: neon-glow 2s ease-in-out infinite;
+}
+
+/* ========== 分割线科技风格 ========== */
+
+.divider {
+  background: linear-gradient(90deg, transparent, var(--tech-border), transparent);
+  height: 2px;
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
+}
+
+.divider-vertical {
+  background: linear-gradient(180deg, transparent, var(--tech-border), transparent);
+  width: 2px;
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
+}
+
+/* ========== 响应式调整 ========== */
+
+@media (max-width: 1024px) {
+  .card,
+  .card-panel {
+    box-shadow: 0 4px 20px rgba(0, 217, 255, 0.1);
+  }
+
+  .btn {
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.15);
+  }
+}
+
+@media (max-width: 768px) {
+  :root::before {
+    background-size: 30px 30px;
+  }
+
+  .card,
+  .card-panel {
+    box-shadow: 0 2px 15px rgba(0, 217, 255, 0.08);
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-dialog,
+  .author-modal {
+    box-shadow: 0 10px 30px rgba(0, 217, 255, 0.15);
+  }
+}

@@ -1,0 +1,364 @@
+/*
+ * 超凡新生 - 全局颜色变量映射
+ * Global Color Variables Mapping
+ * 将所有旧的 --color-* 变量映射到新的科技色系
+ */
+
+:root {
+  /* === 科技主色系 === */
+  --tech-primary: #00d9ff;
+  --tech-secondary: #9d00ff;
+  --tech-accent: #00ffaa;
+  --tech-warning: #ff6b00;
+  --tech-danger: #ff0055;
+  --tech-background: #0a0e27;
+  --tech-surface: #0f1535;
+  --tech-border: #1a2a5e;
+
+  /* === 向后兼容：旧颜色变量映射到新科技色系 === */
+  --color-primary: var(--tech-primary);
+  --color-primary-rgb: 0, 217, 255;
+  --color-primary-border: var(--tech-primary);
+  --color-primary-light: rgba(0, 217, 255, 0.1);
+  --color-primary-hover: rgba(0, 217, 255, 0.2);
+  --color-primary-dark: #0099bb;
+
+  --color-secondary: var(--tech-secondary);
+  --color-accent: var(--tech-accent);
+
+  /* === 背景/表面色 === */
+  --color-background: var(--tech-background);
+  --color-surface: var(--tech-surface);
+  --color-surface-light: rgba(15, 21, 53, 0.7);
+  --color-surface-lighter: rgba(15, 21, 53, 0.5);
+  --color-surface-hover: rgba(0, 217, 255, 0.1);
+
+  /* === 边框色 === */
+  --color-border: var(--tech-border);
+  --color-border-hover: var(--tech-primary);
+
+  /* === 文字色 === */
+  --color-text: var(--tech-primary);
+  --color-text-rgb: 0, 217, 255;
+  --color-text-secondary: rgba(0, 217, 255, 0.7);
+  --color-text-muted: rgba(0, 217, 255, 0.4);
+
+  /* === 状态色 === */
+  --color-success: var(--tech-accent);
+  --color-info: var(--tech-primary);
+  --color-warning: var(--tech-warning);
+  --color-error: var(--tech-danger);
+  --color-danger: var(--tech-danger);
+  --color-danger-rgb: 255, 0, 85;
+  --color-danger-hover: rgba(255, 0, 85, 0.2);
+}
+
+/* === 强制覆盖所有使用旧颜色的元素 === */
+
+/* 背景色覆盖 */
+[style*="background: var(--color-surface)"],
+[style*="background: var(--color-background)"],
+[style*="background: var(--color-surface-light)"],
+[style*="background: var(--color-surface-lighter)"],
+[style*="background: var(--color-surface-hover)"] {
+  background: linear-gradient(135deg, rgba(15, 21, 53, 0.9), rgba(10, 14, 39, 0.9)) !important;
+}
+
+/* 文字色覆盖 */
+[style*="color: var(--color-text)"],
+[style*="color: var(--color-text-secondary)"],
+[style*="color: var(--color-text-muted)"] {
+  color: var(--tech-primary) !important;
+}
+
+[style*="color: var(--color-primary)"],
+[style*="color: var(--color-accent)"],
+[style*="color: var(--color-success)"] {
+  color: var(--tech-primary) !important;
+}
+
+[style*="color: var(--color-error)"],
+[style*="color: var(--color-danger)"] {
+  color: var(--tech-danger) !important;
+}
+
+[style*="color: var(--color-warning)"] {
+  color: var(--tech-warning) !important;
+}
+
+/* 边框色覆盖 */
+[style*="border: 1px solid var(--color-border)"],
+[style*="border-color: var(--color-border)"],
+[style*="border-bottom: 1px solid var(--color-border)"],
+[style*="border-top: 1px solid var(--color-border)"],
+[style*="border-left: 1px solid var(--color-border)"],
+[style*="border-right: 1px solid var(--color-border)"] {
+  border-color: var(--tech-border) !important;
+}
+
+/* === 全局组件样式优化 === */
+
+/* 按钮统一样式 */
+button,
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+button:not(.fab):not([class*="close"]):not([style*="background: transparent"]) {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(157, 0, 255, 0.08)) !important;
+  border: 1px solid var(--tech-border) !important;
+  color: var(--tech-primary) !important;
+}
+
+button:hover:not(:disabled):not(.fab):not([class*="close"]) {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.15), rgba(157, 0, 255, 0.1)) !important;
+  border-color: var(--tech-primary) !important;
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.3) !important;
+}
+
+/* 输入框统一样式 */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]),
+textarea,
+select {
+  background: linear-gradient(135deg, rgba(10, 14, 39, 0.6), rgba(15, 21, 53, 0.6)) !important;
+  border: 1px solid var(--tech-border) !important;
+  color: var(--tech-primary) !important;
+  border-radius: 4px !important;
+  padding: 8px 12px !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(0, 217, 255, 0.3) !important;
+}
+
+input:focus:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]),
+textarea:focus,
+select:focus {
+  background: linear-gradient(135deg, rgba(10, 14, 39, 0.8), rgba(15, 21, 53, 0.8)) !important;
+  border-color: var(--tech-primary) !important;
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.3), inset 0 0 10px rgba(0, 217, 255, 0.1) !important;
+  outline: none !important;
+}
+
+/* 卡片/面板统一样式 */
+.card,
+.panel,
+[class*="panel"],
+[class*="card"],
+[class*="modal"],
+[class*="dialog"] {
+  border-radius: 4px;
+}
+
+.card,
+.panel,
+[class*="card"]:not([class*="skill-card"]):not([class*="character-card"]) {
+  background: linear-gradient(135deg, rgba(15, 21, 53, 0.8), rgba(10, 14, 39, 0.8));
+  border: 1px solid var(--tech-border);
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.1);
+}
+
+.card:hover,
+.panel:hover,
+[class*="card"]:hover {
+  border-color: var(--tech-primary);
+  box-shadow: 0 0 25px rgba(0, 217, 255, 0.2);
+}
+
+/* 标签/徽章统一样式 */
+[class*="tag"],
+[class*="badge"],
+[class*="label"] {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(157, 0, 255, 0.08));
+  border: 1px solid var(--tech-border);
+  color: var(--tech-primary);
+  border-radius: 3px;
+  padding: 4px 8px;
+}
+
+[class*="tag"]:hover,
+[class*="badge"]:hover {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.15), rgba(157, 0, 255, 0.1));
+  border-color: var(--tech-primary);
+}
+
+/* === 复选框和单选框 === */
+
+input[type="checkbox"],
+input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--tech-border);
+  border-radius: 3px;
+  background: linear-gradient(135deg, rgba(10, 14, 39, 0.6), rgba(15, 21, 53, 0.6));
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+input[type="checkbox"]:hover,
+input[type="radio"]:hover {
+  border-color: var(--tech-primary);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
+}
+
+input[type="checkbox"]:checked,
+input[type="radio"]:checked {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(157, 0, 255, 0.15));
+  border-color: var(--tech-primary);
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.3), inset 0 0 10px rgba(0, 217, 255, 0.1);
+}
+
+input[type="radio"] {
+  border-radius: 50%;
+}
+
+input[type="checkbox"]::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 3px;
+  border-bottom: 2px solid var(--tech-primary);
+  border-left: 2px solid var(--tech-primary);
+  transform: translate(-50%, -60%) rotate(-45deg);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+input[type="checkbox"]:checked::after {
+  opacity: 1;
+}
+
+input[type="radio"]::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background: var(--tech-primary);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+input[type="radio"]:checked::after {
+  opacity: 1;
+}
+
+/* === 范围/滑块美化 === */
+
+input[type="range"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--tech-primary), var(--tech-secondary));
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--tech-primary), var(--tech-secondary));
+  border: 2px solid var(--tech-primary);
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.4);
+  transition: all 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 25px rgba(0, 217, 255, 0.6);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--tech-primary), var(--tech-secondary));
+  border: 2px solid var(--tech-primary);
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.4);
+  transition: all 0.2s ease;
+}
+
+input[type="range"]::-moz-range-track {
+  background: transparent;
+  border: none;
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 217, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--tech-primary), var(--tech-secondary));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--tech-secondary), var(--tech-primary));
+}
+
+/* Firefox 滚动条 */
+* {
+  scrollbar-color: var(--tech-primary) rgba(0, 217, 255, 0.05);
+  scrollbar-width: thin;
+}
+
+/* === 响应式 === */
+
+@media (max-width: 768px) {
+  button,
+  input,
+  textarea,
+  select {
+    padding: 10px 16px !important;
+  }
+
+  .card,
+  [class*="panel"],
+  [class*="modal"] {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  button,
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+    padding: 12px 16px !important;
+  }
+
+  .card,
+  [class*="panel"],
+  [class*="modal"] {
+    border-radius: 3px;
+    padding: 12px;
+  }
+}

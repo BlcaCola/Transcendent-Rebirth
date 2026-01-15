@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>超凡新生后台管理系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+        [v-cloak] { display: none; }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .tab-active {
+            background: rgba(255, 255, 255, 0.2);
+            border-bottom: 2px solid #fff;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak class="min-h-screen p-6">
+        <!-- 顶部导航 -->
+        <div class="glass-card rounded-lg shadow-2xl mb-6 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-white mb-2">🎮 超凡新生后台管理系统</h1>
+                    <p class="text-white text-opacity-80">轻松管理您的修仙世界</p>
+                </div>
+                <div class="text-right text-white">
+                    <div v-if="isLoggedIn" class="space-y-1">
+                        <div class="text-lg font-semibold">{{ currentUser?.user_name }}</div>
+                        <div class="text-sm opacity-80">{{ currentUser?.is_admin ? '🔐 管理员' : '👤 用户' }}</div>
+                        <button @click="logout" class="mt-2 px-4 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-sm">
+                            退出登录
+                        </button>
+                    </div>
+                    <button v-else @click="showLoginModal = true" class="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg">
+                        管理员登录
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 登录模态框 -->
+        <div v-if="showLoginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="glass-card rounded-lg p-8 max-w-md w-full mx-4">
+                <h2 class="text-2xl font-bold text-white mb-6">🔐 管理员登录</h2>
+                <div class="space-y-4">
+                    <input v-model="loginForm.username" type="text" placeholder="用户名" 
+                           class="w-full px-4 py-3 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-60 border border-white border-opacity-30 focus:outline-none focus:ring-2 focus:ring-white">
+                    <input v-model="loginForm.password" type="password" placeholder="令牌" 
+                           class="w-full px-4 py-3 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-60 border border-white border-opacity-30 focus:outline-none focus:ring-2 focus:ring-white">
+                    <div class="flex gap-3">
+                        <button @click="login" class="flex-1 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold">
+                            登录
+                        </button>
+                        <button @click="showLoginModal = false" class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg">
+                            取消
+                        </button>
+                    </div>
+                </div>
+                <div v-if="loginError" class="mt-4 p-3 bg-red-500 bg-opacity-20 border border-red-500 rounded text-white text-sm">
+                    {{ loginError }}
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div v-if="isLoggedIn" class="glass-card rounded-lg shadow-2xl overflow-hidden">
+            <!-- 标签页导航 -->
+            <div class="flex border-b border-white border-opacity-20">
+                <button v-for="tab in tabs" :key="tab.id" 
+                        @click="activeTab = tab.id"
+                        :class="{'tab-active': activeTab === tab.id}"
+                        class="px-6 py-4 text-white font-semibold hover:bg-white hover:bg-opacity-10 transition">
+                    {{ tab.icon }} {{ tab.name }}
+                </button>
+            </div>
+
+            <!-- 标签页内容 -->
+            <div class="p-6">
+                <!-- 仪表盘 -->
+                <div v-if="activeTab === 'dashboard'" class="space-y-6">
+                    <h2 class="text-2xl font-bold text-white mb-4">📊 系统概览</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="bg-white bg-opacity-10 rounded-lg p-6">
+                            <div class="text-white text-opacity-60 mb-2">总用户数</div>
+                            <div class="text-3xl font-bold text-white">{{ stats.users }}</div>
+                        </div>
+                        <div class="bg-white bg-opacity-10 rounded-lg p-6">
+                            <div class="text-white text-opacity-60 mb-2">总角色数</div>
+                            <div class="text-3xl font-bold text-white">{{ stats.characters }}</div>
+                        </div>
+                        <div class="bg-white bg-opacity-10 rounded-lg p-6">
+                            <div class="text-white text-opacity-60 mb-2">活跃世界</div>
+                            <div class="text-3xl font-bold text-white">{{ stats.worlds }}</div>
+                        </div>
+                        <div class="bg-white bg-opacity-10 rounded-lg p-6">
+                            <div class="text-white text-opacity-60 mb-2">天赋总数</div>
+                            <div class="text-3xl font-bold text-white">{{ stats.talents }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 用户管理 -->
+                <div v-if="activeTab === 'users'" class="space-y-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-white">👥 用户管理</h2>
+                        <button @click="loadUsers" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded">
+                            🔄 刷新
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-white">
+                            <thead class="bg-white bg-opacity-10">
+                                <tr>
+                                    <th class="px-4 py-3 text-left">ID</th>                                    <th class="px-4 py-3 text-left">账号ID</th>                                    <th class="px-4 py-3 text-left">账户名</th>
+                                    <th class="px-4 py-3 text-left">邮箱</th>
+                                    <th class="px-4 py-3 text-left">权限</th>
+                                    <th class="px-4 py-3 text-left">穿越点数</th>
+                                    <th class="px-4 py-3 text-left">状态</th>
+                                    <th class="px-4 py-3 text-left">创建时间</th>
+                                    <th class="px-4 py-3 text-left">最后登录-北京时间</th>
+                                    <th class="px-4 py-3 text-left">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="user in users" :key="user.id" class="border-b border-white border-opacity-10 hover:bg-white hover:bg-opacity-5">
+                                    <td class="px-4 py-3">{{ user.id }}</td>
+                                    <td class="px-4 py-3 font-mono text-sm">{{ user.account_id || '-' }}</td>
+                                    <td class="px-4 py-3 font-semibold">{{ user.user_name }}</td>
+                                    <td class="px-4 py-3">{{ user.email || '-' }}</td>
+                                    <td class="px-4 py-3">
+                                        <span :class="user.is_admin ? 'bg-yellow-500' : 'bg-blue-500'" class="px-2 py-1 rounded text-xs">
+                                            {{ user.is_admin ? '管理员' : '用户' }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3">{{ user.travel_points }}</td>
+                                    <td class="px-4 py-3">
+                                        <span :class="user.is_active ? 'bg-green-500' : 'bg-red-500'" class="px-2 py-1 rounded text-xs">
+                                            {{ user.is_active ? '正常' : '禁用' }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-sm">{{ formatDate(user.created_at) }}</td>
+                                    <td class="px-4 py-3 text-sm">{{ user.last_login ? formatDate(user.last_login) : '从未登录' }}</td>
+                                    <td class="px-4 py-3 space-x-2">
+                                        <button @click="editUser(user)" class="px-2 py-1 bg-blue-500 hover:bg-blue-600 rounded text-xs">
+                                            编辑
+                                        </button>
+                                        <button @click="toggleUserActive(user)" class="px-2 py-1 bg-orange-500 hover:bg-orange-600 rounded text-xs">
+                                            {{ user.is_active ? '禁用' : '启用' }}
+                                        </button>
+                                        <button @click="deleteUser(user)" class="px-2 py-1 bg-red-500 hover:bg-red-600 rounded text-xs">
+                                            删除
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 存档管理 -->
+                <div v-if="activeTab === 'saves'" class="space-y-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-white">💾 存档管理</h2>
+                        <button @click="loadLocalData" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded">
+                            🔄 刷新
+                        </button>
+                    </div>
+                    <div class="bg-white bg-opacity-10 rounded-lg p-4 space-y-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-white text-sm mb-2">搜索玩家名</label>
+                                <input v-model="localDataFilters.userName" type="text" placeholder="输入玩家名..." class="w-full px-3 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded text-white placeholder-white placeholder-opacity-50" />
+                            </div>
+                            <div class="flex items-end gap-2">
+                                <button @click="performLocalDataSearch" class="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded">🔍 搜索</button>
+                                <button @click="resetLocalDataFilters" class="flex-1 px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded">🔄 重置</button>
+                            </div>
+                        </div>
+                        <p class="text-xs text-white text-opacity-70">该页面管理“角色列表JSON”和“存档JSON”的后端备份。</p>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-white">
+                            <thead class="bg-white bg-opacity-10">
+                                <tr>
+                                    <th class="px-4 py-3 text-left">用户ID</th>
+                                    <th class="px-4 py-3 text-left">玩家</th>
+                                    <th class="px-4 py-3 text-left">创建时间</th>
+                                    <th class="px-4 py-3 text-left">更新时间</th>
+                                    <th class="px-4 py-3 text-left">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="item in localDataList" :key="item.user_id" class="border-b border-white border-opacity-10 hover:bg-white hover:bg-opacity-5">
+                                    <td class="px-4 py-3">{{ item.user_id }}</td>
+                                    <td class="px-4 py-3">{{ item.user_name }}</td>
+                                    <td class="px-4 py-3 text-sm">{{ formatDate(item.created_at) }}</td>
+                                    <td class="px-4 py-3 text-sm">{{ formatDate(item.updated_at) }}</td>
+                                    <td class="px-4 py-3 space-x-2">
+                                        <button @click="viewLocalData(item)" class="px-2 py-1 bg-blue-500 hover:bg-blue-600 rounded text-xs">查看/编辑</button>
+                                        <button @click="downloadLocalData(item, 'characters')" class="px-2 py-1 bg-green-500 hover:bg-green-600 rounded text-xs">下载角色JSON</button>
+                                        <button @click="downloadLocalData(item, 'saves')" class="px-2 py-1 bg-emerald-500 hover:bg-emerald-600 rounded text-xs">下载存档JSON</button>
+                                        <button @click="deleteLocalData(item)" class="px-2 py-1 bg-red-500 hover:bg-red-600 rounded text-xs">删除</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 用户提示词 -->
+                <div v-if="activeTab === 'user_prompts'" class="space-y-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-white">🧩 用户提示词</h2>
+                        <button @click="loadUserPrompts" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded">
+                            🔄 刷新
+                        </button>
+                    </div>
+                    <div class="bg-white bg-opacity-10 rounded-lg p-4 space-y-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-white text-sm mb-2">搜索玩家名</label>
+                                <input v-model="userPromptFilter" type="text" placeholder="输入玩家名..." class="w-full px-3 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded text-white placeholder-white placeholder-opacity-50" />
+                            </div>
+                            <div class="flex items-end gap-2">
+                                <span class="text-white text-opacity-70 text-sm">共 {{ userPromptList.length }} 人</span>
+                            </div>
+                        </div>
+                        <p class="text-white text-opacity-80 text-sm">用户提示词会在登录时覆盖本地提示词。</p>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-white">
+                            <thead class="bg-white bg-opacity-10">
+                                <tr>
+                                    <th class="px-4 py-3 text-left">用户ID</th>
+                                    <th class="px-4 py-3 text-left">玩家</th>
+                                    <th class="px-4 py-3 text-left">更新时间</th>
+                                    <th class="px-4 py-3 text-left">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="item in filteredUserPrompts" :key="item.user_id" class="border-b border-white border-opacity-10 hover:bg-white hover:bg-opacity-5">
+                                    <td class="px-4 py-3">{{ item.user_id }}</td>
+                                    <td class="px-4 py-3">{{ item.user_name }}</td>
+                                    <td class="px-4 py-3 text-sm">{{ formatDate(item.updated_at) }}</td>
+                                    <td class="px-4 py-3 space-x-2">
+                                        <button @click="viewUserPrompts(item)" class="px-2 py-1 bg-blue-500 hover:bg-blue-600 rounded text-xs">查看/编辑</button>
+                                        <button @click="deleteUserPrompts(item)" class="px-2 py-1 bg-red-500 hover:bg-red-600 rounded text-xs">删除</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 默认提示词 -->
+                <div v-if="activeTab === 'default_prompts'" class="space-y-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-white">🧩 默认提示词</h2>
+                        <div class="space-x-2">
+                            <button @click="exportDefaultPrompts" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded">
+                                ⬇️ 导出
+                            </button>
+                            <button @click="importDefaultPrompts" class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded">
+                                ⬆️ 导入
+                            </button>
+                            <button @click="loadDefaultPrompts" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded">
+                                🔄 刷新
+                            </button>
+                            <button @click="saveDefaultPrompts" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded">
+                                💾 保存
+                            </button>
+                        </div>
+                    </div>
+                    <div class="bg-white bg-opacity-10 rounded-lg p-4 space-y-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-white text-sm mb-2">搜索Key</label>
+                                <input v-model="defaultPromptFilter" type="text" placeholder="输入提示词Key..." class="w-full px-3 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded text-white placeholder-white placeholder-opacity-50" />
+                            </div>
+                            <div class="flex items-end gap-2">
+                                <span class="text-white text-opacity-70 text-sm">共 {{ defaultPromptsList.length }} 项</span>
+                            </div>
+                        </div>
+                        <p class="text-white text-opacity-80 text-sm">这里保存的是“恢复默认”使用的提示词配置（key → content）。</p>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-white">
+                            <thead class="bg-white bg-opacity-10">
+                                <tr>
+                                    <th class="px-4 py-3 text-left">Key</th>
+                                    <th class="px-4 py-3 text-left">内容预览</th>
+                                    <th class="px-4 py-3 text-left">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="item in filteredDefaultPrompts" :key="item.key" class="border-b border-white border-opacity-10 hover:bg-white hover:bg-opacity-5">
+                                    <td class="px-4 py-3 font-mono text-sm">{{ item.key }}</td>
+                                    <td class="px-4 py-3 text-sm text-white text-opacity-80">
+                                        {{ item.content.slice(0, 120) }}{{ item.content.length > 120 ? '…' : '' }}
+                                    </td>
+                                    <td class="px-4 py-3 space-x-2">
+                                        <button @click="editDefaultPrompt(item)" class="px-2 py-1 bg-blue-500 hover:bg-blue-600 rounded text-xs">编辑</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 邀请码管理 -->
+                <div v-if="activeTab === 'invitations'" class="space-y-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-white">🎫 邀请码管理</h2>
+                        <div class="space-x-2">
+                            <button @click="showCreateInviteModal = true" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded">
+                                ➕ 创建邀请码
+                            </button>
+                            <button @click="loadInvitationCodes" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded">
+                                🔄 刷新
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-white">
+                            <thead class="bg-white bg-opacity-10">
+                                <tr>
+                                    <th class="px-4 py-3 text-left">ID</th>
+                                    <th class="px-4 py-3 text-left">邀请码</th>
+                                    <th class="px-4 py-3 text-left">状态</th>
+                                    <th class="px-4 py-3 text-left">使用次数</th>
+                                    <th class="px-4 py-3 text-left">最大次数</th>
+                                    <th class="px-4 py-3 text-left">过期时间</th>
+                                    <th class="px-4 py-3 text-left">创建者</th>
+                                    <th class="px-4 py-3 text-left">创建时间</th>
+                                    <th class="px-4 py-3 text-left">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="code in invitationCodes" :key="code.id" class="border-b border-white border-opacity-10 hover:bg-white hover:bg-opacity-5">
+                                    <td class="px-4 py-3">{{ code.id }}</td>
+                                    <td class="px-4 py-3 font-mono font-semibold">{{ code.code }}</td>
+                                    <td class="px-4 py-3">
+                                        <span :class="code.is_active ? 'bg-green-500' : 'bg-gray-500'" class="px-2 py-1 rounded text-xs">
+                                            {{ code.is_active ? '启用' : '禁用' }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3">{{ code.times_used }}</td>
+                                    <td class="px-4 py-3">{{ code.max_uses === -1 ? '无限' : code.max_uses }}</td>
+                                    <td class="px-4 py-3 text-sm">{{ code.expires_at ? formatDate(code.expires_at) : '永不' }}</td>
+                                    <td class="px-4 py-3">{{ code.created_by }}</td>
+                                    <td class="px-4 py-3 text-sm">{{ formatDate(code.created_at) }}</td>
+                                    <td class="px-4 py-3 space-x-2">
+                                        <button @click="toggleInviteCode(code)" class="px-2 py-1 bg-orange-500 hover:bg-orange-600 rounded text-xs">
+                                            {{ code.is_active ? '禁用' : '启用' }}
+                                        </button>
+                                        <button @click="deleteInviteCode(code)" class="px-2 py-1 bg-red-500 hover:bg-red-600 rounded text-xs">
+                                            删除
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- 系统设置 -->
+                <div v-if="activeTab === 'settings'" class="space-y-6">
+                    <h2 class="text-2xl font-bold text-white mb-4">⚙️ 系统设置</h2>
+                    <div class="bg-white bg-opacity-10 rounded-lg p-6 text-white">
+                        <h3 class="text-xl font-semibold mb-4">基本信息</h3>
+                        <div class="space-y-3">
+                            <div><span class="opacity-60">应用名称:</span> <span class="font-semibold">超凡新生后端服务</span></div>
+                            <div><span class="opacity-60">版本号:</span> <span class="font-semibold">1.0.0</span></div>
+                            <div><span class="opacity-60">API文档:</span> <a href="/docs" target="_blank" class="text-blue-300 hover:text-blue-200">/docs</a></div>
+                        </div>
+                    </div>
+                    <div class="bg-yellow-500 bg-opacity-20 border border-yellow-500 rounded-lg p-4 text-white">
+                        <p class="font-semibold">⚠️ 提示</p>
+                        <p class="text-sm opacity-90 mt-2">更多系统配置请编辑 .env 文件并重启服务</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 编辑用户模态框 -->
+        <div v-if="showEditUserModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @click.self="showEditUserModal = false">
+            <div class="glass-card rounded-lg shadow-2xl p-6 w-full max-w-md">
+                <h2 class="text-2xl font-bold text-white mb-4">编辑用户</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-white mb-2">账户名</label>
+                        <input v-model="userEditForm.user_name" type="text" class="w-full px-4 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded text-white" placeholder="用户名">
+                    </div>
+                    <div>
+                        <label class="block text-white mb-2">账号ID</label>
+                        <input v-model="userEditForm.account_id" type="number" class="w-full px-4 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded text-white" placeholder="纯数字账号ID（可选）">
+                    </div>
+                    <div>
+                        <label class="block text-white mb-2">邮箱</label>
+                        <input v-model="userEditForm.email" type="email" class="w-full px-4 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded text-white" placeholder="邮箱（可选）">
+                    </div>
+                    <div>
+                        <label class="block text-white mb-2">新密码（留空不修改）</label>
+                        <input v-model="userEditForm.password" type="password" class="w-full px-4 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded text-white" placeholder="留空不修改">
+                    </div>
+                    <div>
+                        <label class="block text-white mb-2">穿越点数</label>
+                        <input v-model.number="userEditForm.travel_points" type="number" min="0" class="w-full px-4 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded text-white" placeholder="请输入穿越点数">
+                    </div>
+                    <div>
+                        <label class="flex items-center text-white">
+                            <input v-model="userEditForm.is_admin" type="checkbox" class="mr-2">
+                            管理员权限
+                        </label>
+                    </div>
+                    <div class="flex gap-3">
+                        <button @click="saveUserEdit" class="flex-1 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold">
+                            保存
+                        </button>
+                        <button @click="showEditUserModal = false" class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg">
+                            取消
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 编辑本地存档模态框 -->
+        <div v-if="showEditLocalDataModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @click.self="showEditLocalDataModal = false">
+            <div class="glass-card rounded-lg shadow-2xl p-6 w-full max-w-5xl">
+                <h2 class="text-2xl font-bold text-white mb-4">编辑本地存档 #{{ editingLocalData?.user_id }}</h2>
+                <div class="space-y-3 text-sm text-white opacity-80">
+                    <div>玩家：{{ editingLocalData?.user_name }}</div>
+                    <div>创建时间：{{ editingLocalData ? formatDate(editingLocalData.created_at) : '-' }}</div>
+                    <div>更新时间：{{ editingLocalData ? formatDate(editingLocalData.updated_at) : '-' }}</div>
+                </div>
+                <div class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-white mb-2">角色列表JSON</label>
+                        <textarea v-model="localCharactersText" class="w-full h-96 px-4 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded text-white font-mono text-xs" spellcheck="false"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-white mb-2">存档JSON</label>
+                        <textarea v-model="localSavesText" class="w-full h-96 px-4 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded text-white font-mono text-xs" spellcheck="false"></textarea>
+                    </div>
+                </div>
+                <p class="text-xs text-white text-opacity-70 mt-2">请确保为合法JSON格式，保存时将完整替换。</p>
+                <div class="flex gap-3 mt-4">
+                    <button @click="saveLocalDataEdit" class="flex-1 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold">保存更改</button>
+                    <button @click="showEditLocalDataModal = false" class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg">取消</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 编辑默认提示词模态框 -->
+        <div v-if="showEditDefaultPromptModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @click.self="showEditDefaultPromptModal = false">
+            <div class="glass-card rounded-lg shadow-2xl p-6 w-full max-w-4xl">
+                <h2 class="text-2xl font-bold text-white mb-4">编辑提示词</h2>
+                <div class="text-sm text-white opacity-80 mb-3">Key：{{ editingDefaultPrompt?.key }}</div>
+                <textarea v-model="editingDefaultPrompt.content" class="w-full h-96 px-4 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded text-white font-mono text-xs" spellcheck="false"></textarea>
+                <div class="flex gap-3 mt-4">
+                    <button @click="saveDefaultPromptEdit" class="flex-1 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold">保存更改</button>
+                    <button @click="showEditDefaultPromptModal = false" class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg">取消</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 编辑用户提示词模态框 -->
+        <div v-if="showEditUserPromptModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @click.self="showEditUserPromptModal = false">
+            <div class="glass-card rounded-lg shadow-2xl p-6 w-full max-w-5xl">
+                <h2 class="text-2xl font-bold text-white mb-4">编辑用户提示词</h2>
+                <div class="text-sm text-white opacity-80 mb-3">玩家：{{ editingUserPrompt?.user_name }}</div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <div class="bg-white bg-opacity-10 rounded-lg p-3 max-h-[520px] overflow-auto">
+                        <div v-for="item in editingUserPromptList" :key="item.key" class="py-2 px-2 rounded cursor-pointer" :class="selectedUserPromptKey === item.key ? 'bg-white bg-opacity-20' : ''" @click="selectUserPrompt(item.key)">
+                            <div class="text-sm font-mono text-white">{{ item.key }}</div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2">
+                        <textarea v-model="selectedUserPromptContent" class="w-full h-[520px] px-4 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded text-white font-mono text-xs" spellcheck="false"></textarea>
+                    </div>
+                </div>
+                <div class="flex gap-3 mt-4">
+                    <button @click="saveUserPromptEdit" class="flex-1 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold">保存更改</button>
+                    <button @click="showEditUserPromptModal = false" class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg">取消</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 创建邀请码模态框 -->
+        <div v-if="showCreateInviteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @click.self="showCreateInviteModal = false">
+            <div class="glass-card rounded-lg shadow-2xl p-6 w-full max-w-md">
+                <h2 class="text-2xl font-bold text-white mb-4">创建邀请码</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-white mb-2">自定义邀请码（留空自动生成）</label>
+                        <input v-model="inviteForm.custom_code" type="text" class="w-full px-4 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded text-white" placeholder="留空自动生成8位随机码">
+                        <p class="text-xs text-white text-opacity-60 mt-1">4-32个字符，支持字母、数字</p>
+                    </div>
+                    <div>
+                        <label class="block text-white mb-2">最大使用次数</label>
+                        <input v-model.number="inviteForm.max_uses" type="number" class="w-full px-4 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded text-white" placeholder="-1 表示无限">
+                    </div>
+                    <div>
+                        <label class="block text-white mb-2">有效天数（留空永不过期）</label>
+                        <input v-model.number="inviteForm.days_valid" type="number" class="w-full px-4 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded text-white" placeholder="留空永不过期">
+                    </div>
+                    <div class="flex gap-3">
+                        <button @click="createInviteCode" class="flex-1 px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold">
+                            创建
+                        </button>
+                        <button @click="showCreateInviteModal = false" class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg">
+                            取消
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 未登录提示 -->
+        <div v-if="!isLoggedIn" class="glass-card rounded-lg shadow-2xl p-12 text-center">
+            <div class="text-6xl mb-6">🔒</div>
+            <h2 class="text-3xl font-bold text-white mb-4">请先登录</h2>
+            <p class="text-white text-opacity-80 mb-6">您需要管理员权限才能访问后台管理系统</p>
+            <button @click="showLoginModal = true" class="px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold text-lg">
+                立即登录
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    activeTab: 'dashboard',
+                    showLoginModal: false,
+                    isLoggedIn: false,
+                    currentUser: null,
+                    loginForm: { username: '', password: '' },
+                    loginError: '',
+                    tabs: [
+                        { id: 'dashboard', name: '仪表盘', icon: '📊' },
+                        { id: 'users', name: '用户管理', icon: '👥' },
+                        { id: 'invitations', name: '邀请码管理', icon: '🎫' },
+                        { id: 'saves', name: '存档管理', icon: '💾' },
+                        { id: 'user_prompts', name: '用户提示词', icon: '🧩' },
+                        { id: 'default_prompts', name: '默认提示词', icon: '🧩' },
+                        { id: 'settings', name: '系统设置', icon: '⚙️' }
+                    ],
+                    stats: { users: 0, characters: 0, worlds: 0, talents: 0 },
+                    users: [],
+                    localDataList: [],
+                    invitationCodes: [],
+                    userPromptList: [],
+                    userPromptFilter: '',
+                    showEditUserPromptModal: false,
+                    editingUserPrompt: null,
+                    editingUserPromptList: [],
+                    selectedUserPromptKey: '',
+                    defaultPromptsList: [],
+                    defaultPromptFilter: '',
+                    showEditDefaultPromptModal: false,
+                    editingDefaultPrompt: null,
+                    showEditLocalDataModal: false,
+                    editingLocalData: null,
+                    localCharactersText: '',
+                    localSavesText: '',
+                    localDataFilters: {
+                        userName: ''
+                    },
+                    showEditUserModal: false,
+                    editingUser: null,
+                    userEditForm: { user_name: '', account_id: null, email: '', password: '', is_admin: false, travel_points: 0 },
+                    showCreateInviteModal: false,
+                    inviteForm: { max_uses: -1, days_valid: null, custom_code: '' },
+                    redemptionCodes: []
+                };
+            },
+            mounted() {
+                this.checkAuth();
+            },
+            computed: {
+                filteredDefaultPrompts() {
+                    const keyword = (this.defaultPromptFilter || '').trim().toLowerCase();
+                    if (!keyword) return this.defaultPromptsList;
+                    return this.defaultPromptsList.filter(item => item.key.toLowerCase().includes(keyword));
+                },
+                filteredUserPrompts() {
+                    const keyword = (this.userPromptFilter || '').trim().toLowerCase();
+                    if (!keyword) return this.userPromptList;
+                    return this.userPromptList.filter(item => item.user_name.toLowerCase().includes(keyword));
+                },
+                selectedUserPromptContent: {
+                    get() {
+                        const current = this.editingUserPromptList.find(p => p.key === this.selectedUserPromptKey);
+                        return current ? current.content : '';
+                    },
+                    set(value) {
+                        const current = this.editingUserPromptList.find(p => p.key === this.selectedUserPromptKey);
+                        if (current) current.content = value;
+                    }
+                }
+            },
+            methods: {
+                checkAuth() {
+                    const token = localStorage.getItem('admin_token');
+                    if (token) {
+                        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                        this.fetchCurrentUser();
+                    }
+                },
+                async fetchCurrentUser() {
+                    try {
+                        const res = await axios.get('/api/v1/auth/me');
+                        if (res.data.is_admin) {
+                            this.currentUser = res.data;
+                            this.isLoggedIn = true;
+                            this.loadStats();
+                        } else {
+                            this.logout();
+                            alert('您没有管理员权限');
+                        }
+                    } catch (error) {
+                        this.logout();
+                    }
+                },
+                async login() {
+                    try {
+                        this.loginError = '';
+                        const res = await axios.post('/api/v1/auth/token', {
+                            username: this.loginForm.username,
+                            password: this.loginForm.password,
+                            is_admin: true
+                        });
+                        localStorage.setItem('admin_token', res.data.access_token);
+                        axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.access_token}`;
+                        this.showLoginModal = false;
+                        await this.fetchCurrentUser();
+                    } catch (error) {
+                        this.loginError = error.response?.data?.detail || '登录失败';
+                    }
+                },
+                logout() {
+                    localStorage.removeItem('admin_token');
+                    delete axios.defaults.headers.common['Authorization'];
+                    this.isLoggedIn = false;
+                    this.currentUser = null;
+                },
+                async loadStats() {
+                    try {
+                        const [users, localData, worlds, talents] = await Promise.all([
+                            axios.get('/api/v1/admin/users'),
+                            axios.get('/api/v1/admin/local-data'),
+                            axios.get('/api/v1/worlds/'),
+                            axios.get('/api/v1/talents/')
+                        ]);
+                        this.stats = {
+                            users: users.data.length,
+                            characters: localData.data.length,
+                            worlds: worlds.data.length,
+                            talents: talents.data.length
+                        };
+                    } catch (error) {
+                        console.error('加载统计失败:', error);
+                    }
+                },
+                async loadUsers() {
+                    try {
+                        const res = await axios.get('/api/v1/admin/users');
+                        this.users = res.data;
+                    } catch (error) {
+                        alert('加载用户失败');
+                    }
+                },
+                async loadLocalData() {
+                    try {
+                        const params = new URLSearchParams();
+                        if (this.localDataFilters.userName.trim()) {
+                            params.append('user_name', this.localDataFilters.userName.trim());
+                        }
+                        const url = `/api/v1/admin/local-data${params.toString() ? '?' + params.toString() : ''}`;
+                        const res = await axios.get(url);
+                        this.localDataList = res.data || [];
+                    } catch (error) {
+                        alert('加载存档失败');
+                    }
+                },
+                async loadDefaultPrompts() {
+                    try {
+                        const res = await axios.get('/api/v1/admin/default-prompts');
+                        const prompts = res.data?.prompts || {};
+                        this.defaultPromptsList = Object.entries(prompts).map(([key, content]) => ({
+                            key,
+                            content: String(content ?? '')
+                        }));
+                    } catch (error) {
+                        alert('加载默认提示词失败');
+                    }
+                },
+                async loadUserPrompts() {
+                    try {
+                        const params = new URLSearchParams();
+                        if (this.userPromptFilter.trim()) {
+                            params.append('user_name', this.userPromptFilter.trim());
+                        }
+                        const url = `/api/v1/admin/user-prompts${params.toString() ? '?' + params.toString() : ''}`;
+                        const res = await axios.get(url);
+                        this.userPromptList = res.data || [];
+                    } catch (error) {
+                        alert('加载用户提示词失败');
+                    }
+                },
+                async viewUserPrompts(item) {
+                    try {
+                        const res = await axios.get(`/api/v1/admin/user-prompts/${item.user_id}`);
+                        const prompts = res.data?.prompts || {};
+                        this.editingUserPrompt = res.data;
+                        this.editingUserPromptList = Object.entries(prompts).map(([key, content]) => ({
+                            key,
+                            content: String(content ?? '')
+                        }));
+                        this.selectedUserPromptKey = this.editingUserPromptList[0]?.key || '';
+                        this.showEditUserPromptModal = true;
+                    } catch (error) {
+                        alert(error.response?.data?.detail || '加载用户提示词失败');
+                    }
+                },
+                selectUserPrompt(key) {
+                    this.selectedUserPromptKey = key;
+                },
+                async saveUserPromptEdit() {
+                    if (!this.editingUserPrompt) return;
+                    try {
+                        const payload = {};
+                        this.editingUserPromptList.forEach(item => {
+                            payload[item.key] = item.content;
+                        });
+                        await axios.put(`/api/v1/admin/user-prompts/${this.editingUserPrompt.user_id}`, { prompts: payload });
+                        this.showEditUserPromptModal = false;
+                        alert('保存成功');
+                        await this.loadUserPrompts();
+                    } catch (error) {
+                        alert(error.response?.data?.detail || '保存失败');
+                    }
+                },
+                async deleteUserPrompts(item) {
+                    if (!confirm(`确定要删除用户 ${item.user_name} 的提示词吗？`)) return;
+                    try {
+                        await axios.delete(`/api/v1/admin/user-prompts/${item.user_id}`);
+                        this.userPromptList = this.userPromptList.filter(u => u.user_id !== item.user_id);
+                        alert('删除成功');
+                    } catch (error) {
+                        alert('删除失败');
+                    }
+                },
+                async saveDefaultPrompts() {
+                    try {
+                        const payload = {};
+                        this.defaultPromptsList.forEach(item => {
+                            payload[item.key] = item.content;
+                        });
+                        await axios.put('/api/v1/admin/default-prompts', { prompts: payload });
+                        alert('保存成功');
+                    } catch (error) {
+                        alert(error.response?.data?.detail || '保存失败');
+                    }
+                },
+                editDefaultPrompt(item) {
+                    this.editingDefaultPrompt = { ...item };
+                    this.showEditDefaultPromptModal = true;
+                },
+                saveDefaultPromptEdit() {
+                    if (!this.editingDefaultPrompt) return;
+                    const target = this.defaultPromptsList.find(p => p.key === this.editingDefaultPrompt.key);
+                    if (target) {
+                        target.content = this.editingDefaultPrompt.content;
+                    }
+                    this.showEditDefaultPromptModal = false;
+                },
+                exportDefaultPrompts() {
+                    const payload = {};
+                    this.defaultPromptsList.forEach(item => {
+                        payload[item.key] = item.content;
+                    });
+                    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'default_prompts.json';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                },
+                importDefaultPrompts() {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = '.json';
+                    input.onchange = async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        try {
+                            const text = await file.text();
+                            const data = JSON.parse(text);
+                            if (!data || typeof data !== 'object') {
+                                throw new Error('无效的JSON');
+                            }
+                            this.defaultPromptsList = Object.entries(data).map(([key, content]) => ({
+                                key,
+                                content: String(content ?? '')
+                            }));
+                            alert('导入成功，记得点击保存');
+                        } catch (error) {
+                            alert('导入失败，请检查文件格式');
+                        }
+                    };
+                    input.click();
+                },
+                performLocalDataSearch() {
+                    this.loadLocalData();
+                },
+                resetLocalDataFilters() {
+                    this.localDataFilters = { userName: '' };
+                    this.loadLocalData();
+                },
+                async toggleUserActive(user) {
+                    if (!confirm(`确定要${user.is_active ? '禁用' : '启用'}用户 ${user.user_name} 吗？`)) return;
+                    try {
+                        await axios.put(`/api/v1/admin/users/${user.id}/active?is_active=${!user.is_active}`);
+                        user.is_active = !user.is_active;
+                    } catch (error) {
+                        alert('操作失败');
+                    }
+                },
+                async viewLocalData(item) {
+                    try {
+                        const res = await axios.get(`/api/v1/admin/local-data/${item.user_id}`);
+                        this.editingLocalData = res.data;
+                        this.localCharactersText = JSON.stringify(res.data.characters || {}, null, 2);
+                        this.localSavesText = JSON.stringify(res.data.saves || {}, null, 2);
+                        this.showEditLocalDataModal = true;
+                    } catch (error) {
+                        alert(error.response?.data?.detail || '加载存档失败');
+                    }
+                },
+                async saveLocalDataEdit() {
+                    if (!this.editingLocalData) return;
+                    let charactersPayload;
+                    let savesPayload;
+                    try {
+                        charactersPayload = JSON.parse(this.localCharactersText || '{}');
+                        savesPayload = JSON.parse(this.localSavesText || '{}');
+                    } catch (e) {
+                        alert('JSON格式不合法，请检查后再试');
+                        return;
+                    }
+                    try {
+                        await axios.put(`/api/v1/admin/local-data/${this.editingLocalData.user_id}`, {
+                            characters: charactersPayload,
+                            saves: savesPayload
+                        });
+                        this.showEditLocalDataModal = false;
+                        alert('保存成功');
+                        await this.loadLocalData();
+                    } catch (error) {
+                        alert(error.response?.data?.detail || '保存失败');
+                    }
+                },
+                downloadLocalData(item, type) {
+                    window.open(`/api/v1/admin/local-data/${item.user_id}/download?type=${type}`, '_blank');
+                },
+                async deleteLocalData(item) {
+                    if (!confirm(`确定要删除用户 ${item.user_name} 的本地存档数据吗？此操作不可恢复！`)) return;
+                    try {
+                        await axios.delete(`/api/v1/admin/local-data/${item.user_id}`);
+                        this.localDataList = this.localDataList.filter(s => s.user_id !== item.user_id);
+                        alert('删除成功');
+                    } catch (error) {
+                        alert('删除失败');
+                    }
+                },
+                editUser(user) {
+                    this.editingUser = user;
+                    this.userEditForm = {
+                        user_name: user.user_name,
+                        account_id: user.account_id,
+                        email: user.email || '',
+                        password: '',
+                        is_admin: user.is_admin,
+                        travel_points: user.travel_points ?? 0
+                    };
+                    this.showEditUserModal = true;
+                },
+                async saveUserEdit() {
+                    try {
+                        const updates = {
+                            user_name: this.userEditForm.user_name,
+                            account_id: this.userEditForm.account_id ? parseInt(this.userEditForm.account_id) : null,
+                            email: this.userEditForm.email || null,
+                            is_admin: this.userEditForm.is_admin,
+                            travel_points: Number(this.userEditForm.travel_points || 0)
+                        };
+                        if (this.userEditForm.password) {
+                            updates.password = this.userEditForm.password;
+                        }
+                        await axios.put(`/api/v1/admin/users/${this.editingUser.id}`, updates);
+                        Object.assign(this.editingUser, {
+                            user_name: updates.user_name,
+                            account_id: updates.account_id,
+                            email: updates.email,
+                            is_admin: updates.is_admin,
+                            travel_points: updates.travel_points
+                        });
+                        this.showEditUserModal = false;
+                        alert('更新成功');
+                    } catch (error) {
+                        alert(error.response?.data?.detail || '更新失败');
+                    }
+                },
+                async deleteUser(user) {
+                    if (!confirm(`确定要删除用户 ${user.user_name} 吗？此操作将删除该用户的所有角色和存档，不可恢复！`)) return;
+                    try {
+                        await axios.delete(`/api/v1/admin/users/${user.id}`);
+                        this.users = this.users.filter(u => u.id !== user.id);
+                        alert('删除成功');
+                    } catch (error) {
+                        alert(error.response?.data?.detail || '删除失败');
+                    }
+                },
+                async loadInvitationCodes() {
+                    try {
+                        const res = await axios.get('/api/v1/admin/invitation-codes');
+                        this.invitationCodes = res.data.items || [];
+                    } catch (error) {
+                        alert('加载邀请码失败');
+                    }
+                },
+                async createInviteCode() {
+                    try {
+                        const params = new URLSearchParams();
+                        params.append('max_uses', this.inviteForm.max_uses);
+                        if (this.inviteForm.days_valid) {
+                            params.append('days_valid', this.inviteForm.days_valid);
+                        }
+                        if (this.inviteForm.custom_code) {
+                            params.append('custom_code', this.inviteForm.custom_code);
+                        }
+                        await axios.post(`/api/v1/admin/invitation-codes?${params}`);
+                        this.showCreateInviteModal = false;
+                        this.inviteForm = { max_uses: -1, days_valid: null, custom_code: '' };
+                        await this.loadInvitationCodes();
+                        alert('创建成功');
+                    } catch (error) {
+                        alert(error.response?.data?.detail || '创建失败');
+                    }
+                },
+                async toggleInviteCode(code) {
+                    try {
+                        await axios.patch(`/api/v1/admin/invitation-codes/${code.id}?is_active=${!code.is_active}`);
+                        code.is_active = !code.is_active;
+                    } catch (error) {
+                        alert('操作失败');
+                    }
+                },
+                async deleteInviteCode(code) {
+                    if (!confirm(`确定要删除邀请码 ${code.code} 吗？`)) return;
+                    try {
+                        await axios.delete(`/api/v1/admin/invitation-codes/${code.id}`);
+                        this.invitationCodes = this.invitationCodes.filter(c => c.id !== code.id);
+                        alert('删除成功');
+                    } catch (error) {
+                        alert('删除失败');
+                    }
+                },
+                formatDate(dateStr) {
+                    return new Date(dateStr).toLocaleString('zh-CN');
+                }
+            },
+            watch: {
+                activeTab(newTab) {
+                    if (newTab === 'users') this.loadUsers();
+                    if (newTab === 'saves') this.loadLocalData();
+                    if (newTab === 'user_prompts') this.loadUserPrompts();
+                    if (newTab === 'default_prompts') this.loadDefaultPrompts();
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

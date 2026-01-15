@@ -1,0 +1,429 @@
+2026-01-14 22:54:01.302 | INFO     | server.main:lifespan:33 - 🚀 正在初始化数据库...
+2026-01-14 22:54:01.444 | INFO     | server.main:lifespan:35 - ✅ 数据库初始化完成
+2026-01-14 22:54:47.789 | INFO     | server.main:lifespan:33 - 🚀 正在初始化数据库...
+2026-01-14 22:54:47.825 | INFO     | server.main:lifespan:35 - ✅ 数据库初始化完成
+2026-01-14 22:55:34.859 | INFO     | server.main:lifespan:33 - 🚀 正在初始化数据库...
+2026-01-14 22:55:34.880 | INFO     | server.main:lifespan:35 - ✅ 数据库初始化完成
+2026-01-14 22:56:08.727 | INFO     | server.main:lifespan:33 - 🚀 正在初始化数据库...
+2026-01-14 22:56:08.749 | INFO     | server.main:lifespan:35 - ✅ 数据库初始化完成
+2026-01-14 22:57:43.658 | INFO     | server.main:lifespan:33 - 🚀 正在初始化数据库...
+2026-01-14 22:57:43.679 | INFO     | server.main:lifespan:35 - ✅ 数据库初始化完成
+2026-01-14 22:58:22.180 | INFO     | server.main:lifespan:33 - 🚀 正在初始化数据库...
+2026-01-14 22:58:22.199 | INFO     | server.main:lifespan:35 - ✅ 数据库初始化完成
+2026-01-14 22:59:41.621 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-14 22:59:41.642 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-14 22:59:41.647 | WARNING  | server.main:lifespan:51 - ⚠️ 管理员账号创建失败或已存在: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+2026-01-14 22:59:41.651 | INFO     | server.main:lifespan:53 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-14 22:59:41.651 | INFO     | server.main:lifespan:54 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-14 22:59:41.652 | INFO     | server.main:lifespan:55 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-14 22:59:41.652 | INFO     | server.main:lifespan:56 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-14 22:59:41.653 | INFO     | server.main:lifespan:61 - 👋 正在关闭数据库连接...
+2026-01-14 22:59:41.654 | INFO     | server.main:lifespan:63 - ✅ 数据库连接已关闭
+2026-01-14 22:59:54.396 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-14 22:59:54.416 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-14 22:59:54.422 | WARNING  | server.main:lifespan:51 - ⚠️ 管理员账号创建失败或已存在: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+2026-01-14 22:59:54.422 | INFO     | server.main:lifespan:53 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-14 22:59:54.422 | INFO     | server.main:lifespan:54 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-14 22:59:54.422 | INFO     | server.main:lifespan:55 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-14 22:59:54.422 | INFO     | server.main:lifespan:56 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-14 23:00:05.619 | INFO     | server.main:lifespan:61 - 👋 正在关闭数据库连接...
+2026-01-14 23:00:05.623 | INFO     | server.main:lifespan:63 - ✅ 数据库连接已关闭
+2026-01-14 23:00:15.434 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-14 23:00:15.456 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-14 23:00:15.461 | WARNING  | server.main:lifespan:51 - ⚠️ 管理员账号创建失败或已存在: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+2026-01-14 23:00:15.461 | INFO     | server.main:lifespan:53 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-14 23:00:15.461 | INFO     | server.main:lifespan:54 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-14 23:00:15.461 | INFO     | server.main:lifespan:55 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-14 23:00:15.461 | INFO     | server.main:lifespan:56 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-14 23:00:29.394 | INFO     | server.main:lifespan:61 - 👋 正在关闭数据库连接...
+2026-01-14 23:00:29.396 | INFO     | server.main:lifespan:63 - ✅ 数据库连接已关闭
+2026-01-14 23:02:31.653 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-14 23:02:31.673 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-14 23:02:32.985 | INFO     | server.main:lifespan:49 - ✅ 已创建默认管理员账号: admin
+2026-01-14 23:02:32.986 | INFO     | server.main:lifespan:53 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-14 23:02:32.986 | INFO     | server.main:lifespan:54 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-14 23:02:32.986 | INFO     | server.main:lifespan:55 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-14 23:02:32.986 | INFO     | server.main:lifespan:56 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-14 23:02:43.442 | INFO     | server.main:lifespan:61 - 👋 正在关闭数据库连接...
+2026-01-14 23:02:43.449 | INFO     | server.main:lifespan:63 - ✅ 数据库连接已关闭
+2026-01-14 23:02:53.929 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-14 23:02:53.952 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-14 23:02:53.977 | INFO     | server.main:lifespan:53 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-14 23:02:53.977 | INFO     | server.main:lifespan:54 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-14 23:02:53.978 | INFO     | server.main:lifespan:55 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-14 23:02:53.978 | INFO     | server.main:lifespan:56 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-14 23:03:04.549 | INFO     | server.main:lifespan:61 - 👋 正在关闭数据库连接...
+2026-01-14 23:03:04.552 | INFO     | server.main:lifespan:63 - ✅ 数据库连接已关闭
+2026-01-14 23:03:11.095 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-14 23:03:11.115 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-14 23:03:11.137 | INFO     | server.main:lifespan:53 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-14 23:03:11.137 | INFO     | server.main:lifespan:54 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-14 23:03:11.137 | INFO     | server.main:lifespan:55 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-14 23:03:11.137 | INFO     | server.main:lifespan:56 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-14 23:11:40.697 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-14 23:11:40.719 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-14 23:11:40.742 | INFO     | server.main:lifespan:53 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-14 23:11:40.742 | INFO     | server.main:lifespan:54 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-14 23:11:40.742 | INFO     | server.main:lifespan:55 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-14 23:11:40.743 | INFO     | server.main:lifespan:56 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 00:09:10.030 | INFO     | server.main:lifespan:61 - 👋 正在关闭数据库连接...
+2026-01-15 00:09:10.035 | INFO     | server.main:lifespan:63 - ✅ 数据库连接已关闭
+2026-01-15 00:37:42.017 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 00:37:42.066 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 00:37:42.067 | WARNING  | server.main:lifespan:51 - ⚠️ 管理员账号创建失败或已存在: '"last_login"'
+2026-01-15 00:37:42.067 | INFO     | server.main:lifespan:53 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 00:37:42.067 | INFO     | server.main:lifespan:54 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 00:37:42.067 | INFO     | server.main:lifespan:55 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 00:37:42.068 | INFO     | server.main:lifespan:56 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 00:41:57.240 | INFO     | server.main:lifespan:61 - 👋 正在关闭数据库连接...
+2026-01-15 00:41:57.248 | INFO     | server.main:lifespan:63 - ✅ 数据库连接已关闭
+2026-01-15 00:42:06.060 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 00:42:06.117 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 00:42:06.175 | INFO     | server.main:lifespan:49 - ✅ 已创建默认管理员账号: admin
+2026-01-15 00:42:06.175 | INFO     | server.main:lifespan:53 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 00:42:06.176 | INFO     | server.main:lifespan:54 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 00:42:06.176 | INFO     | server.main:lifespan:55 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 00:42:06.176 | INFO     | server.main:lifespan:56 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 00:48:37.536 | INFO     | server.main:lifespan:61 - 👋 正在关闭数据库连接...
+2026-01-15 00:48:37.544 | INFO     | server.main:lifespan:63 - ✅ 数据库连接已关闭
+2026-01-15 00:48:43.189 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 00:48:43.225 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 00:48:43.288 | INFO     | server.main:lifespan:49 - ✅ 已创建默认管理员账号: blcacola
+2026-01-15 00:48:43.288 | INFO     | server.main:lifespan:53 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 00:48:43.289 | INFO     | server.main:lifespan:54 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 00:48:43.289 | INFO     | server.main:lifespan:55 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 00:48:43.289 | INFO     | server.main:lifespan:56 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 01:09:49.267 | INFO     | server.main:lifespan:61 - 👋 正在关闭数据库连接...
+2026-01-15 01:09:49.275 | INFO     | server.main:lifespan:63 - ✅ 数据库连接已关闭
+2026-01-15 01:09:53.833 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 01:09:53.870 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 01:09:53.893 | INFO     | server.main:lifespan:53 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 01:09:53.893 | INFO     | server.main:lifespan:54 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 01:09:53.893 | INFO     | server.main:lifespan:55 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 01:09:53.893 | INFO     | server.main:lifespan:56 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 01:14:24.674 | INFO     | server.main:lifespan:61 - 👋 正在关闭数据库连接...
+2026-01-15 01:14:24.682 | INFO     | server.main:lifespan:63 - ✅ 数据库连接已关闭
+2026-01-15 01:20:09.997 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 01:20:10.034 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 01:20:10.056 | INFO     | server.main:lifespan:53 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 01:20:10.056 | INFO     | server.main:lifespan:54 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 01:20:10.056 | INFO     | server.main:lifespan:55 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 01:20:10.057 | INFO     | server.main:lifespan:56 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 01:20:10.057 | INFO     | server.main:lifespan:61 - 👋 正在关闭数据库连接...
+2026-01-15 01:20:10.058 | INFO     | server.main:lifespan:63 - ✅ 数据库连接已关闭
+2026-01-15 01:20:26.706 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 01:20:26.741 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 01:20:26.762 | INFO     | server.main:lifespan:53 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 01:20:26.763 | INFO     | server.main:lifespan:54 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 01:20:26.763 | INFO     | server.main:lifespan:55 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 01:20:26.764 | INFO     | server.main:lifespan:56 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 01:33:51.045 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 01:33:51.085 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 01:33:51.107 | INFO     | server.main:lifespan:53 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 01:33:51.107 | INFO     | server.main:lifespan:54 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 01:33:51.108 | INFO     | server.main:lifespan:55 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 01:33:51.108 | INFO     | server.main:lifespan:56 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 01:35:56.682 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 01:35:56.725 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 01:35:56.747 | INFO     | server.main:lifespan:53 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 01:35:56.747 | INFO     | server.main:lifespan:54 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 01:35:56.748 | INFO     | server.main:lifespan:55 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 01:35:56.748 | INFO     | server.main:lifespan:56 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 01:35:56.748 | INFO     | server.main:lifespan:61 - 👋 正在关闭数据库连接...
+2026-01-15 01:35:56.749 | INFO     | server.main:lifespan:63 - ✅ 数据库连接已关闭
+2026-01-15 01:41:10.484 | INFO     | server.main:lifespan:61 - 👋 正在关闭数据库连接...
+2026-01-15 01:41:10.492 | INFO     | server.main:lifespan:63 - ✅ 数据库连接已关闭
+2026-01-15 01:42:43.896 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 01:42:43.936 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 01:42:43.960 | WARNING  | server.main:lifespan:51 - ⚠️ 管理员账号创建失败或已存在: '"account_id"'
+2026-01-15 01:42:43.960 | INFO     | server.main:lifespan:53 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 01:42:43.961 | INFO     | server.main:lifespan:54 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 01:42:43.961 | INFO     | server.main:lifespan:55 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 01:42:43.961 | INFO     | server.main:lifespan:56 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 01:44:26.559 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 01:44:26.605 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 01:44:26.606 | WARNING  | server.main:lifespan:53 - ⚠️ 管理员账号创建失败或已存在: '"account_id"'
+2026-01-15 01:44:26.606 | INFO     | server.main:lifespan:55 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 01:44:26.607 | INFO     | server.main:lifespan:56 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 01:44:26.607 | INFO     | server.main:lifespan:57 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 01:44:26.607 | INFO     | server.main:lifespan:58 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 01:44:56.089 | INFO     | server.main:lifespan:63 - 👋 正在关闭数据库连接...
+2026-01-15 01:44:56.091 | INFO     | server.main:lifespan:65 - ✅ 数据库连接已关闭
+2026-01-15 01:45:22.920 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 01:45:22.954 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 01:45:22.977 | WARNING  | server.main:lifespan:53 - ⚠️ 管理员账号创建失败或已存在: '"account_id"'
+2026-01-15 01:45:22.978 | INFO     | server.main:lifespan:55 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 01:45:22.978 | INFO     | server.main:lifespan:56 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 01:45:22.978 | INFO     | server.main:lifespan:57 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 01:45:22.978 | INFO     | server.main:lifespan:58 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 01:45:42.894 | INFO     | server.main:lifespan:63 - 👋 正在关闭数据库连接...
+2026-01-15 01:45:42.896 | INFO     | server.main:lifespan:65 - ✅ 数据库连接已关闭
+2026-01-15 01:46:15.406 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 01:46:15.444 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 01:46:15.466 | ERROR    | server.main:lifespan:58 - ⚠️ 管理员账号创建失败: '"account_id"'
+2026-01-15 01:46:15.468 | ERROR    | server.main:lifespan:59 - Traceback (most recent call last):
+  File "C:\Users\ADVAPUTE\Downloads\XianTu-master\server\venv\Lib\site-packages\tortoise\models.py", line 731, in _init_from_db
+    setattr(self, model_field, kwargs[key])
+                               ~~~~~~^^^^^
+KeyError: 'account_id'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ADVAPUTE\Downloads\XianTu-master\server\main.py", line 40, in lifespan
+    admin = await User.filter(user_name=settings.ADMIN_USERNAME).first()
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADVAPUTE\Downloads\XianTu-master\server\venv\Lib\site-packages\tortoise\queryset.py", line 1008, in _execute
+    instance_list = await self._db.executor_class(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADVAPUTE\Downloads\XianTu-master\server\venv\Lib\site-packages\tortoise\backends\base\executor.py", line 139, in execute_select
+    instance: "Model" = self.model._init_from_db(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADVAPUTE\Downloads\XianTu-master\server\venv\Lib\site-packages\tortoise\models.py", line 748, in _init_from_db
+    setattr(self, key, meta.fields_map[key].to_python_value(value))
+                       ~~~~~~~~~~~~~~~^^^^^
+KeyError: '"account_id"'
+
+2026-01-15 01:46:15.468 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 01:46:15.468 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 01:46:15.468 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 01:46:15.469 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 01:46:40.029 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 01:46:40.078 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 01:46:40.079 | ERROR    | server.main:lifespan:58 - ⚠️ 管理员账号创建失败: '"account_id"'
+2026-01-15 01:46:40.080 | ERROR    | server.main:lifespan:59 - Traceback (most recent call last):
+  File "C:\Users\ADVAPUTE\Downloads\XianTu-master\server\venv\Lib\site-packages\tortoise\models.py", line 731, in _init_from_db
+    setattr(self, model_field, kwargs[key])
+                               ~~~~~~^^^^^
+KeyError: 'account_id'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ADVAPUTE\Downloads\XianTu-master\server\main.py", line 40, in lifespan
+    admin = await User.filter(user_name=settings.ADMIN_USERNAME).first()
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADVAPUTE\Downloads\XianTu-master\server\venv\Lib\site-packages\tortoise\queryset.py", line 1008, in _execute
+    instance_list = await self._db.executor_class(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADVAPUTE\Downloads\XianTu-master\server\venv\Lib\site-packages\tortoise\backends\base\executor.py", line 139, in execute_select
+    instance: "Model" = self.model._init_from_db(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADVAPUTE\Downloads\XianTu-master\server\venv\Lib\site-packages\tortoise\models.py", line 748, in _init_from_db
+    setattr(self, key, meta.fields_map[key].to_python_value(value))
+                       ~~~~~~~~~~~~~~~^^^^^
+KeyError: '"account_id"'
+
+2026-01-15 01:46:40.080 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 01:46:40.080 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 01:46:40.080 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 01:46:40.080 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 01:46:53.140 | INFO     | server.main:lifespan:69 - 👋 正在关闭数据库连接...
+2026-01-15 01:46:53.142 | INFO     | server.main:lifespan:71 - ✅ 数据库连接已关闭
+2026-01-15 01:47:15.737 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 01:47:15.773 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 01:47:15.795 | ERROR    | server.main:lifespan:58 - ⚠️ 管理员账号创建失败: '"account_id"'
+2026-01-15 01:47:15.796 | ERROR    | server.main:lifespan:59 - Traceback (most recent call last):
+  File "C:\Users\ADVAPUTE\Downloads\XianTu-master\server\venv\Lib\site-packages\tortoise\models.py", line 731, in _init_from_db
+    setattr(self, model_field, kwargs[key])
+                               ~~~~~~^^^^^
+KeyError: 'account_id'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ADVAPUTE\Downloads\XianTu-master\server\main.py", line 40, in lifespan
+    admin = await User.filter(user_name=settings.ADMIN_USERNAME).first()
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADVAPUTE\Downloads\XianTu-master\server\venv\Lib\site-packages\tortoise\queryset.py", line 1008, in _execute
+    instance_list = await self._db.executor_class(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADVAPUTE\Downloads\XianTu-master\server\venv\Lib\site-packages\tortoise\backends\base\executor.py", line 139, in execute_select
+    instance: "Model" = self.model._init_from_db(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADVAPUTE\Downloads\XianTu-master\server\venv\Lib\site-packages\tortoise\models.py", line 748, in _init_from_db
+    setattr(self, key, meta.fields_map[key].to_python_value(value))
+                       ~~~~~~~~~~~~~~~^^^^^
+KeyError: '"account_id"'
+
+2026-01-15 01:47:15.796 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 01:47:15.797 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 01:47:15.797 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 01:47:15.797 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 01:47:37.395 | INFO     | server.main:lifespan:69 - 👋 正在关闭数据库连接...
+2026-01-15 01:47:37.397 | INFO     | server.main:lifespan:71 - ✅ 数据库连接已关闭
+2026-01-15 01:48:06.788 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 01:48:06.852 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 01:48:06.886 | INFO     | server.main:lifespan:44 - 正在创建管理员账号，账号ID: 909908227
+2026-01-15 01:48:06.909 | INFO     | server.main:lifespan:53 - ✅ 已创建默认管理员账号: blcacola, 账号ID: 909908227
+2026-01-15 01:48:06.909 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 01:48:06.909 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 01:48:06.910 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 01:48:06.910 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 01:54:32.440 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 01:54:32.479 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 01:54:32.501 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-15 01:54:32.501 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 01:54:32.501 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 01:54:32.502 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 01:54:32.502 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 02:28:09.767 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 02:28:09.799 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 02:28:11.241 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-15 02:28:11.241 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 02:28:11.241 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 02:28:11.241 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 02:28:11.242 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 02:28:23.620 | INFO     | server.main:lifespan:69 - 👋 正在关闭数据库连接...
+2026-01-15 02:28:23.621 | INFO     | server.main:lifespan:71 - ✅ 数据库连接已关闭
+2026-01-15 02:28:34.663 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 02:28:34.687 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 02:28:34.710 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-15 02:28:34.711 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 02:28:34.711 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 02:28:34.711 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 02:28:34.711 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 02:34:29.894 | INFO     | server.main:lifespan:69 - 👋 正在关闭数据库连接...
+2026-01-15 02:34:29.895 | INFO     | server.main:lifespan:71 - ✅ 数据库连接已关闭
+2026-01-15 02:34:30.704 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 02:34:30.734 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 02:34:30.757 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-15 02:34:30.758 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 02:34:30.758 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 02:34:30.758 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 02:34:30.758 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 03:09:15.830 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 03:09:15.849 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 03:09:15.872 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-15 03:09:15.872 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 03:09:15.872 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 03:09:15.872 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 03:09:15.873 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 03:09:15.873 | INFO     | server.main:lifespan:69 - 👋 正在关闭数据库连接...
+2026-01-15 03:09:15.874 | INFO     | server.main:lifespan:71 - ✅ 数据库连接已关闭
+2026-01-15 03:09:37.369 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 03:09:37.387 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 03:09:37.410 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-15 03:09:37.410 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 03:09:37.410 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 03:09:37.411 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 03:09:37.411 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 03:09:37.412 | INFO     | server.main:lifespan:69 - 👋 正在关闭数据库连接...
+2026-01-15 03:09:37.412 | INFO     | server.main:lifespan:71 - ✅ 数据库连接已关闭
+2026-01-15 03:19:30.313 | INFO     | server.main:lifespan:69 - 👋 正在关闭数据库连接...
+2026-01-15 03:19:30.315 | INFO     | server.main:lifespan:71 - ✅ 数据库连接已关闭
+2026-01-15 03:19:50.549 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 03:19:50.566 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 03:19:50.589 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-15 03:19:50.589 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 03:19:50.589 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 03:19:50.590 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 03:19:50.590 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 03:19:50.590 | INFO     | server.main:lifespan:69 - 👋 正在关闭数据库连接...
+2026-01-15 03:19:50.590 | INFO     | server.main:lifespan:71 - ✅ 数据库连接已关闭
+2026-01-15 03:20:58.405 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 03:20:58.435 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 03:20:58.458 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-15 03:20:58.459 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 03:20:58.459 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 03:20:58.459 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 03:20:58.459 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 06:19:15.620 | INFO     | server.main:lifespan:69 - 👋 正在关闭数据库连接...
+2026-01-15 06:19:15.626 | INFO     | server.main:lifespan:71 - ✅ 数据库连接已关闭
+2026-01-15 06:19:19.824 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 06:19:19.845 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 06:19:19.868 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-15 06:19:19.868 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 06:19:19.869 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 06:19:19.869 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 06:19:19.869 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 06:20:57.966 | INFO     | server.main:lifespan:69 - 👋 正在关闭数据库连接...
+2026-01-15 06:20:57.968 | INFO     | server.main:lifespan:71 - ✅ 数据库连接已关闭
+2026-01-15 06:25:58.971 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 06:25:58.991 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 06:25:59.013 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-15 06:25:59.014 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 06:25:59.014 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 06:25:59.015 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 06:25:59.015 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 06:38:30.498 | INFO     | server.main:lifespan:69 - 👋 正在关闭数据库连接...
+2026-01-15 06:38:30.506 | INFO     | server.main:lifespan:71 - ✅ 数据库连接已关闭
+2026-01-15 06:38:34.566 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 06:38:34.586 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 06:38:34.610 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-15 06:38:34.610 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 06:38:34.611 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 06:38:34.611 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 06:38:34.611 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 06:46:32.694 | INFO     | server.main:lifespan:69 - 👋 正在关闭数据库连接...
+2026-01-15 06:46:32.699 | INFO     | server.main:lifespan:71 - ✅ 数据库连接已关闭
+2026-01-15 06:46:36.450 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 06:46:36.470 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 06:46:36.493 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-15 06:46:36.493 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 06:46:36.493 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 06:46:36.493 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 06:46:36.494 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 06:47:22.974 | INFO     | server.main:lifespan:69 - 👋 正在关闭数据库连接...
+2026-01-15 06:47:22.976 | INFO     | server.main:lifespan:71 - ✅ 数据库连接已关闭
+2026-01-15 06:47:42.846 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 06:47:42.865 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 06:47:42.887 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-15 06:47:42.887 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 06:47:42.888 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 06:47:42.888 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 06:47:42.888 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 07:33:31.318 | INFO     | server.main:lifespan:69 - 👋 正在关闭数据库连接...
+2026-01-15 07:33:31.327 | INFO     | server.main:lifespan:71 - ✅ 数据库连接已关闭
+2026-01-15 07:33:37.320 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 07:33:37.366 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 07:33:38.126 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-15 07:33:38.127 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 07:33:38.127 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 07:33:38.127 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 07:33:38.127 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 08:49:42.713 | INFO     | server.main:lifespan:69 - 👋 正在关闭数据库连接...
+2026-01-15 08:49:42.722 | INFO     | server.main:lifespan:71 - ✅ 数据库连接已关闭
+2026-01-15 08:49:46.577 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 08:49:46.601 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 08:49:46.624 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-15 08:49:46.624 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 08:49:46.624 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 08:49:46.624 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 08:49:46.624 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 09:07:33.343 | INFO     | server.main:lifespan:69 - 👋 正在关闭数据库连接...
+2026-01-15 09:07:33.352 | INFO     | server.main:lifespan:71 - ✅ 数据库连接已关闭
+2026-01-15 09:07:37.504 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 09:07:37.523 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 09:07:37.546 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-15 09:07:37.546 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 09:07:37.547 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 09:07:37.547 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 09:07:37.547 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 18:45:05.397 | INFO     | server.main:lifespan:69 - 👋 正在关闭数据库连接...
+2026-01-15 18:45:05.406 | INFO     | server.main:lifespan:71 - ✅ 数据库连接已关闭
+2026-01-15 18:45:09.764 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 18:45:09.792 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 18:45:09.814 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-15 18:45:09.815 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 18:45:09.815 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 18:45:09.815 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 18:45:09.816 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 18:52:50.533 | INFO     | server.main:lifespan:69 - 👋 正在关闭数据库连接...
+2026-01-15 18:52:50.543 | INFO     | server.main:lifespan:71 - ✅ 数据库连接已关闭
+2026-01-15 18:52:54.908 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 18:52:54.931 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 18:52:54.956 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-15 18:52:54.956 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 18:52:54.957 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 18:52:54.957 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 18:52:54.957 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-15 19:21:40.339 | INFO     | server.main:lifespan:69 - 👋 正在关闭数据库连接...
+2026-01-15 19:21:40.348 | INFO     | server.main:lifespan:71 - ✅ 数据库连接已关闭
+2026-01-15 19:21:44.485 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-15 19:21:44.512 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-15 19:21:44.536 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-15 19:21:44.537 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-15 19:21:44.537 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-15 19:21:44.537 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-15 19:21:44.537 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
