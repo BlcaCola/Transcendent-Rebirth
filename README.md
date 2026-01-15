@@ -112,5 +112,5 @@
 - 前端无法请求后端：检查 BACKEND_BASE_URL（webpack 定义）或后端地址是否可达
 
 ---
-本项目基于 [qianye60](https://github.com/qianye60/) 获得授权后大量修改，使用GPL3二次开源
+本项目基于 [qianye60](https://github.com/qianye60/) 获得授权后重做，使用GPL3二次开源
 
