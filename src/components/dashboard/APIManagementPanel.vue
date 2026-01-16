@@ -3,7 +3,6 @@
     <!-- 头部 -->
     <div class="panel-header">
       <div class="header-left">
-        <div class="header-icon">🔌</div>
         <div class="header-info">
           <h3 class="panel-title">{{ t('API管理') }}</h3>
           <span class="settings-subtitle">{{ t('管理多个API配置和功能分配') }}</span>
@@ -30,7 +29,7 @@
       <!-- API列表区 -->
       <div class="settings-section">
         <div class="section-header">
-          <h4 class="section-title">📡 {{ t('API配置列表') }}</h4>
+          <h4 class="section-title">{{ t('API配置列表') }}</h4>
           <span class="section-count">{{ apiStore.apiConfigs.length }} {{ t('个配置') }}</span>
         </div>
         <div class="api-list">
@@ -44,7 +43,7 @@
               <div class="api-info">
                 <span class="api-name">{{ getDisplayName(api) }}</span>
                 <span class="api-provider" v-if="!(isTavernEnvFlag && api.id === 'default')">{{ getProviderName(api.provider) }}</span>
-                <span class="api-provider tavern-tag" v-else>🍺 酒馆配置</span>
+                <span class="api-provider tavern-tag" v-else>酒馆配置</span>
               </div>
               <div class="api-actions">
                 <label class="setting-switch" :title="t('启用/禁用')">
@@ -75,7 +74,7 @@
               <!-- 酒馆模式下默认API显示特殊提示 -->
               <template v-if="isTavernEnvFlag && api.id === 'default'">
                 <div class="tavern-api-hint">
-                  <span class="hint-text">🍺 API配置由酒馆管理，此处无需配置</span>
+                  <span class="hint-text">API配置由酒馆管理，此处无需配置</span>
                 </div>
               </template>
               <template v-else>
@@ -114,35 +113,35 @@
       <!-- 功能分配区 -->
       <div class="settings-section">
         <div class="section-header">
-          <h4 class="section-title">⚙️ {{ t('功能分配') }}</h4>
+          <h4 class="section-title">{{ t('功能分配') }}</h4>
 
         </div>
 
         <!-- 模式说明 -->
         <div class="mode-hint" :class="isTavernEnvFlag ? 'tavern' : 'web'">
-          <div class="hint-icon">{{'🌐' }}</div>
+          <div class="hint-icon">{{'😁' }}</div>
           <div class="hint-content" >
-            <strong>所有功能都通过配置的自定义API调用。
-            可为不同功能分配不同的API，实现灵活调度。</strong>
+            <strong>你可以为下面所有不同的功能分配不同的大模型API。</strong>
             <br/>
-            <span class="hint-example">提示：配置了相同API的功能会自动合并请求，节省调用次数。</span>
+            <span class="hint-example">提示：相同大模型API的功能会自动合并发送，一定程度上可以节省Token。</span>
           </div>
         </div>
 
         <div class="pipeline-hint">
-          <div class="hint-icon">💡</div>
+          <div class="hint-icon">😎</div>
           <div class="hint-content">
-            <strong>智能流水线：</strong>只有配置了独立API的功能才会触发额外调用。
-            如果所有功能都使用"默认API"，系统会合并请求以节省调用次数。
+            <strong>如果某个功能配置了独立API，则会单独发送请求。
+              如果你不了解独立API的运行机制，建议所有功能都使用"默认API"。</strong>
             <br/>
-            <span class="hint-example">示例：CoT + Main 使用同一API = 1次调用 | CoT + Main 使用不同API = 2次调用</span>
+            <span class="hint-example">举例：</span>
+            <span class="hint-example">CoT + Main 使用同一API = 1次调用。CoT + Main 使用不同API = 2次调用。</span>
           </div>
         </div>
         <div class="settings-list">
           <!-- ========== 主游戏流程（3个） ========== -->
           <div class="function-group-header">
-            <h5 class="group-title">🎮 主游戏流程</h5>
-            <span class="group-desc">控制游戏主要生成流程的API分配</span>
+            <h5 class="group-title">主要API</h5>
+            <span class="group-desc">负责游戏主要内容生成的大模型API</span>
           </div>
 
           <!-- 1. 主游戏流程 -->
@@ -153,7 +152,7 @@
             <div class="setting-info">
               <label class="setting-name">
                 {{ getFunctionName('main') }}
-                <span v-if="isTavernEnvFlag" class="locked-badge">🔒 酒馆API</span>
+                <span v-if="isTavernEnvFlag" class="locked-badge">酒馆API</span>
               </label>
               <span class="setting-desc">{{ getFunctionDesc('main') }}</span>
             </div>
@@ -252,7 +251,7 @@
 
           <!-- ========== 辅助功能（6个） ========== -->
           <div class="function-group-header">
-            <h5 class="group-title">🛠️ 辅助功能</h5>
+            <h5 class="group-title">辅助功能</h5>
             <span class="group-desc">可选的辅助生成功能，支持Raw/标准模式切换</span>
           </div>
 
@@ -322,13 +321,13 @@
       <!-- AI生成设置 -->
       <div class="settings-section">
         <div class="section-header">
-          <h4 class="section-title">🤖 {{ t('AI生成设置') }}</h4>
+          <h4 class="section-title">{{ t('AI生成设置') }}</h4>
         </div>
         <div class="settings-list">
           <div class="setting-item">
             <div class="setting-info">
               <label class="setting-name">{{ t('流式输出') }}</label>
-              <span class="setting-desc">{{ t('开启后AI响应逐字显示') }}</span>
+              <span class="setting-desc">{{ t('开启后AI响应逐字显示（建议开启，有错误请关闭）') }}</span>
             </div>
             <div class="setting-control">
               <label class="setting-switch">
@@ -666,7 +665,7 @@ const onProviderChange = () => {
 // 获取功能名称
 const getFunctionName = (type: APIUsageType): string => {
   const names: Record<APIUsageType, string> = {
-    main: '主游戏流程',
+    main: '核心API',
     memory_summary: '记忆总结',
     embedding: '向量检索(Embedding)',
     text_optimization: '文本优化',

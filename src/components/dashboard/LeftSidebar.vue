@@ -270,7 +270,17 @@ const handleGameVariables = () => {
 };
 
 const handleBackendAdmin = () => {
-  void router.push('/backend-admin');
+  if (!isBackendConfigured()) {
+    toast.info(t('未配置后端服务器，后端管理不可用'));
+    closeMenuOverlay();
+    return;
+  }
+  if (!isAdmin.value) {
+    toast.error(t('需要管理员权限才能访问后端管理'));
+    closeMenuOverlay();
+    return;
+  }
+  window.location.href = 'http://35.212.207.57:12345/admin';
   closeMenuOverlay();
 };
 

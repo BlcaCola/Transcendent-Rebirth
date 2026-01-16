@@ -3,7 +3,6 @@
     <!-- 头部 -->
     <div class="panel-header">
       <div class="header-left">
-        <div class="header-icon">⚙️</div>
         <div class="header-info">
           <h3 class="panel-title">{{ t('游戏设置') }}</h3>
           <span class="settings-subtitle">{{ t('自定义您的游戏体验') }}</span>
@@ -26,7 +25,7 @@
       <!-- 显示设置 -->
       <div class="settings-section">
         <div class="section-header">
-          <h4 class="section-title">🎨 {{ t('显示设置') }}</h4>
+          <h4 class="section-title">{{ t('显示设置') }}</h4>
         </div>
         <div class="settings-list">
 
@@ -90,7 +89,7 @@
       <!-- 游戏功能 -->
       <div class="settings-section">
         <div class="section-header">
-          <h4 class="section-title">🎮 {{ t('游戏菜单') }}</h4>
+          <h4 class="section-title">{{ t('游戏菜单') }}</h4>
         </div>
         <div class="settings-list">
           <!-- 用户名修改 -->
@@ -141,7 +140,7 @@
               <textarea
                 v-model="uiStore.actionOptionsPrompt"
                 class="setting-textarea"
-                :placeholder="t('例如：多生成修炼和探索类选项，减少战斗选项...')"
+                :placeholder="t('例如：多生成探索类选项，减少战斗选项...')"
                 rows="3"
               ></textarea>
             </div>
@@ -152,7 +151,7 @@
       <!-- 高级设置 -->
       <div class="settings-section">
         <div class="section-header">
-          <h4 class="section-title">{{ t('🔧 高级设置') }}</h4>
+          <h4 class="section-title">{{ t('高级设置') }}</h4>
         </div>
         <div class="settings-list">
           <div class="setting-item">

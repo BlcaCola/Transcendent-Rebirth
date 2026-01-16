@@ -448,3 +448,10 @@ KeyError: '"account_id"'
 2026-01-17 00:44:25.181 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
 2026-01-17 00:44:25.181 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
 2026-01-17 00:44:25.182 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-17 02:00:39.355 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-17 02:00:39.385 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-17 02:00:39.417 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-17 02:00:39.417 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-17 02:00:39.418 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-17 02:00:39.418 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-17 02:00:39.418 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin

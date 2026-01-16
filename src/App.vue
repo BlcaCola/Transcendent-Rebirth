@@ -354,7 +354,7 @@ const openBackendAdmin = (close: () => void) => {
     return;
   }
 
-  router.push('/backend-admin');
+  window.location.href = 'http://35.212.207.57:12345/admin';
   close();
 };
 

@@ -5,7 +5,6 @@ import LoginView from '../views/LoginView.vue';
 import WorkshopView from '../views/WorkshopView.vue';
 import GameView from '../views/GameView.vue';
 import AccountCenter from '../views/AccountCenter.vue';
-import BackendAdminView from '../views/BackendAdminView.vue';
 
 // 创建一个包装组件来传递fullscreen属性
 import { h } from 'vue';
@@ -79,11 +78,6 @@ const routes = [
     path: '/account',
     name: 'AccountCenter',
     component: AccountCenter,
-  },
-  {
-    path: '/backend-admin',
-    name: 'BackendAdmin',
-    component: BackendAdminView,
   },
   {
     // 提示词管理 - 独立顶级路由，不需要加载游戏数据
