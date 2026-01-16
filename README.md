@@ -5,7 +5,7 @@
 <h1 align="center">超凡新生（Transcendent Rebirth）</h1>
 
 <p align="center">
-  <strong>一个 AI 驱动的沉浸式修仙文字冒险项目。</strong>
+  <strong>一个 AI 驱动的沉浸式文字冒险游戏项目。</strong>
 </p>
 
 <p align="center">
