@@ -36,7 +36,9 @@
 
 # 超凡新生（Transcendent Rebirth）
 
-一个 AI 驱动的沉浸式修仙文字冒险项目。前端采用 Vue 3 + TypeScript，后端采用 FastAPI + Tortoise ORM。支持本地存档、提示词管理、管理员后台等能力。
+一个 AI 驱动的沉浸式修仙文字冒险游戏项目。
+前端采用 Vue 3 + TypeScript，后端采用 FastAPI + Tortoise ORM。
+支持本地存档、提示词管理、管理员后台等能力。
 
 ## 项目结构
 - 前端：根目录（Vue3 + Webpack）
