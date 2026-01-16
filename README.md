@@ -27,7 +27,6 @@
 </p>
 
 <p align="center">
-  <img src="https://visitor-badge.laobi.icu/badge?page_id=BlcaCola.Transcendent&left_color=gray&right_color=blue" alt="visitors"/>
   <img src="https://img.shields.io/github/stars/BlcaCola/Transcendent-Rebirth?style=flat-square&color=yellow" alt="stars"/>
   <img src="https://img.shields.io/github/forks/BlcaCola/Transcendent-Rebirth?style=flat-square" alt="forks"/>
 </p>
