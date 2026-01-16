@@ -3,6 +3,7 @@
 // 从 game.d.ts 导出 TechniqueItem 类型以修复编译错误
 export type { TechniqueItem } from './game.d';
 import type { SaveDataV3 } from './saveSchemaV3';
+export type { SaveDataV4 } from './saveSchemaV4';
 import type { APIUsageType } from '@/stores/apiManagementStore';
 
 // --- 核心AI交互结构 (保留) ---
@@ -146,7 +147,7 @@ export interface Character {
   talents: Talent[];
   reputation: number;
 
-  // --- 先天六司 (永不改变) ---
+  // --- 初始六维 (永不改变) ---
   root_bone: number;
   spirituality: number;
   comprehension: number;
@@ -161,7 +162,7 @@ export interface Character {
   spirit_root?: SpiritRoot | null;
 
   // --- 动态可变属性 (用于游戏状态) ---
-  realm?: string;
+  rank?: string;
   hp?: number; hp_max?: number;
   mana?: number; mana_max?: number;
   spirit?: number; spirit_max?: number;
@@ -186,7 +187,7 @@ export interface CharacterCreationPayload {
   world: World;
   talentTier: TalentTier;
   origin: Origin | null;  // 允许为null，表示随机出身
-  spiritRoot: SpiritRoot | null;  // 允许为null，表示随机灵根
+  spiritRoot: SpiritRoot | null;  // 允许为null，表示随机改造
   talents: Talent[];
   baseAttributes: {
     root_bone: number;
@@ -224,20 +225,20 @@ export type AllSaves = Record<string, any[]>;
 export interface InitialGameData {
   baseInfo: {
     名字: string;
-    先天六司?: {
-      根骨?: number;
-      灵性?: number;
-      悟性?: number;
-      气运?: number;
+    初始六维?: {
+      体质?: number;
+      能源?: number;
+      算法?: number;
+      资源感知?: number;
       魅力?: number;
-      心性?: number;
+      心智?: number;
     };
     性别?: string;
     世界?: string;
-    天资?: any; // 允许包含描述的复杂类型
-    天赋?: any[]; // 允许包含描述的复杂类型
+    模块阶位?: any; // 允许包含描述的复杂类型
+    模块?: any[]; // 允许包含描述的复杂类型
     出生?: any; // 允许包含描述的复杂类型
-    灵根?: any; // 允许包含描述的复杂类型
+    改造核心?: any; // 允许包含描述的复杂类型
   };
   creationDetails: {
     age: number;

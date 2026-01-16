@@ -13,25 +13,25 @@ import type {
   Equipment,
   GameMessage,
   EventSystem,
-  SectMemberInfo,
-  SectSystemV2,
+  FactionMemberInfo,
+  FactionSystemV2,
   StatusEffect,
 } from '@/types/game';
 import { calculateFinalAttributes } from '@/utils/attributeCalculation';
 import { isTavernEnv } from '@/utils/tavern';
 import { ensureSystemConfigHasNsfw } from '@/utils/nsfw';
-import { isSaveDataV3, migrateSaveDataToLatest } from '@/utils/saveMigration';
+import { isSaveDataV3, isSaveDataV4, migrateSaveDataToLatest, convertV4ToV3Compat } from '@/utils/saveMigration';
 
-function buildTechniqueProgress(inventory: Inventory | null) {
+function buildProgramProgress(inventory: Inventory | null) {
   const progress: Record<string, { 熟练度: number; 已解锁技能: string[] }> = {};
   const items = inventory?.物品 || {};
 
   Object.values(items).forEach((item: any) => {
-    if (item?.类型 !== '功法') return;
+    if (item?.类型 !== '程序') return;
     const itemId = item.物品ID;
     if (!itemId) return;
     progress[itemId] = {
-      熟练度: Number(item.修炼进度 ?? item.熟练度 ?? 0),
+      熟练度: Number(item.训练进度 ?? item.熟练度 ?? 0),
       已解锁技能: Array.isArray(item.已解锁技能) ? item.已解锁技能 : []
     };
   });
@@ -53,23 +53,23 @@ interface GameState {
   equipment: Equipment | null;
   relationships: Record<string, NpcProfile> | null;
   worldInfo: WorldInfo | null;
-  sectSystem: SectSystemV2 | null;
-  sectMemberInfo: SectMemberInfo | null;
+  factionSystem: FactionSystemV2 | null;
+  factionMemberInfo: FactionMemberInfo | null;
   memory: Memory | null;
   gameTime: GameTime | null;
   narrativeHistory: GameMessage[] | null;
   isGameLoaded: boolean;
 
-  // 三千大道系统
-  thousandDao: any | null;
+  // 流派系统
+  protocolSystem: any | null;
   // 事件系统
   eventSystem: EventSystem;
-  // 修炼功法
-  cultivationTechnique: any | null;
-  // 修炼模块（完整结构）
-  cultivation: any | null;
-  // 功法模块（进度/套装）
-  techniqueSystem: any | null;
+  // 训练程序
+  trainingProgram: any | null;
+  // 训练模块（完整结构）
+  training: any | null;
+  // 程序模块（进度/套装）
+  programSystem: any | null;
   // 技能模块（掌握技能/冷却）
   skillState: any | null;
   // 效果（buff/debuff数组）
@@ -105,15 +105,15 @@ export const useGameStateStore = defineStore('gameState', {
     equipment: null,
     relationships: null,
     worldInfo: null,
-    sectSystem: null,
-    sectMemberInfo: null,
+    factionSystem: null,
+    factionMemberInfo: null,
     memory: null,
     gameTime: null,
     narrativeHistory: [],
     isGameLoaded: false,
 
     // 其他游戏系统
-    thousandDao: null,
+    protocolSystem: null,
     eventSystem: {
       配置: {
         启用随机事件: true,
@@ -124,9 +124,9 @@ export const useGameStateStore = defineStore('gameState', {
       下次事件时间: null,
       事件记录: [],
     },
-    cultivationTechnique: null,
-    cultivation: null,
-    techniqueSystem: null,
+    trainingProgram: null,
+    training: null,
+    programSystem: null,
     skillState: null,
     effects: [],
     masteredSkills: null,
@@ -197,7 +197,11 @@ export const useGameStateStore = defineStore('gameState', {
      * @param saveData 完整的存档数据
      */
     loadFromSaveData(saveData: SaveData) {
-      const v3 = (isSaveDataV3(saveData) ? saveData : migrateSaveDataToLatest(saveData).migrated) as any;
+      const v3 = (isSaveDataV4(saveData)
+        ? convertV4ToV3Compat(saveData as any)
+        : isSaveDataV3(saveData)
+          ? saveData
+          : migrateSaveDataToLatest(saveData).migrated) as any;
 
       const deepCopy = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
@@ -234,17 +238,19 @@ export const useGameStateStore = defineStore('gameState', {
       const equipment: Equipment | null = v3?.角色?.装备 ? deepCopy(v3.角色.装备) : null;
       const relationships: Record<string, NpcProfile> | null = v3?.社交?.关系 ? deepCopy(v3.社交.关系) : null;
       const worldInfo: WorldInfo | null = v3?.世界?.信息 ? deepCopy(v3.世界.信息) : null;
-      const sectSystem: SectSystemV2 | null = v3?.社交?.宗门 ? deepCopy(v3.社交.宗门) : null;
-      const sectMemberInfo: SectMemberInfo | null = (v3?.社交?.宗门 as any)?.成员信息 ? deepCopy((v3.社交.宗门 as any).成员信息) : null;
+      const factionSystem: FactionSystemV2 | null = v3?.社交?.组织 ? deepCopy(v3.社交.组织) : null;
+      const factionMemberInfo: FactionMemberInfo | null = (v3?.社交?.组织 as any)?.成员信息
+        ? deepCopy((v3.社交.组织 as any).成员信息)
+        : null;
       const memory: Memory | null = v3?.社交?.记忆 ? deepCopy(v3.社交.记忆) : null;
       const gameTime: GameTime | null = v3?.元数据?.时间 ? deepCopy(v3.元数据.时间) : null;
 
       const narrativeHistory: GameMessage[] = Array.isArray(v3?.系统?.历史?.叙事) ? deepCopy(v3.系统.历史.叙事) : [];
 
-      const daoSystem = v3?.角色?.大道 ? deepCopy(v3.角色.大道) : null;
+      const protocolSystem = v3?.角色?.流派 ? deepCopy(v3.角色.流派) : null;
       const eventSystem: EventSystem | null = v3?.社交?.事件 ? deepCopy(v3.社交.事件) : null;
-      const cultivation = v3?.角色?.修炼 ? deepCopy(v3.角色.修炼) : null;
-      const techniqueSystem = v3?.角色?.功法 ? deepCopy(v3.角色.功法) : null;
+      const training = v3?.角色?.训练 ? deepCopy(v3.角色.训练) : null;
+      const programSystem = v3?.角色?.程序 ? deepCopy(v3.角色.程序) : null;
       const skillState = v3?.角色?.技能 ? deepCopy(v3.角色.技能) : null;
 
       const effects: StatusEffect[] = Array.isArray(v3?.角色?.效果) ? deepCopy(v3.角色.效果) : [];
@@ -260,27 +266,27 @@ export const useGameStateStore = defineStore('gameState', {
       this.attributes = attributes;
       this.location = location;
 
-      // 灵根/境界品质字段容错（AI偶尔会返回 {quality,grade} 结构）
-      if (this.character?.灵根 && typeof this.character.灵根 === 'object') {
-        normalizeQualitySuffix(this.character.灵根 as any, 'tier');
+      // 改造核心/阶位品质字段容错（AI偶尔会返回 {quality,grade} 结构）
+      if (this.character?.改造核心 && typeof this.character.改造核心 === 'object') {
+        normalizeQualitySuffix(this.character.改造核心 as any, 'tier');
       }
-      if (this.attributes?.境界 && typeof this.attributes.境界 === 'object') {
-        normalizeQualitySuffix(this.attributes.境界 as any, '品质');
-        normalizeQualitySuffix(this.attributes.境界 as any, '品阶');
+      if (this.attributes?.阶位 && typeof this.attributes.阶位 === 'object') {
+        normalizeQualitySuffix(this.attributes.阶位 as any, '品质');
+        normalizeQualitySuffix(this.attributes.阶位 as any, '品阶');
       }
 
       this.inventory = inventory;
       this.equipment = equipment;
       this.relationships = relationships;
       this.worldInfo = worldInfo;
-      this.sectSystem = sectSystem;
-      this.sectMemberInfo = sectMemberInfo;
+      this.factionSystem = factionSystem;
+      this.factionMemberInfo = factionMemberInfo;
       this.memory = memory;
       this.gameTime = gameTime;
       this.narrativeHistory = narrativeHistory;
 
       // 系统模块
-      this.thousandDao = daoSystem ? deepCopy(daoSystem) : null;
+      this.protocolSystem = protocolSystem ? deepCopy(protocolSystem) : null;
       this.eventSystem = eventSystem
         ? deepCopy(eventSystem)
         : {
@@ -294,10 +300,10 @@ export const useGameStateStore = defineStore('gameState', {
             事件记录: [],
           };
 
-      this.cultivation = cultivation ? deepCopy(cultivation) : null;
-      this.cultivationTechnique = (this.cultivation as any)?.修炼功法 ?? null;
+      this.training = training ? deepCopy(training) : null;
+      this.trainingProgram = (this.training as any)?.训练程序 ?? null;
 
-      this.techniqueSystem = techniqueSystem ? deepCopy(techniqueSystem) : null;
+      this.programSystem = programSystem ? deepCopy(programSystem) : null;
       this.skillState = skillState ? deepCopy(skillState) : null;
       this.masteredSkills = (this.skillState as any)?.掌握技能
         ? deepCopy((this.skillState as any).掌握技能)
@@ -332,8 +338,8 @@ export const useGameStateStore = defineStore('gameState', {
         } as any;
       }
 
-      if (!this.cultivation) {
-        this.cultivation = { 修炼功法: this.cultivationTechnique ?? null } as any;
+      if (!this.training) {
+        this.training = { 训练程序: this.trainingProgram ?? null } as any;
       }
 
       this.isGameLoaded = true;
@@ -364,14 +370,14 @@ export const useGameStateStore = defineStore('gameState', {
 
       const deepCopy = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
-      const techniqueProgress = buildTechniqueProgress(this.inventory);
-      const currentTechniqueId = (this.cultivationTechnique as any)?.物品ID ?? null;
+      const techniqueProgress = buildProgramProgress(this.inventory);
+      const currentTechniqueId = (this.trainingProgram as any)?.物品ID ?? null;
 
       const techniqueSystem = {
-        ...(this.techniqueSystem || {}),
-        当前功法ID: (this.techniqueSystem as any)?.当前功法ID ?? currentTechniqueId,
-        功法进度: (this.techniqueSystem as any)?.功法进度 ?? techniqueProgress,
-        功法套装: (this.techniqueSystem as any)?.功法套装 ?? { 主修: null, 辅修: [] },
+        ...(this.programSystem || {}),
+        当前程序ID: (this.programSystem as any)?.当前程序ID ?? currentTechniqueId,
+        程序进度: (this.programSystem as any)?.程序进度 ?? techniqueProgress,
+        程序套装: (this.programSystem as any)?.程序套装 ?? { 主修: null, 辅修: [] },
       } as any;
 
       const skillState = {
@@ -381,9 +387,9 @@ export const useGameStateStore = defineStore('gameState', {
         冷却: (this.skillState as any)?.冷却 ?? {},
       } as any;
 
-      const cultivation = {
-        ...(this.cultivation || {}),
-        修炼功法: (this.cultivation as any)?.修炼功法 ?? this.cultivationTechnique ?? null,
+      const training = {
+        ...(this.training || {}),
+        训练程序: (this.training as any)?.训练程序 ?? this.trainingProgram ?? null,
       } as any;
 
       const nowIso = new Date().toISOString();
@@ -399,14 +405,14 @@ export const useGameStateStore = defineStore('gameState', {
         时间: this.gameTime,
       };
 
-      const daoNormalized =
-        this.thousandDao && typeof this.thousandDao === 'object' && (this.thousandDao as any).大道列表
-          ? this.thousandDao
-          : { 大道列表: {} };
+      const protocolNormalized =
+        this.protocolSystem && typeof this.protocolSystem === 'object' && (this.protocolSystem as any).流派列表
+          ? this.protocolSystem
+          : { 流派列表: {} };
 
-      const sectNormalized =
-        this.sectSystem || this.sectMemberInfo
-          ? { ...(this.sectSystem || {}), ...(this.sectMemberInfo ? { 成员信息: this.sectMemberInfo } : {}) }
+      const factionNormalized =
+        this.factionSystem || this.factionMemberInfo
+          ? { ...(this.factionSystem || {}), ...(this.factionMemberInfo ? { 成员信息: this.factionMemberInfo } : {}) }
           : null;
 
       const settings =
@@ -451,14 +457,14 @@ export const useGameStateStore = defineStore('gameState', {
           身体: body,
           背包: this.inventory,
           装备: this.equipment,
-          功法: techniqueSystem,
-          修炼: cultivation,
-          大道: daoNormalized,
+          程序: techniqueSystem,
+          训练: training,
+          流派: protocolNormalized,
           技能: skillState,
         },
         社交: {
           关系: this.relationships ?? {},
-          宗门: sectNormalized,
+          组织: factionNormalized,
           事件: this.eventSystem,
           记忆: this.memory,
         },
@@ -473,11 +479,11 @@ export const useGameStateStore = defineStore('gameState', {
         },
       };
 
-      // 动态计算后天六司（装备/天赋加成）
-      // 注意：这里不能将计算后的"后天六司"（总值）保存回 character.后天六司（基值），
-      // 否则会导致下次加载时重复叠加天赋/装备加成（基值被污染为总值，再算一遍加成）。
-      // character.后天六司 应该只存储永久性的消耗品加成。
-      // 天赋/装备加成应在运行时动态计算，不落盘到该字段。
+      // 动态计算成长六维（装备/模块加成）
+      // 注意：这里不能将计算后的"成长六维"（总值）保存回 character.成长六维（基值），
+      // 否则会导致下次加载时重复叠加模块/装备加成（基值被污染为总值，再算一遍加成）。
+      // character.成长六维 应该只存储永久性的消耗品加成。
+      // 模块/装备加成应在运行时动态计算，不落盘到该字段。
 
       return deepCopy(v3 as any);
     },
@@ -572,15 +578,15 @@ export const useGameStateStore = defineStore('gameState', {
       this.equipment = null;
       this.relationships = null;
       this.worldInfo = null;
-      this.sectSystem = null;
-      this.sectMemberInfo = null;
+      this.factionSystem = null;
+      this.factionMemberInfo = null;
       this.memory = null;
       this.gameTime = null;
       this.narrativeHistory = [];
       this.isGameLoaded = false;
 
       // 重置其他系统数据
-      this.thousandDao = null;
+      this.protocolSystem = null;
       this.eventSystem = {
         配置: {
           启用随机事件: true,
@@ -591,9 +597,9 @@ export const useGameStateStore = defineStore('gameState', {
         下次事件时间: null,
         事件记录: [],
       };
-      this.cultivationTechnique = null;
-      this.cultivation = null;
-      this.techniqueSystem = null;
+      this.trainingProgram = null;
+      this.training = null;
+      this.programSystem = null;
       this.skillState = null;
       this.effects = [];
       this.masteredSkills = null;
@@ -779,14 +785,14 @@ export const useGameStateStore = defineStore('gameState', {
         this.memory.隐式中期记忆 = [];
       }
 
-      // 添加时间前缀（使用"仙道"与其他地方保持一致）
+      // 添加时间前缀（使用“霓虹纪元”与其他地方保持一致）
       const gameTime = this.gameTime;
       const minutes = gameTime?.分钟 ?? 0;
       const timePrefix = gameTime
-        ? `【仙道${gameTime.年}年${gameTime.月}月${gameTime.日}日 ${String(gameTime.小时).padStart(2, '0')}:${String(minutes).padStart(2, '0')}】`
+        ? `【霓虹纪元${gameTime.年}年${gameTime.月}月${gameTime.日}日 ${String(gameTime.小时).padStart(2, '0')}:${String(minutes).padStart(2, '0')}】`
         : '【未知时间】';
 
-      const hasTimePrefix = content.startsWith('【仙道') || content.startsWith('【未知时间】') || content.startsWith('【仙历');
+      const hasTimePrefix = content.startsWith('【霓虹纪元') || content.startsWith('【未知时间】') || content.startsWith('【仙道') || content.startsWith('【仙历');
       const finalContent = hasTimePrefix ? content : `${timePrefix}${content}`;
 
       this.memory.短期记忆.unshift(finalContent); // 最新的在前

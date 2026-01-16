@@ -266,16 +266,16 @@ export async function fetchOrigins(): Promise<Origin[]> {
 }
 
 /**
- * 从服务器获取所有灵根选项
+ * 从服务器获取所有改造核心选项
  */
 export async function fetchSpiritRoots(): Promise<SpiritRoot[]> {
   try {
     const spiritRoots = await request.get<SpiritRoot[]>('/api/v1/spirit_roots/');
-    console.log('[API] 成功获取灵根列表:', spiritRoots);
+    console.log('[API] 成功获取改造核心列表:', spiritRoots);
     return spiritRoots || [];
   } catch (error) {
-    console.error('[API] 获取灵根列表失败:', error);
-    toast.error('获取灵根列表失败，请检查网络或联系管理员。');
+    console.error('[API] 获取改造核心列表失败:', error);
+    toast.error('获取改造核心列表失败，请检查网络或联系管理员。');
     return [];
   }
 }

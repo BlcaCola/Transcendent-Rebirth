@@ -24,11 +24,11 @@ import { EnhancedWorldGenerator } from '@/utils/worldGeneration/enhancedWorldGen
 import { LOCAL_SPIRIT_ROOTS, LOCAL_ORIGINS } from '@/data/creationData';
 
 /**
- * 判断是否为随机灵根（辅助函数）
+ * 判断是否为随机改造（辅助函数）
  */
 function isRandomSpiritRoot(spiritRoot: string | object): boolean {
   if (typeof spiritRoot === 'string') {
-    return spiritRoot === '随机灵根' || spiritRoot.includes('随机');
+    return spiritRoot === '随机改造' || spiritRoot.includes('随机');
   }
   return false;
 }
@@ -107,42 +107,42 @@ async function robustAICall<T>(
  * 计算角色的初始属性值
  */
 export function calculateInitialAttributes(baseInfo: CharacterBaseInfo, age: number): PlayerStatus {
-  const { 先天六司 } = baseInfo;
+  const { 初始六维 } = baseInfo as any;
 
-  // 确保先天六司都是有效的数值，避免NaN
+  // 确保初始六维都是有效的数值，避免NaN
   // ⚠️ 使用 ?? 而不是 ||，因为 || 会将 0 视为 falsy 值
-  const 根骨 = Number(先天六司?.根骨 ?? 0);
-  const 灵性 = Number(先天六司?.灵性 ?? 0);
-  const 悟性 = Number(先天六司?.悟性 ?? 0);
+  const 体质 = Number(初始六维?.体质 ?? 0);
+  const 能源 = Number(初始六维?.能源 ?? 0);
+  const 算法 = Number(初始六维?.算法 ?? 0);
 
   // 基础属性计算公式
-  const 初始气血 = 100 + 根骨 * 10;
-  const 初始灵气 = 50 + 灵性 * 5;
-  const 初始神识 = 30 + 悟性 * 3;
+  const 初始生命值 = 100 + 体质 * 10;
+  const 初始电量 = 50 + 能源 * 5;
+  const 初始带宽 = 30 + 算法 * 3;
 
   // -- 寿命计算逻辑 --
-  const 基础寿命 = 80; // 凡人基础寿命
-  const 根骨寿命系数 = 5; // 每点根骨增加5年寿命
-  const 最大寿命 = 基础寿命 + 根骨 * 根骨寿命系数;
+  const 基础寿命 = 80; // 基础寿命
+  const 体质寿命系数 = 5; // 每点体质增加5年寿命
+  const 最大寿命 = 基础寿命 + 体质 * 体质寿命系数;
 
-  console.log(`[角色初始化] 属性计算: 气血=${初始气血}, 灵气=${初始灵气}, 神识=${初始神识}, 年龄=${age}/${最大寿命}`);
-  console.log(`[角色初始化] 先天六司: 根骨=${根骨}, 灵性=${灵性}, 悟性=${悟性}`);
+  console.log(`[角色初始化] 属性计算: 生命值=${初始生命值}, 电量=${初始电量}, 带宽=${初始带宽}, 年龄=${age}/${最大寿命}`);
+  console.log(`[角色初始化] 初始六维: 体质=${体质}, 能源=${能源}, 算法=${算法}`);
 
   return {
-    境界: {
-      名称: "凡人",
+    阶位: {
+      名称: "街头人",
       阶段: "",
       当前进度: 0,
       下一级所需: 100,
-      突破描述: "引气入体，感悟天地灵气，踏上修仙第一步"
+      晋升描述: "完成基础适配，开始进入街头级训练"
     },
     声望: 0, // 声望应该是数字类型
     位置: {
       描述: "位置生成失败" // 标记为错误状态而不是默认值
     },
-    气血: { 当前: 初始气血, 上限: 初始气血 },
-    灵气: { 当前: 初始灵气, 上限: 初始灵气 },
-    神识: { 当前: 初始神识, 上限: 初始神识 },
+    生命值: { 当前: 初始生命值, 上限: 初始生命值 },
+    电量: { 当前: 初始电量, 上限: 初始电量 },
+    带宽: { 当前: 初始带宽, 上限: 初始带宽 },
     寿命: { 当前: age, 上限: 最大寿命 }
   };
 }
@@ -159,7 +159,7 @@ export function calculateInitialAttributes(baseInfo: CharacterBaseInfo, age: num
  */
 function prepareInitialData(baseInfo: CharacterBaseInfo, age: number): { saveData: SaveData; processedBaseInfo: CharacterBaseInfo } {
   console.log('[初始化流程] 1. 准备初始存档数据');
-  console.log('[初始化流程] prepareInitialData 接收到的 baseInfo.先天六司:', baseInfo.先天六司);
+  console.log('[初始化流程] prepareInitialData 接收到的 baseInfo.初始六维:', (baseInfo as any).初始六维);
 
   // 深度克隆以移除响应式代理
   // 直接使用 JSON 方式，因为 baseInfo 可能包含 Vue 响应式对象
@@ -167,7 +167,7 @@ function prepareInitialData(baseInfo: CharacterBaseInfo, age: number): { saveDat
   try {
     // 使用 JSON 序列化来移除响应式代理和不可序列化的属性
     processedBaseInfo = JSON.parse(JSON.stringify(baseInfo));
-    console.log('[初始化流程] JSON 序列化后的 processedBaseInfo.先天六司:', processedBaseInfo.先天六司);
+    console.log('[初始化流程] JSON 序列化后的 processedBaseInfo.初始六维:', (processedBaseInfo as any).初始六维);
   } catch (jsonError) {
     console.error('[角色初始化] JSON 序列化失败，使用原始对象', jsonError);
     processedBaseInfo = baseInfo;
@@ -191,28 +191,28 @@ function prepareInitialData(baseInfo: CharacterBaseInfo, age: number): { saveDat
     console.log(`[角色初始化] 临时出生日期(AI可能会重新计算): ${processedBaseInfo.出生日期.年}年${processedBaseInfo.出生日期.月}月${processedBaseInfo.出生日期.日}日 (当前${age}岁)`);
   }
 
-  // 注意：不再在此处理随机灵根和随机出生，完全交给 AI 处理
-  // AI 会根据提示词中的引导，创造性地生成独特的灵根和出生
+  // 注意：不再在此处理随机改造和随机出生，完全交给 AI 处理
+  // AI 会根据提示词中的引导，创造性地生成独特的改造核心和出生
   // 这样可以避免固定的套路，每次初始化都会有不同的结果
 
-  // 确保后天六司存在，开局默认全为0
-  if (!processedBaseInfo.后天六司) {
-    processedBaseInfo.后天六司 = {
-      根骨: 0,
-      灵性: 0,
-      悟性: 0,
-      气运: 0,
+  // 确保成长六维存在，开局默认全为0
+  if (!(processedBaseInfo as any).成长六维) {
+    (processedBaseInfo as any).成长六维 = {
+      体质: 0,
+      能源: 0,
+      算法: 0,
+      资源感知: 0,
       魅力: 0,
-      心性: 0
+      心智: 0
     };
-    console.log('[角色初始化] 初始化后天六司为全0');
+    console.log('[角色初始化] 初始化成长六维为全0');
   }
 
-  if (isRandomSpiritRoot(processedBaseInfo.灵根)) {
-    console.log('[灵根生成] 检测到随机灵根，将由 AI 创造性生成');
-    // 保留"随机灵根"字符串，让 AI 处理
+  if (isRandomSpiritRoot((processedBaseInfo as any).改造核心)) {
+    console.log('[改造生成] 检测到随机改造，将由 AI 创造性生成');
+    // 保留"随机改造"字符串，让 AI 处理
   } else {
-    console.log('[灵根生成] 检测到玩家已选择特定灵根，将直接使用该灵根，不进行随机化处理。');
+    console.log('[改造生成] 检测到玩家已选择特定改造核心，将直接使用该改造，不进行随机化处理。');
   }
 
   if (typeof processedBaseInfo.出生 === 'string' &&
@@ -224,11 +224,11 @@ function prepareInitialData(baseInfo: CharacterBaseInfo, age: number): { saveDat
   // 计算初始属性
   const playerStatus = calculateInitialAttributes(processedBaseInfo, age);
   const attributes = {
-    境界: playerStatus.境界,
+    阶位: (playerStatus as any).阶位,
     声望: playerStatus.声望,
-    气血: playerStatus.气血,
-    灵气: playerStatus.灵气,
-    神识: playerStatus.神识,
+    生命值: (playerStatus as any).生命值,
+    电量: (playerStatus as any).电量,
+    带宽: (playerStatus as any).带宽,
     寿命: playerStatus.寿命,
   };
   const location = playerStatus.位置;
@@ -242,19 +242,19 @@ function prepareInitialData(baseInfo: CharacterBaseInfo, age: number): { saveDat
     效果: [],
     // 🔥 时间：使用age作为初始年份，AI可以通过tavern_commands修改
     时间: { 年: age, 月: 1, 日: 1, 小时: Math.floor(Math.random() * 12) + 6, 分钟: Math.floor(Math.random() * 60) },
-    背包: { 灵石: { 下品: 0, 中品: 0, 上品: 0, 极品: 0 }, 物品: {} },
+    背包: { 信用点: { 低额: 0, 中额: 0, 高额: 0, 最高额: 0 }, 物品: {} },
     装备: { 装备1: null, 装备2: null, 装备3: null, 装备4: null, 装备5: null, 装备6: null },
-    功法: {
-      当前功法ID: null,
-      功法进度: {},
-      功法套装: { 主修: null, 辅修: [] },
+    模块: {
+      当前模块ID: null,
+      模块进度: {},
+      模块套装: { 主修: null, 辅修: [] },
     },
-    修炼: {
-      修炼功法: null,
+    训练: {
+      训练模块: null,
     },
-    大道: createEmptyThousandDaoSystem(),
+    流派: createEmptyThousandDaoSystem(),
     技能: { 掌握技能: [], 装备栏: [], 冷却: {} },
-    宗门: undefined,
+    组织: undefined,
     事件: {
       配置: {
         启用随机事件: true,
@@ -270,10 +270,10 @@ function prepareInitialData(baseInfo: CharacterBaseInfo, age: number): { saveDat
     历史: { 叙事: [] },
     系统: {
       规则: {
-        属性上限: { 先天六司: { 每项上限: 10 } },
+        属性上限: { 初始六维: { 每项上限: 10 } },
         // 装备系统
         装备系统: '装备存储引用{物品ID,名称}，完整数据在背包.物品中',
-        品质控制: '严格遵守境界对应品质范围，仙品世界上几乎没有，每一个都是令世界动荡的存在，神品不存在'
+        品质控制: '严格遵守阶位对应品质范围，超规格物品极其稀有，每一个都可能引发组织震荡'
       },
       提示: [
         '⚠️ 先创建后修改：修改数据前必须确保数据已存在',
@@ -445,9 +445,9 @@ async function generateOpeningScene(saveData: SaveData, baseInfo: CharacterBaseI
     world: baseInfo.世界 || world, // 优先使用 baseInfo 中的完整对象
     talentTier: baseInfo.天资, // 现在是完整对象
     origin: baseInfo.出生,     // 现在是完整对象或"随机出身"
-    spiritRoot: baseInfo.灵根, // 现在是完整对象或"随机灵根"
+    spiritRoot: (baseInfo as any).改造核心, // 现在是完整对象或"随机改造"
     talents: baseInfo.天赋 || [], // 现在是完整对象数组
-    attributes: (baseInfo.先天六司 || {}) as unknown as Record<string, number>,
+    attributes: ((baseInfo as any).初始六维 || {}) as unknown as Record<string, number>,
     difficultyPrompt: characterCreationStore.currentDifficultyPrompt // 🔥 添加难度提示词
   };
 
@@ -455,7 +455,7 @@ async function generateOpeningScene(saveData: SaveData, baseInfo: CharacterBaseI
   console.log('  - 种族:', baseInfo.种族, '->', userSelections.race);
   console.log('  - 天资:', userSelections.talentTier);
   console.log('  - 出身:', userSelections.origin);
-  console.log('  - 灵根:', userSelections.spiritRoot);
+  console.log('  - 改造核心:', userSelections.spiritRoot);
   console.log('  - 天赋数量:', userSelections.talents?.length);
   console.log('  - 难度:', characterCreationStore.gameDifficulty);
 
@@ -495,7 +495,7 @@ ${selectionsSummary}
 
 **重要提示**：
 - 严格按照我的角色设定来生成内容
-- 我选择的是什么样的出身、天赋、灵根，你就如实展现
+- 我选择的是什么样的出身、天赋、改造核心，你就如实展现
 - 不要强加任何预设的剧情方向或生活方式
 - 这只是一个开始，我的人生我做主`;
 
@@ -653,11 +653,11 @@ async () => {
   const creationStore = useCharacterCreationStore();
 
   // [Roo] 强制TS重新评估类型
-  // 如果用户选择了随机灵根，用AI生成的具体灵根替换
-  if (creationStore.selectedSpiritRoot?.name === '随机灵根' && (saveDataAfterCommands as any).角色?.身份?.灵根) {
-    const aiSpiritRoot = (saveDataAfterCommands as any).角色.身份.灵根;
-    if (typeof aiSpiritRoot === 'object') {
-      creationStore.setAIGeneratedSpiritRoot(aiSpiritRoot as SpiritRoot);
+  // 如果用户选择了随机改造，用AI生成的具体改造替换
+  if (isRandomSpiritRoot(String(creationStore.selectedSpiritRoot?.name || '')) && (saveDataAfterCommands as any).角色?.身份?.改造核心) {
+    const aiCore = (saveDataAfterCommands as any).角色.身份.改造核心;
+    if (typeof aiCore === 'object') {
+      creationStore.setAIGeneratedSpiritRoot(aiCore as SpiritRoot);
     }
   }
 
@@ -734,22 +734,22 @@ function deriveBaseFieldsFromDetails(baseInfo: CharacterBaseInfo): CharacterBase
     console.warn('[数据校准] 警告: 无法找到权威的出身数据。');
   }
 
-  // 4. 灵根 (Spirit Root) - 如果AI已生成具体灵根，则保留AI生成的
+  // 4. 改造核心 (Cyber Core) - 如果AI已生成具体改造，则保留AI生成的
   const authoritativeSpiritRoot = creationStore.selectedSpiritRoot;
-  const hasAIGeneratedSpiritRoot = derivedInfo.灵根 && typeof derivedInfo.灵根 === 'object' && (derivedInfo.灵根 as any).名称 !== '随机灵根';
+  const hasAIGeneratedSpiritRoot = (derivedInfo as any).改造核心 && typeof (derivedInfo as any).改造核心 === 'object' && !String(((derivedInfo as any).改造核心 as any).名称 || '').includes('随机');
 
   if (authoritativeSpiritRoot && !hasAIGeneratedSpiritRoot) {
-    console.log(`[数据校准] ✅ 同步用户选择的灵根: ${authoritativeSpiritRoot.name} (${authoritativeSpiritRoot.tier})`);
-    derivedInfo.灵根 = authoritativeSpiritRoot;
+    console.log(`[数据校准] ✅ 同步用户选择的改造核心: ${authoritativeSpiritRoot.name} (${authoritativeSpiritRoot.tier})`);
+    (derivedInfo as any).改造核心 = authoritativeSpiritRoot;
   } else if (hasAIGeneratedSpiritRoot) {
     // 如果用户选择随机，并且一个具体的对象已经存在（由AI或后备逻辑生成），则直接信任和保留它。
-    console.log('[数据校准] ✅ 保留已生成的具体灵根:', (derivedInfo.灵根 as SpiritRoot).name);
+    console.log('[数据校准] ✅ 保留已生成的具体改造核心:', ((derivedInfo as any).改造核心 as SpiritRoot).name);
   } else if (creationStore.characterPayload.spirit_root_id === null) {
-    // 仅当没有生成任何具体灵根时，才可能需要标记回随机（作为最后的保险措施）
-    console.log('[数据校准] 🎲 用户选择随机灵根，但无有效生成值，标记为随机');
-    derivedInfo.灵根 = '随机灵根';
+    // 仅当没有生成任何具体改造时，才可能需要标记回随机（作为最后的保险措施）
+    console.log('[数据校准] 🎲 用户选择随机改造，但无有效生成值，标记为随机');
+    (derivedInfo as any).改造核心 = '随机改造';
   } else {
-    console.warn('[数据校准] 警告: 无法找到权威的灵根数据。');
+    console.warn('[数据校准] 警告: 无法找到权威的改造核心数据。');
   }
 
   // 5. 天赋 (Talents) - 用户选择的天赋，强制使用不允许修改
@@ -762,17 +762,17 @@ function deriveBaseFieldsFromDetails(baseInfo: CharacterBaseInfo): CharacterBase
     derivedInfo.天赋 = [];
   }
 
-  // 6. 先天六司 (Attributes) - 用户分配的属性，强制使用不允许修改
+  // 6. 初始六维 (Attributes) - 用户分配的属性，强制使用不允许修改
   const authoritativeAttributes = creationStore.attributes;
   if (authoritativeAttributes) {
-    console.log('[数据校准] ✅ 同步用户分配的先天六司:', authoritativeAttributes);
-    derivedInfo.先天六司 = {
-      根骨: authoritativeAttributes.root_bone,
-      灵性: authoritativeAttributes.spirituality,
-      悟性: authoritativeAttributes.comprehension,
-      气运: authoritativeAttributes.fortune,
+    console.log('[数据校准] ✅ 同步用户分配的初始六维:', authoritativeAttributes);
+    (derivedInfo as any).初始六维 = {
+      体质: authoritativeAttributes.root_bone,
+      能源: authoritativeAttributes.spirituality,
+      算法: authoritativeAttributes.comprehension,
+      资源感知: authoritativeAttributes.fortune,
       魅力: authoritativeAttributes.charm,
-      心性: authoritativeAttributes.temperament,
+      心智: authoritativeAttributes.temperament,
     };
   }
 
@@ -792,7 +792,7 @@ function deriveBaseFieldsFromDetails(baseInfo: CharacterBaseInfo): CharacterBase
 async function finalizeAndSyncData(saveData: SaveData, baseInfo: CharacterBaseInfo, world: World, age: number): Promise<SaveData> {
   console.log('[初始化流程] 4. 合并、验证并同步最终数据');
   const uiStore = useUIStore();
-  uiStore.updateLoadingText(`正在同步数据，即将进入${baseInfo.名字}的修仙世界...`);
+  uiStore.updateLoadingText(`正在同步数据，即将进入${baseInfo.名字}的霓虹世界...`);
 
   // 1. 合并AI生成的数据和用户选择的原始数据，并保护核心字段
   const mergedBaseInfo: CharacterBaseInfo = {
@@ -802,55 +802,55 @@ async function finalizeAndSyncData(saveData: SaveData, baseInfo: CharacterBaseIn
     名字: baseInfo.名字,
     性别: baseInfo.性别,
     种族: baseInfo.种族,
-    先天六司: baseInfo.先天六司,
+    初始六维: (baseInfo as any).初始六维,
     天赋: baseInfo.天赋, // 强制使用玩家选择的完整天赋列表
   };
 
 
-  // 灵根权威覆盖
-  const userChoseRandomSpiritRoot = (typeof baseInfo.灵根 === 'object' && (baseInfo.灵根 as SpiritRoot)?.name?.includes('随机')) ||
-                                (typeof baseInfo.灵根 === 'string' && baseInfo.灵根.includes('随机'));
+  // 改造核心权威覆盖
+  const userChoseRandomSpiritRoot = (typeof (baseInfo as any).改造核心 === 'object' && ((baseInfo as any).改造核心 as SpiritRoot)?.name?.includes('随机')) ||
+                                (typeof (baseInfo as any).改造核心 === 'string' && (baseInfo as any).改造核心.includes('随机'));
 
   if (userChoseRandomSpiritRoot) {
-    console.log('[数据最终化] 🎲 用户选择随机灵根，使用AI生成的数据');
-    const aiGeneratedSpiritRoot = (saveData as any).角色?.身份?.灵根;
-    mergedBaseInfo.灵根 = aiGeneratedSpiritRoot || '随机灵根'; // Fallback to string
+    console.log('[数据最终化] 🎲 用户选择随机改造，使用AI生成的数据');
+    const aiGeneratedCore = (saveData as any).角色?.身份?.改造核心;
+    (mergedBaseInfo as any).改造核心 = aiGeneratedCore || '随机改造'; // Fallback to string
 
-    // 验证AI是否正确替换了随机灵根
-    if (typeof mergedBaseInfo.灵根 === 'string' && mergedBaseInfo.灵根.includes('随机')) {
-      console.warn('[数据最终化] ⚠️ 警告：AI未能正确替换随机灵根，使用本地数据库生成');
+    // 验证AI是否正确替换了随机改造
+    if (typeof (mergedBaseInfo as any).改造核心 === 'string' && (mergedBaseInfo as any).改造核心.includes('随机')) {
+      console.warn('[数据最终化] ⚠️ 警告：AI未能正确替换随机改造，使用本地数据库生成');
 
       // 🔥 后备逻辑：使用本地数据库随机生成
       const 天资 = baseInfo.天资;
-      let 灵根池 = LOCAL_SPIRIT_ROOTS.filter(root => {
-        // 根据天资筛选合适的灵根，排除特殊灵根(神品、仙品等)
-        // 神品灵根应该是极其罕见的,不应该作为随机结果
+      let 改造池 = LOCAL_SPIRIT_ROOTS.filter(root => {
+        // 根据天资筛选合适的改造核心，排除特殊等级
+        // 顶级改造应极其罕见，不应该作为随机结果
         if (天资.name === '废柴' || 天资.name === '凡人') {
-          return root.tier === '凡品' || root.tier === '下品';
+          return root.tier === '民用' || root.tier === '下品';
         } else if (天资.name === '俊杰') {
           return root.tier === '中品' || root.tier === '上品';
         } else if (天资.name === '天骄') {
           return root.tier === '上品' || root.tier === '极品';
         } else if (天资.name === '妖孽') {
-          // 妖孽也只能随机到极品,神品太过罕见
+          // 顶尖天资也只能随机到极品
           return root.tier === '极品';
         } else {
-          return root.tier === '凡品' || root.tier === '下品'; // 默认
+          return root.tier === '民用' || root.tier === '下品'; // 默认
         }
       });
 
-      if (灵根池.length === 0) {
-        // 如果过滤结果为空，使用所有灵根
-        灵根池 = LOCAL_SPIRIT_ROOTS;
+      if (改造池.length === 0) {
+        // 如果过滤结果为空，使用所有改造核心
+        改造池 = LOCAL_SPIRIT_ROOTS;
       }
 
-      const 随机灵根 = 灵根池[Math.floor(Math.random() * 灵根池.length)];
-      mergedBaseInfo.灵根 = 随机灵根;
-      console.log(`[数据最终化] ✅ 已从本地数据库生成随机灵根: ${随机灵根.name} (${随机灵根.tier})`);
+      const 随机改造 = 改造池[Math.floor(Math.random() * 改造池.length)];
+      (mergedBaseInfo as any).改造核心 = 随机改造;
+      console.log(`[数据最终化] ✅ 已从本地数据库生成随机改造: ${随机改造.name} (${随机改造.tier})`);
     }
   } else {
-    console.log(`[数据最终化] ✅ 用户选择特定灵根，强制使用用户选择: ${(baseInfo.灵根 as SpiritRoot)?.name}`);
-    mergedBaseInfo.灵根 = baseInfo.灵根;
+    console.log(`[数据最终化] ✅ 用户选择特定改造核心，强制使用用户选择: ${((baseInfo as any).改造核心 as SpiritRoot)?.name}`);
+    (mergedBaseInfo as any).改造核心 = (baseInfo as any).改造核心;
   }
 
   // 出生权威覆盖
@@ -893,29 +893,29 @@ async function finalizeAndSyncData(saveData: SaveData, baseInfo: CharacterBaseIn
   const aiLocationCandidate = (saveData as any).角色?.位置 ?? (saveData as any).位置;
 
   // 🔥 关键修复：合并状态，而不是完全覆盖。
-  // 以权威计算值为基础，然后应用AI的所有修改（包括境界、位置、属性上限等）。
-  // 🔥 境界字段特殊处理：优先使用AI设置的境界，只在缺失字段时才用初始值补充
-  const mergedRealm = aiModifiedAttributes.境界 && typeof aiModifiedAttributes.境界 === 'object'
+  // 以权威计算值为基础，然后应用AI的所有修改（包括阶位、位置、属性上限等）。
+  // 🔥 阶位字段特殊处理：优先使用AI设置的阶位，只在缺失字段时才用初始值补充
+  const mergedRank = aiModifiedAttributes.阶位 && typeof aiModifiedAttributes.阶位 === 'object'
     ? {
-        名称: aiModifiedAttributes.境界.名称 || authoritativeStatus.境界.名称,
-        阶段: aiModifiedAttributes.境界.阶段 !== undefined ? aiModifiedAttributes.境界.阶段 : authoritativeStatus.境界.阶段,
-        当前进度: aiModifiedAttributes.境界.当前进度 !== undefined ? aiModifiedAttributes.境界.当前进度 : authoritativeStatus.境界.当前进度,
-        下一级所需: aiModifiedAttributes.境界.下一级所需 !== undefined ? aiModifiedAttributes.境界.下一级所需 : authoritativeStatus.境界.下一级所需,
-        突破描述: aiModifiedAttributes.境界.突破描述 || authoritativeStatus.境界.突破描述
+        名称: aiModifiedAttributes.阶位.名称 || (authoritativeStatus as any).阶位.名称,
+        阶段: aiModifiedAttributes.阶位.阶段 !== undefined ? aiModifiedAttributes.阶位.阶段 : (authoritativeStatus as any).阶位.阶段,
+        当前进度: aiModifiedAttributes.阶位.当前进度 !== undefined ? aiModifiedAttributes.阶位.当前进度 : (authoritativeStatus as any).阶位.当前进度,
+        下一级所需: aiModifiedAttributes.阶位.下一级所需 !== undefined ? aiModifiedAttributes.阶位.下一级所需 : (authoritativeStatus as any).阶位.下一级所需,
+        晋升描述: aiModifiedAttributes.阶位.晋升描述 || (authoritativeStatus as any).阶位.晋升描述
       }
-    : authoritativeStatus.境界;
+    : (authoritativeStatus as any).阶位;
 
   // 🔥 新架构：不再写入 saveData.状态，改为短路径拆分：属性 + 位置
   (saveData as any).属性 = {
-    境界: mergedRealm,
+    阶位: mergedRank,
     声望: typeof aiModifiedAttributes.声望 === 'number' ? aiModifiedAttributes.声望 : authoritativeStatus.声望,
-    气血: aiModifiedAttributes.气血 ?? authoritativeStatus.气血,
-    灵气: aiModifiedAttributes.灵气 ?? authoritativeStatus.灵气,
-    神识: aiModifiedAttributes.神识 ?? authoritativeStatus.神识,
+    生命值: aiModifiedAttributes.生命值 ?? (authoritativeStatus as any).生命值,
+    电量: aiModifiedAttributes.电量 ?? (authoritativeStatus as any).电量,
+    带宽: aiModifiedAttributes.带宽 ?? (authoritativeStatus as any).带宽,
     寿命: aiModifiedAttributes.寿命 ?? authoritativeStatus.寿命,
   };
 
-  console.log('[数据最终化] 境界合并结果:', mergedRealm);
+  console.log('[数据最终化] 阶位合并结果:', mergedRank);
 
   const aiLocation = aiLocationCandidate; // 从V3路径 角色.位置 提取
 
@@ -1001,24 +1001,24 @@ async function finalizeAndSyncData(saveData: SaveData, baseInfo: CharacterBaseIn
     throw new Error(`角色数据最终验证失败: ${finalValidation.errors.join(', ')}`);
   }
 
-  // 5. 数据一致性强力校验：根除“幽灵功法”
-  // 检查是否存在一个“正在修炼”的功法引用，但背包里却没有对应的实体物品。
+  // 5. 数据一致性强力校验：根除“幽灵模块”
+  // 检查是否存在一个“正在训练”的模块引用，但背包里却没有对应的实体物品。
   // 这种情况通常是AI指令错误导致的，必须在此处修正。
-  const cultivating = (migrated as any)?.角色?.修炼?.修炼功法;
+  const cultivating = (migrated as any)?.角色?.训练?.训练模块;
   const items = ((migrated as any)?.角色?.背包?.物品 ?? {}) as Record<string, any>;
   if (cultivating?.物品ID && typeof cultivating.名称 === 'string') {
     const corresponding = items[cultivating.物品ID];
     const ok =
       corresponding &&
-      corresponding.类型 === '功法' &&
+      corresponding.类型 === '模块' &&
       (corresponding.名称 === cultivating.名称 || corresponding.名称) &&
-      (corresponding.修炼中 === true || corresponding.已装备 === true);
+      (corresponding.训练中 === true || corresponding.已装备 === true);
 
     if (!ok) {
-      console.warn(`[数据校准] 检测到无效的“幽灵功法”：角色.修炼.修炼功法 非空，但角色.背包.物品中无对应实体。正在清除无效修炼状态...`);
-      if ((migrated as any).角色?.修炼) (migrated as any).角色.修炼.修炼功法 = null;
+      console.warn(`[数据校准] 检测到无效的“幽灵模块”：角色.训练.训练模块 非空，但角色.背包.物品中无对应实体。正在清除无效训练状态...`);
+      if ((migrated as any).角色?.训练) (migrated as any).角色.训练.训练模块 = null;
     } else {
-      console.log(`[数据校准] 功法一致性校验通过: "${cultivating.名称}"`);
+      console.log(`[数据校准] 模块一致性校验通过: "${cultivating.名称}"`);
     }
   }
 
@@ -1054,7 +1054,7 @@ export async function initializeCharacter(
     (baseInfo as any).种族 = creationStore.characterPayload.race;
   }
 
-  console.log('[初始化流程] 接收到的 baseInfo.先天六司:', baseInfo.先天六司);
+  console.log('[初始化流程] 接收到的 baseInfo.初始六维:', (baseInfo as any).初始六维);
   try {
     // 步骤 1: 准备初始数据
     const { saveData: initialSaveData, processedBaseInfo } = prepareInitialData(baseInfo, age);
@@ -1064,61 +1064,61 @@ export async function initializeCharacter(
     if (!(initialSaveData as any).世界) (initialSaveData as any).世界 = { 信息: {}, 状态: {} };
     (initialSaveData as any).世界.信息 = worldInfo;
 
-    // 🔥 [彩蛋] 合欢宗圣女 - 灰夫人
-    // - 无论是否酒馆环境：补齐合欢宗“圣女”字段，保证宗门信息完整
+    // 🔥 [彩蛋] 夜宴组织特使 - 灰夫人
+    // - 无论是否酒馆环境：补齐夜宴组织“特使”字段，保证组织信息完整
     // - 仅酒馆环境：注入灰夫人NPC（包含NSFW信息）
-    const hehuanSect = worldInfo.势力信息.find((f: any) => f.名称?.includes('合欢') || f.name?.includes('合欢'));
-    if (hehuanSect) {
-      const sectName = hehuanSect.名称 || (hehuanSect as any).name || '合欢宗';
+    const nightGalaFaction = worldInfo.势力信息.find((f: any) => f.名称?.includes('夜宴') || f.name?.includes('夜宴'));
+    if (nightGalaFaction) {
+      const sectName = nightGalaFaction.名称 || (nightGalaFaction as any).name || '夜宴组织';
 
-      // 1) 补齐宗门领导层与“圣女”职位（兼容 leadership / 领导层 两套字段）
+      // 1) 补齐组织领导层与“核心岗位”职位（兼容 leadership / 领导层 两套字段）
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const existingLeadership = ((hehuanSect as any).领导层 || (hehuanSect as any).leadership) as any;
+      const existingLeadership = ((nightGalaFaction as any).领导层 || (nightGalaFaction as any).leadership) as any;
       const nextLeadership =
         existingLeadership && typeof existingLeadership === 'object'
           ? { ...existingLeadership }
           : ({} as any);
 
-      if (!nextLeadership.宗主) nextLeadership.宗主 = '合欢老魔';
-      if (!nextLeadership.最强修为) nextLeadership.最强修为 = nextLeadership.宗主修为 || '化神期';
+      if (!nextLeadership.首领) nextLeadership.首领 = '夜宴主理人';
+      if (!nextLeadership.最强等级) nextLeadership.最强等级 = nextLeadership.首领等级 || '主宰级';
 
-      if (!nextLeadership.圣女) {
-        nextLeadership.圣女 = '灰夫人(合欢圣女)';
-        console.log('[角色初始化] ✅ 已补齐合欢宗领导层：圣女=灰夫人(合欢圣女)');
+      if (!nextLeadership.特使) {
+        nextLeadership.特使 = '灰夫人(夜宴特使)';
+        console.log('[角色初始化] ✅ 已补齐夜宴组织领导层：特使=灰夫人(夜宴特使)');
       }
 
-      (hehuanSect as any).领导层 = nextLeadership;
-      (hehuanSect as any).leadership = nextLeadership;
+      (nightGalaFaction as any).领导层 = nextLeadership;
+      (nightGalaFaction as any).leadership = nextLeadership;
 
       // 2) 酒馆环境才注入NPC数据
       if (isTavernEnv()) {
-        console.log('[角色初始化] 🎲 触发合欢宗彩蛋：生成灰夫人NPC');
+        console.log('[角色初始化] 🎲 触发夜宴组织彩蛋：生成灰夫人NPC');
 
         const greyLady: NpcProfile = {
-          名字: "灰夫人(合欢圣女)",
+          名字: "灰夫人(夜宴特使)",
           性别: "女",
           出生日期: { 年: Math.max(0, age - 20), 月: 1, 日: 1 }, // 设定为20岁左右
           种族: "人族",
-          出生: "合欢宗",
+          出生: "夜宴组织",
           外貌描述: "身材极度丰满，拥有夸张的丰乳肥臀，腰肢纤细如蛇。面容妖媚，眼神含春，举手投足间散发着惊人的魅惑力。身着轻薄纱衣，曼妙身姿若隐若现。",
           性格特征: ["平易近人", "开放", "双性恋", "M体质", "S体质", "痴女(潜在)"],
-          境界: { 名称: "金丹", 阶段: "圆满", 当前进度: 0, 下一级所需: 100, 突破描述: "阴阳调和，丹破婴生" },
-          灵根: { name: "天阴灵根", tier: "天品" } as any,
-          天赋: [{ name: "合欢圣体", description: "天生媚骨，极适合双修，采补效果翻倍" }] as any,
-          先天六司: { 根骨: 8, 灵性: 9, 悟性: 8, 气运: 7, 魅力: 10, 心性: 5 },
+          阶位: { 名称: "核心级", 阶段: "圆满", 当前进度: 0, 下一级所需: 100, 升级描述: "系统过载边缘，核心稳定" },
+          改造核心: { name: "夜宴核心", tier: "顶级" } as any,
+          模块: [{ name: "夜宴特化", description: "感官改造与情报网络加成" }] as any,
+          初始六维: { 体质: 8, 能源: 9, 算法: 8, 资源感知: 7, 魅力: 10, 心智: 5 },
           与玩家关系: "陌生人", // 初始关系
           好感度: 10, // 初始好感略高
           当前位置: { 描述: `${sectName}驻地` },
           势力归属: sectName,
           人格底线: [], // 暂无底线
           记忆: [
-            "我是合欢宗的圣女，人称灰夫人。",
+            "我是合欢组织的代言人，人称灰夫人。",
             "我的真实姓名是一个秘密，只有真正征服我的人才能知道。",
             "我渴望体验世间极致的快乐与痛苦，无论是给予还是接受。"
           ],
           当前外貌状态: "衣衫半解，媚眼如丝",
           当前内心想法: "观察着周围的人，寻找能让我感兴趣的猎物",
-          背包: { 灵石: { 下品: 5000, 中品: 500, 上品: 50, 极品: 0 }, 物品: {} },
+          背包: { 信用点: { 低额: 5000, 中额: 500, 高额: 50, 最高额: 0 }, 物品: {} },
           实时关注: true, // 关键：让AI主动关注此NPC
           私密信息: {
             是否为处女: true,
@@ -1169,31 +1169,31 @@ export async function initializeCharacter(
     // 步骤 3.5: 核心属性校准
     // AI在生成开场时可能会意外覆盖或删除我们预先计算好的核心属性。
     // 此处强制将我们计算的初始值重新应用到最终存档数据中，以确保数据一致性。
-    // 这会保留AI对"位置"等字段的修改，同时保护"气血"、"寿命"等核心数据。
+    // 这会保留AI对"位置"等字段的修改，同时保护"生命值"、"寿命"等核心数据。
     console.log('[初始化流程] 核心属性校准：合并AI修改与初始属性...');
     const authoritativeStatus = calculateInitialAttributes(baseInfo, age);
     const aiModifiedStatus = finalSaveData.状态 || {};
 
     // 合并状态：以权威计算值为基础，然后应用AI的所有修改。
-    // 这会保留AI对"境界"、"位置"等剧情相关字段的修改，
-    // 同时确保"气血"、"寿命"等核心计算字段有一个有效的初始值。
-    // 🔥 境界字段特殊处理：优先使用AI设置的境界，只在缺失字段时才用初始值补充
-    const mergedRealmStep3 = aiModifiedStatus.境界 && typeof aiModifiedStatus.境界 === 'object'
+    // 这会保留AI对"阶位"、"位置"等剧情相关字段的修改，
+    // 同时确保"生命值"、"寿命"等核心计算字段有一个有效的初始值。
+    // 🔥 阶位字段特殊处理：优先使用AI设置的阶位，只在缺失字段时才用初始值补充
+    const mergedRankStep3 = aiModifiedStatus.阶位 && typeof aiModifiedStatus.阶位 === 'object'
       ? {
-          名称: aiModifiedStatus.境界.名称 || authoritativeStatus.境界.名称,
-          阶段: aiModifiedStatus.境界.阶段 !== undefined ? aiModifiedStatus.境界.阶段 : authoritativeStatus.境界.阶段,
-          当前进度: aiModifiedStatus.境界.当前进度 !== undefined ? aiModifiedStatus.境界.当前进度 : authoritativeStatus.境界.当前进度,
-          下一级所需: aiModifiedStatus.境界.下一级所需 !== undefined ? aiModifiedStatus.境界.下一级所需 : authoritativeStatus.境界.下一级所需,
-          突破描述: aiModifiedStatus.境界.突破描述 || authoritativeStatus.境界.突破描述
+          名称: aiModifiedStatus.阶位.名称 || (authoritativeStatus as any).阶位.名称,
+          阶段: aiModifiedStatus.阶位.阶段 !== undefined ? aiModifiedStatus.阶位.阶段 : (authoritativeStatus as any).阶位.阶段,
+          当前进度: aiModifiedStatus.阶位.当前进度 !== undefined ? aiModifiedStatus.阶位.当前进度 : (authoritativeStatus as any).阶位.当前进度,
+          下一级所需: aiModifiedStatus.阶位.下一级所需 !== undefined ? aiModifiedStatus.阶位.下一级所需 : (authoritativeStatus as any).阶位.下一级所需,
+          晋升描述: aiModifiedStatus.阶位.晋升描述 || (authoritativeStatus as any).阶位.晋升描述
         }
-      : authoritativeStatus.境界;
+      : (authoritativeStatus as any).阶位;
 
     finalSaveData.状态 = {
       ...authoritativeStatus,
       ...aiModifiedStatus,
-      境界: mergedRealmStep3, // 强制使用合并后的完整境界对象（优先AI的值）
+      阶位: mergedRankStep3, // 强制使用合并后的完整阶位对象（优先AI的值）
     };
-    console.log('[初始化流程] 核心属性校准完成，境界:', mergedRealmStep3);
+    console.log('[初始化流程] 核心属性校准完成，阶位:', mergedRankStep3);
 
     // 步骤 4: 最终化并同步数据
     console.log('[初始化流程] 准备最终化并同步数据...');

@@ -2,15 +2,15 @@
   <div class="sect-panel">
     <div class="panel-content">
       <div class="sect-container">
-        <!-- 左侧：宗门列表 -->
+        <!-- 左侧：组织列表 -->
         <div class="sect-list">
           <div class="list-header">
-            <h3 class="panel-title">势力宗门</h3>
+            <h3 class="panel-title">势力组织</h3>
             <div class="search-bar">
               <Search :size="16" />
               <input
                 v-model="searchQuery"
-                placeholder="搜索宗门..."
+                placeholder="搜索组织..."
                 class="search-input"
               />
             </div>
@@ -19,11 +19,11 @@
           <div class="list-content">
             <div v-if="isLoading" class="loading-state">
               <Loader2 :size="32" class="animate-spin" />
-              <p>{{ t('正在读取宗门信息...') }}</p>
+                <p>{{ t('正在读取组织信息...') }}</p>
             </div>
             <div v-else-if="filteredSects.length === 0" class="empty-state">
               <Building :size="48" class="empty-icon" />
-              <p class="empty-text">{{ t('暂无宗门信息') }}</p>
+                <p class="empty-text">{{ t('暂无组织信息') }}</p>
               <p class="empty-hint">{{ t('世界信息将由AI根据游戏进程生成') }}</p>
               <div class="empty-actions">
                 <button class="empty-action-btn primary" @click="sendSectGenerationPrompt">生成势力信息</button>
@@ -50,7 +50,7 @@
                 <div class="sect-info">
                   <div class="sect-name">{{ sect.名称 }}</div>
                   <div class="sect-meta">
-                    <span class="sect-type">{{ sect.类型 }}</span>
+                    <span class="sect-type">{{ getSectTypeLabel(sect.类型) }}</span>
                   </div>
 
                 </div>
@@ -60,7 +60,7 @@
           </div>
         </div>
 
-        <!-- 右侧：宗门详情 -->
+        <!-- 右侧：组织详情 -->
         <div class="sect-detail">
           <div v-if="selectedSect" class="detail-content">
             <!-- 详情头部 -->
@@ -72,7 +72,7 @@
                 <h3 class="detail-name">{{ selectedSect.名称 }}</h3>
                 <div class="detail-badges">
                   <span class="type-badge" :class="`type-${getSectTypeClass(selectedSect.类型)}`">
-                    {{ selectedSect.类型 }}
+                      {{ getSectTypeLabel(selectedSect.类型) }}
                   </span>
                   <span class="level-badge" :class="`level-${selectedSect.等级}`">
                     {{ formatSectLevel(selectedSect.等级) }}
@@ -97,16 +97,16 @@
                     <span class="total-value">{{ selectedSect.成员数量?.总数 || selectedSect.成员数量?.total || 0 }}人</span>
                   </div>
 
-                  <!-- 境界分布 -->
-                  <div class="realm-distribution" v-if="selectedSect.成员数量?.按境界 || selectedSect.成员数量?.byRealm">
-                    <h6 class="distribution-title">境界分布</h6>
+                  <!-- 阶位分布 -->
+                  <div class="realm-distribution" v-if="selectedSect.成员数量?.按阶位 || selectedSect.成员数量?.byRealm">
+                      <h6 class="distribution-title">等级分布</h6>
                     <div class="realm-stats">
                       <div
-                        v-for="(count, realm) in (selectedSect.成员数量?.按境界 || selectedSect.成员数量?.byRealm)"
+                        v-for="(count, realm) in (selectedSect.成员数量?.按阶位 || selectedSect.成员数量?.byRealm)"
                         :key="realm"
                         class="realm-item"
                       >
-                        <span class="realm-name">{{ formatRealmName(String(realm)) }}</span>
+                        <span class="realm-name">{{ formatTierName(String(realm)) }}</span>
                         <span class="realm-count">{{ count }}人</span>
                       </div>
                     </div>
@@ -138,11 +138,11 @@
                 </h5>
                 <div class="info-grid">
                   <div class="info-item">
-                    <span class="info-label">宗门类型</span>
-                    <span class="info-value">{{ selectedSect.类型 }}</span>
+                    <span class="info-label">组织类型</span>
+                    <span class="info-value">{{ getSectTypeLabel(selectedSect.类型) }}</span>
                   </div>
                   <div class="info-item">
-                    <span class="info-label">宗门等级</span>
+                    <span class="info-label">组织等级</span>
                     <span class="info-value">{{ selectedSect.等级 }}</span>
                   </div>
                   <div class="info-item">
@@ -156,30 +156,30 @@
 
                 </div>
 
-                <!-- 宗门领导层 -->
+                <!-- 组织领导层 -->
                 <div v-if="selectedLeadership" class="leadership-info">
-                  <h6 class="leadership-title">宗门领导</h6>
+                  <h6 class="leadership-title">组织领导</h6>
 
                   <div class="leader-grid">
                     <div class="leader-item primary-leader">
-                      <span class="leader-role">宗主</span>
-                      <span class="leader-name">{{ selectedLeadership.宗主 }}</span>
-                      <span class="leader-realm" v-if="selectedLeadership.宗主修为">{{ selectedLeadership.宗主修为 }}</span>
+                      <span class="leader-role">首领</span>
+                      <span class="leader-name">{{ selectedLeadership.首领 }}</span>
+                      <span class="leader-realm" v-if="selectedLeadership.首领阶位">{{ selectedLeadership.首领阶位 }}</span>
                     </div>
-                    <div v-if="selectedLeadership.副宗主" class="leader-item">
-                      <span class="leader-role">副宗主</span>
-                      <span class="leader-name">{{ selectedLeadership.副宗主 }}</span>
+                    <div v-if="selectedLeadership.副首领" class="leader-item">
+                      <span class="leader-role">副首领</span>
+                      <span class="leader-name">{{ selectedLeadership.副首领 }}</span>
                     </div>
-                    <div v-if="selectedLeadership.圣女" class="leader-item">
-                      <span class="leader-role">圣女</span>
-                      <span class="leader-name">{{ selectedLeadership.圣女 }}</span>
+                    <div v-if="selectedLeadership.代言人" class="leader-item">
+                      <span class="leader-role">代言人</span>
+                      <span class="leader-name">{{ selectedLeadership.代言人 }}</span>
                     </div>
                   </div>
 
                   <div class="sect-strength">
                     <div class="strength-item">
-                      <span class="strength-label">最强修为</span>
-                      <span class="strength-value peak-power">{{ selectedLeadership.最强修为 || selectedLeadership.宗主修为 }}</span>
+                      <span class="strength-label">最高阶位</span>
+                      <span class="strength-value peak-power">{{ selectedLeadership.最高阶位 || selectedLeadership.首领阶位 }}</span>
                     </div>
                     <div v-if="selectedLeadership?.综合战力" class="strength-item">
                       <span class="strength-label">综合战力</span>
@@ -192,13 +192,13 @@
                 </div>
 
                 <div class="sect-description">
-                  <h6 class="desc-title">宗门描述</h6>
+                  <h6 class="desc-title">组织描述</h6>
                   <p class="desc-text">{{ selectedSect.描述 }}</p>
                 </div>
 
-                <!-- 宗门特色 -->
+                <!-- 组织特色 -->
                 <div class="sect-specialties" v-if="getSectSpecialties(selectedSect).length > 0">
-                  <h6 class="specialties-title">宗门特色</h6>
+                  <h6 class="specialties-title">组织特色</h6>
                   <div class="specialties-tags">
                     <span
                       v-for="specialty in getSectSpecialties(selectedSect)"
@@ -319,17 +319,17 @@
                 </div>
               </div>
 
-              <!-- 已加入宗门信息 -->
+              <!-- 已加入组织信息 -->
               <div class="detail-section" v-if="isCurrentSect(selectedSect)">
                 <h5 class="section-title">
                   <Crown :size="16" />
-                  <span>我的宗门身份</span>
+                  <span>我的组织身份</span>
                 </h5>
                 <div class="current-member-info">
                   <div class="member-status">
                     <div class="status-item">
                       <span class="status-label">职位</span>
-                      <span class="status-value position">{{ playerSectInfo?.职位 || '散修' }}</span>
+                      <span class="status-value position">{{ playerSectInfo?.职位 || '游民' }}</span>
                     </div>
                     <div class="status-item">
                       <span class="status-label">贡献点</span>
@@ -347,14 +347,14 @@
                   <div class="member-actions">
                     <button class="leave-btn" @click="requestLeaveSect(selectedSect)">
                       <LogOut :size="16" />
-                      <span>退出宗门</span>
+                      <span>退出组织</span>
                     </button>
                   </div>
                 </div>
 
-                <!-- 宗门功能 -->
+                <!-- 组织功能 -->
                 <div class="sect-actions">
-                  <h6 class="actions-title">宗门势力</h6>
+                  <h6 class="actions-title">组织功能</h6>
                   <div class="action-buttons">
                     <button class="sect-action-btn" @click="showContribution">
                       <Coins :size="16" />
@@ -362,11 +362,11 @@
                     </button>
                     <button class="sect-action-btn" @click="showSectLibrary">
                       <Book :size="16" />
-                      <span>宗门藏书</span>
+                      <span>模块库</span>
                     </button>
                     <button class="sect-action-btn" @click="showSectMembers">
                       <Users :size="16" />
-                      <span>同门师兄弟</span>
+                      <span>组织成员</span>
                     </button>
                   </div>
                 </div>
@@ -376,8 +376,8 @@
 
           <div v-else class="no-selection">
             <Building :size="64" class="placeholder-icon" />
-            <p class="placeholder-text">选择一个宗门查看详细信息</p>
-            <p class="placeholder-hint">尘世间的宗门势力等你探索</p>
+            <p class="placeholder-text">选择一个组织查看详细信息</p>
+            <p class="placeholder-hint">城邦中的组织势力等你探索</p>
           </div>
         </div>
       </div>
@@ -400,7 +400,7 @@ import {
 } from 'lucide-vue-next';
 import { toast } from '@/utils/toast';
 import { sendChat } from '@/utils/chatBus';
-import { validateAndFixSectDataList } from '@/utils/worldGeneration/sectDataValidator';
+import { validateAndFixFactionDataList } from '@/utils/worldGeneration/sectDataValidator';
 import { createJoinedSectState } from '@/utils/sectSystemFactory';
 
 const characterStore = useCharacterStore();
@@ -423,7 +423,7 @@ const buildSectGenerationPrompt = () => {
   const width = Number(mapConfig?.width) || 10000;
   const height = Number(mapConfig?.height) || 10000;
 
-  return `你是GM，请根据当前剧情与世界设定，生成/补全「世界.信息.势力信息」（数组）。\n\n要求：\n- 每条势力至少包含：名称、类型、等级、描述、宗门驻地、主要资源、可否加入、加入条件、领导层、成员数量、势力范围详情、与玩家关系、声望值。\n- 坐标范围：x 0-${width}，y 0-${height}（游戏坐标，左上角为原点）。\n- 势力必须包含「位置」坐标（对象，含x/y）与「势力范围」（至少4个坐标点）。\n- 内容要与当前世界一致，避免与已存在信息冲突。\n- 严格输出一个 JSON 对象（不要代码块/解释/额外文本，不要 <thinking>）：\n{\n  \"text\": \"【系统】势力信息已补全。\",\n  \"mid_term_memory\": \"\",\n  \"tavern_commands\": [\n    {\"action\":\"set\",\"key\":\"世界.信息.势力信息\",\"value\":[/*...势力数组...*/]}\n  ],\n  \"action_options\": []\n}`;
+  return `你是GM，请根据当前剧情与世界设定，生成/补全「世界.信息.势力信息」（数组）。\n\n要求：\n- 每条势力至少包含：名称、类型、等级、描述、组织驻地、主要资源、可否加入、加入条件、领导层、成员数量、势力范围详情、与玩家关系、声望值。\n- 坐标范围：x 0-${width}，y 0-${height}（游戏坐标，左上角为原点）。\n- 势力必须包含「位置」坐标（对象，含x/y）与「势力范围」（至少4个坐标点）。\n- 内容要与当前世界一致，避免与已存在信息冲突。\n- 严格输出一个 JSON 对象（不要代码块/解释/额外文本，不要 <thinking>）：\n{\n  \"text\": \"【系统】势力信息已补全。\",\n  \"mid_term_memory\": \"\",\n  \"tavern_commands\": [\n    {\"action\":\"set\",\"key\":\"世界.信息.势力信息\",\"value\":[/*...势力数组...*/]}\n  ],\n  \"action_options\": []\n}`;
 };
 
 const sendSectGenerationPrompt = () => {
@@ -431,7 +431,7 @@ const sendSectGenerationPrompt = () => {
   toast.success('已发送到对话');
 };
 
-// 获取世界中的宗门势力数据 - 统一数据源（V3：世界.信息.势力信息）
+// 获取世界中的组织势力数据 - 统一数据源（V3：世界.信息.势力信息）
 const sectSystemData = computed(() => {
   const data = gameStateStore.getCurrentSaveData();
 
@@ -442,15 +442,15 @@ const sectSystemData = computed(() => {
   let availableSects: WorldFaction[] = [];
   const sectSystem = gameStateStore.sectSystem;
 
-  // 从 世界.信息.势力信息 中获取宗门数据
+  // 从 世界.信息.势力信息 中获取组织数据
   const worldInfo = (data as any)?.世界?.信息 as WorldInfo | undefined;
   if (worldInfo?.势力信息) {
-    // 筛选出宗门类型的势力
+    // 筛选出组织类型的势力
     const sectFactions = worldInfo.势力信息.filter((faction: WorldFaction) => {
       if (!faction.类型) return false;
 
       const type = faction.类型.toLowerCase();
-      // 排除明显不是宗门的类型
+      // 排除明显不是组织的类型
       const excludeTypes = ['秘境', '遗迹', '禁地', '森林', '山脉', '湖泊', '城池'];
       const shouldExclude = excludeTypes.some(exclude => type.includes(exclude.toLowerCase()));
 
@@ -461,29 +461,29 @@ const sectSystemData = computed(() => {
     availableSects = sectFactions;
   }
 
-  if (availableSects.length === 0 && sectSystem?.宗门档案 && Object.keys(sectSystem.宗门档案).length > 0) {
-    availableSects = Object.values(sectSystem.宗门档案);
+  if (availableSects.length === 0 && sectSystem?.组织档案 && Object.keys(sectSystem.组织档案).length > 0) {
+    availableSects = Object.values(sectSystem.组织档案);
   }
   // 去重并应用数据验证
   const uniqueSects = availableSects.filter((sect, index, arr) =>
     arr.findIndex(s => s.名称 === sect.名称) === index
   );
 
-  // 应用宗门数据验证和修复
-  const validatedSects = validateAndFixSectDataList(uniqueSects);
+  // 应用组织数据验证和修复
+  const validatedSects = validateAndFixFactionDataList(uniqueSects);
 
   return { availableSects: validatedSects };
 });
 
-// 玩家的宗门信息
+// 玩家的组织信息
 const playerSectInfo = computed((): SectMemberInfo | undefined => {
   return gameStateStore.sectMemberInfo || undefined;
 });
 
-// 获取所有宗门列表
+// 获取所有组织列表
 const allSects = computed(() => sectSystemData.value.availableSects);
 
-// 过滤后的宗门列表（只保留搜索功能）
+// 过滤后的组织列表（只保留搜索功能）
 const filteredSects = computed(() => {
   let filtered = [...allSects.value];
 
@@ -565,19 +565,19 @@ const getMainResources = (sect: WorldFaction): string => {
     return sectAsAny.resources.slice(0, 3).join('、');
   }
 
-  // 根据宗门类型推测资源
+  // 根据组织类型推测资源
   const type = sect.类型 || '';
   if (type.includes('剑')) return '神铁、剑谱、磨剑石';
   if (type.includes('丹')) return '灵药、丹炉、药圃';
   if (type.includes('符') || type.includes('阵')) return '符纸、阵法、法器';
   if (type.includes('魔') || type.includes('邪')) return '魔石、煞气、秘法';
-  if (type.includes('商')) return '灵石、珍宝、情报';
-  if (type.includes('世家')) return '传承、人脉、底蕴';
+  if (type.includes('商')) return '信用点、珍宝、情报';
+  if (type.includes('家族势力')) return '传承、人脉、底蕴';
 
-  return '灵石、功法、修炼资源';
+  return '信用点、模块、训练资源';
 };
 
-// 获取宗门特色列表
+// 获取组织特色列表
 const getSectSpecialties = (sect: WorldFaction): string[] => {
   const specialties: string[] = [];
 
@@ -618,32 +618,53 @@ const getReputationValue = (reputation: unknown): number => {
 // 工具函数
 const getSectEmoji = (type: string): string => {
   const emojiMap: Record<string, string> = {
-    '正道宗门': '⛩️',
-    '修仙宗门': '⛩️',
-    '魔道宗门': '🏴',
-    '魔道势力': '🏴',
-    '中立宗门': '🏯',
-    '修仙世家': '🏘️',
-    '世家': '🏘️',
+    '秩序组织': '⛩️',
+    '核心组织': '⛩️',
+    '黑市组织': '🏴',
+    '黑市势力': '🏴',
+    '中立组织': '🏯',
+    '企业家族': '🏘️',
+    '家族势力': '🏘️',
     '商会': '🏪',
-    '商会组织': '🏪',
-    '散修联盟': '🤝'
+    '商业联盟': '🏪',
+    '独立联盟': '🤝'
   };
   return emojiMap[type] || '🏛️';
 };
 
+const getSectTypeLabel = (type: string): string => {
+  if (!type) return '组织';
+  const labelMap: Record<string, string> = {
+    '秩序组织': '秩序组织',
+    '核心组织': '核心组织',
+    '黑市组织': '黑市组织',
+    '黑市势力': '黑市势力',
+    '中立组织': '中立组织',
+    '企业家族': '企业家族',
+    '家族势力': '家族势力',
+    '商业联盟': '商业联盟',
+    '商会组织': '商业联盟',
+    '独立联盟': '独立联盟'
+  };
+  if (labelMap[type]) return labelMap[type];
+  return type
+    .replace(/魔道/g, '黑市')
+    .replace(/正道/g, '秩序')
+    .replace(/散修/g, '独立');
+};
+
 const getSectTypeClass = (type: string): string => {
   const classMap: Record<string, string> = {
-    '正道宗门': 'righteous',
-    '修仙宗门': 'righteous',
-    '魔道宗门': 'demonic',
-    '魔道势力': 'demonic',
-    '中立宗门': 'neutral',
-    '修仙世家': 'family',
-    '世家': 'family',
+    '秩序组织': 'righteous',
+    '核心组织': 'righteous',
+    '黑市组织': 'demonic',
+    '黑市势力': 'demonic',
+    '中立组织': 'neutral',
+    '企业家族': 'family',
+    '家族势力': 'family',
     '商会': 'merchant',
-    '商会组织': 'merchant',
-    '散修联盟': 'alliance'
+    '商业联盟': 'merchant',
+    '独立联盟': 'alliance'
   };
   return classMap[type] || 'neutral';
 };
@@ -700,7 +721,7 @@ const getRelationshipClass = (relationship: string): string => {
 };
 
 const isCurrentSect = (sect: WorldFaction): boolean => {
-  return playerSectInfo.value?.宗门名称 === sect.名称;
+  return playerSectInfo.value?.组织名称 === sect.名称;
 };
 
 const formatJoinDate = (dateStr: string | undefined): string => {
@@ -712,32 +733,19 @@ const formatJoinDate = (dateStr: string | undefined): string => {
   }
 };
 
-// 格式化宗门等级，避免重复显示"宗门"
+// 格式化组织等级，避免重复显示"组织"
 const formatSectLevel = (level: string): string => {
   if (!level) return '未知';
-  // 如果等级已经包含"宗门"，直接返回
-  if (level.includes('宗门')) return level;
-  // 否则添加"宗门"后缀
-  return level + '宗门';
+  // 如果等级已经包含"组织"，直接返回
+  if (level.includes('组织')) return level;
+  // 否则添加"组织"后缀
+  return level + '组织';
 };
 
-// 格式化境界名称，智能处理"期"后缀
-const formatRealmName = (realm: string): string => {
-  if (!realm) return '未知';
-
-  // 如果已经包含"期"，直接返回
-  if (realm.includes('期')) return realm;
-
-  // 如果是完整的境界描述（如"练气初期"），直接返回
-  const fullRealmPattern = /(练气|筑基|金丹|元婴|化神|炼虚|合体|渡劫)(初期|中期|后期|圆满|极境)/;
-  if (fullRealmPattern.test(realm)) return realm;
-
-  // 如果只是境界名称（如"练气"、"筑基"），添加"期"后缀
-  const simpleRealmPattern = /^(练气|筑基|金丹|元婴|化神|炼虚|合体|渡劫)$/;
-  if (simpleRealmPattern.test(realm)) return realm + '期';
-
-  // 其他情况直接返回
-  return realm;
+// 格式化等级名称
+const formatTierName = (tier: string): string => {
+  if (!tier) return '未知';
+  return tier;
 };
 
 const selectSect = (sect: WorldFaction) => {
@@ -746,8 +754,8 @@ const selectSect = (sect: WorldFaction) => {
 
 const confirmLeave = (currentName: string, nextName?: string) => {
   const tip = nextName
-    ? `你已加入${currentName}，是否退出并加入${nextName}？退出后将清空该宗门的贡献与兑换数据。`
-    : `确定退出${currentName}？退出后将清空该宗门的贡献与兑换数据。`;
+    ? `你已加入${currentName}，是否退出并加入${nextName}？退出后将清空该组织的贡献与兑换数据。`
+    : `确定退出${currentName}？退出后将清空该组织的贡献与兑换数据。`;
   return window.confirm(tip);
 };
 
@@ -758,9 +766,9 @@ const applyLeave = (sectName: string) => {
 };
 
 const requestLeaveSect = (sect: WorldFaction | null) => {
-  const currentName = playerSectInfo.value?.宗门名称;
+  const currentName = playerSectInfo.value?.组织名称;
   if (!currentName) {
-    toast.info('尚未加入宗门');
+    toast.info('尚未加入组织');
     return;
   }
   if (!confirmLeave(currentName)) return;
@@ -772,11 +780,11 @@ const requestLeaveSect = (sect: WorldFaction | null) => {
 
 const requestJoinSect = (sect: WorldFaction) => {
   if (!sect.可否加入) {
-    toast.warning('该宗门暂不接受加入');
+    toast.warning('该组织暂不接受加入');
     return;
   }
 
-  const currentName = playerSectInfo.value?.宗门名称;
+  const currentName = playerSectInfo.value?.组织名称;
   if (currentName === sect.名称) {
     toast.info(`你已加入 ${sect.名称}`);
     return;
@@ -1704,7 +1712,7 @@ const forceRefresh = () => {
   color: var(--color-text);
 }
 
-/* 宗门领导层样式 */
+/* 组织领导层样式 */
 .leadership-info {
   margin-top: 1.5rem;
   padding: 1rem;

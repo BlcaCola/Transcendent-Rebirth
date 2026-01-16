@@ -92,9 +92,9 @@ export function useGameData() {
   const characterName = computed(() => gameState.character?.名字 || '未知');
 
   /**
-   * 当前境界
+   * 当前阶位
    */
-  const currentRealm = computed(() => gameState.attributes?.境界?.名称 || '凡人');
+  const currentRealm = computed(() => gameState.attributes?.阶位?.名称 || '街头新人');
 
   /**
    * 当前位置
@@ -102,9 +102,9 @@ export function useGameData() {
   const currentLocation = computed(() => gameState.location?.描述 || '未知');
 
   /**
-   * 灵石（分品阶）
+   * 信用点（分档位）
    */
-  const spiritStones = computed(() => gameState.inventory?.灵石 ?? { 下品: 0, 中品: 0, 上品: 0, 极品: 0 });
+  const spiritStones = computed(() => gameState.inventory?.信用点 ?? { 低额: 0, 中额: 0, 高额: 0, 最高额: 0 });
 
   /**
    * 背包物品数量

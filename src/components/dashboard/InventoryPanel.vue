@@ -140,15 +140,15 @@
                   {{ t('丢弃') }}
                 </button>
               </template>
-              <!-- 功法：修炼和丢弃 -->
-              <template v-else-if="selectedItem?.类型 === '功法'">
+              <!-- 模块：训练和丢弃 -->
+              <template v-else-if="selectedItem?.类型 === '程序'">
                 <button
                   class="action-btn"
-                  :class="isCultivating(selectedItem) ? 'stop-cultivate-btn' : 'cultivate-btn'"
-                  :disabled="cultivateBusy"
-                  @click="toggleCultivate(selectedItem)"
+                  :class="isTraining(selectedItem) ? 'stop-train-btn' : 'train-btn'"
+                  :disabled="trainingBusy"
+                  @click="toggleTraining(selectedItem)"
                 >
-                  {{ isCultivating(selectedItem) ? t('停止修炼') : t('修炼') }}
+                  {{ isTraining(selectedItem) ? t('停止训练') : t('训练') }}
                 </button>
                 <button class="action-btn discard-btn" @click="discardItem(selectedItem)">
                   {{ t('丢弃') }}
@@ -174,7 +174,7 @@
             <BoxSelect :size="48" />
             <p v-if="selectedCategory === 'all'">{{ t('空空如也') }}</p>
             <p v-else-if="selectedCategory === '装备'">{{ t('暂无装备') }}</p>
-            <p v-else-if="selectedCategory === '功法'">{{ t('暂无功法') }}</p>
+            <p v-else-if="selectedCategory === '程序'">{{ t('暂无模块') }}</p>
             <p v-else-if="selectedCategory === '其他'">{{ t('暂无其他物品') }}</p>
             <p v-else>{{ t('暂无{0}').replace('{0}', t(selectedCategory)) }}</p>
             <span v-if="selectedCategory !== 'all'" class="filter-tip"> {{ t('可以试试搜索其他分类') }} </span>
@@ -207,7 +207,7 @@
 
             <!-- 底部信息：类型和品级 -->
             <div class="item-bottom-section">
-              <div class="item-type-label">{{ t(item.类型) }}</div>
+              <div class="item-type-label">{{ t(getItemTypeLabel(item.类型)) }}</div>
               <div
                 v-if="item.品质?.grade !== undefined"
                 class="item-grade-info"
@@ -224,12 +224,12 @@
           <div v-if="selectedItem" class="details-content">
             <div class="details-header">
               <div class="details-icon-large" :class="getItemQualityClass(selectedItem)">
-                <div class="item-type-text-large">{{ selectedItem.类型 }}</div>
+                <div class="item-type-text-large">{{ getItemTypeLabel(selectedItem.类型) }}</div>
               </div>
               <div class="details-title-area">
                 <h3>{{ selectedItem.名称 }}</h3>
                 <div class="details-meta">
-                  {{ t(selectedItem.类型) }} / {{ selectedItem.品质?.quality ? t(selectedItem.品质.quality) : t('未知') }}
+                  {{ t(getItemTypeLabel(selectedItem.类型)) }} / {{ selectedItem.品质?.quality ? t(selectedItem.品质.quality) : t('未知') }}
                   <span
                     v-if="selectedItem.品质?.grade !== undefined"
                     class="grade-display"
@@ -243,25 +243,25 @@
             <div class="details-body">
               <p class="details-description">{{ selectedItem.描述 }}</p>
 
-              <!-- 功法特有属性 -->
-              <template v-if="selectedItem.类型 === '功法'">
-                <!-- 功法效果 -->
-                <div v-if="selectedItem.功法效果" class="details-attributes">
-                  <h4>{{ t('功法效果:') }}</h4>
+              <!-- 程序特有属性 -->
+              <template v-if="selectedItem.类型 === '程序'">
+                <!-- 程序效果 -->
+                <div v-if="selectedItem.程序效果" class="details-attributes">
+                  <h4>{{ t('模块效果:') }}</h4>
                   <div class="attribute-text">
-                    {{ typeof selectedItem.功法效果 === 'string' ? selectedItem.功法效果 : JSON.stringify(selectedItem.功法效果) }}
+                    {{ typeof selectedItem.程序效果 === 'string' ? selectedItem.程序效果 : JSON.stringify(selectedItem.程序效果) }}
                   </div>
                 </div>
 
-                <!-- 功法技能 -->
+                <!-- 程序技能 -->
                 <div
-                  v-if="selectedItem.功法技能 && Array.isArray(selectedItem.功法技能) && selectedItem.功法技能.length > 0"
+                  v-if="selectedItem.程序技能 && Array.isArray(selectedItem.程序技能) && selectedItem.程序技能.length > 0"
                   class="details-attributes"
                 >
-                  <h4>{{ t('功法技能:') }}</h4>
+                  <h4>{{ t('模块技能:') }}</h4>
                   <div class="technique-skills">
                     <div
-                      v-for="(skill, index) in selectedItem.功法技能"
+                      v-for="(skill, index) in selectedItem.程序技能"
                       :key="index"
                       class="skill-item"
                     >
@@ -287,9 +287,8 @@
                 <div class="attribute-text">{{ typeof selectedItem.装备增幅 === 'string' ? selectedItem.装备增幅 : formatItemAttributes(selectedItem.装备增幅) }}</div>
               </div>
 
-              <!-- 装备特殊效果 -->
               <div
-                v-if="selectedItem.类型 === '装备' && selectedItem.特殊效果"
+                v-if="selectedItem.类型 !== '程序' && selectedItem.特殊效果"
                 class="details-attributes"
               >
                 <h4>{{ t('特殊效果:') }}</h4>
@@ -301,7 +300,6 @@
               <template v-if="selectedItem?.类型 === '装备'">
                 <button
                   class="action-btn"
-                  :class="isEquipped(selectedItem) ? 'unequip-btn' : 'equip-btn'"
                   :disabled="equipBusy"
                   @click="toggleEquip(selectedItem)"
                 >
@@ -311,15 +309,15 @@
                   {{ t('丢弃') }}
                 </button>
               </template>
-              <!-- 功法：修炼和丢弃 -->
-              <template v-else-if="selectedItem?.类型 === '功法'">
+              <!-- 模块：训练和丢弃 -->
+              <template v-else-if="selectedItem?.类型 === '程序'">
                 <button
                   class="action-btn"
-                  :class="isCultivating(selectedItem) ? 'stop-cultivate-btn' : 'cultivate-btn'"
-                  :disabled="cultivateBusy"
-                  @click="toggleCultivate(selectedItem)"
+                  :class="isTraining(selectedItem) ? 'stop-train-btn' : 'train-btn'"
+                  :disabled="trainingBusy"
+                  @click="toggleTraining(selectedItem)"
                 >
-                  {{ isCultivating(selectedItem) ? t('停止修炼') : t('修炼') }}
+                  {{ isTraining(selectedItem) ? t('停止训练') : t('训练') }}
                 </button>
                 <button class="action-btn discard-btn" @click="discardItem(selectedItem)">
                   {{ t('丢弃') }}
@@ -413,11 +411,11 @@
         </div>
       </div>
 
-      <!-- 灵石标签 -->
+      <!-- 信用点标签 -->
       <div v-if="activeTab === 'currency'" class="currency-tab">
         <div class="currency-grid">
           <div
-            v-for="grade in spiritStoneGrades"
+            v-for="grade in creditGrades"
             :key="grade.name"
             class="currency-card"
             :class="grade.colorClass"
@@ -427,8 +425,8 @@
                 <Gem :size="isMobile ? 32 : 40" />
               </div>
               <div class="currency-info">
-                <div class="currency-amount">{{ (gameStateStore.inventory?.灵石?.[grade.name] || 0) }}</div>
-                <div class="currency-label">{{ t(grade.name) }}{{t('灵石')}}</div>
+                <div class="currency-amount">{{ (gameStateStore.inventory?.信用点?.[grade.name] || 0) }}</div>
+                <div class="currency-label">{{ t(grade.name) }}{{ t('信用点') }}</div>
               </div>
             </div>
             <div v-if="grade.canExchange || grade.canExchangeDown" class="currency-exchange">
@@ -436,8 +434,8 @@
                 v-if="grade.canExchange"
                 class="exchange-btn"
                 @click="handleExchange(grade.name, 'up')"
-                :disabled="((gameStateStore.inventory?.灵石?.[grade.name] || 0) < 100)"
-                :title="t('兑换为{0}灵石 (100:1)').replace('{0}', t(grade.exchangeUp))"
+                :disabled="((gameStateStore.inventory?.信用点?.[grade.name] || 0) < 100)"
+                :title="t('兑换为{0}信用点 (100:1)').replace('{0}', t(grade.exchangeUp))"
               >
                 {{ t('↑ 兑换') }}
               </button>
@@ -445,8 +443,8 @@
                 v-if="grade.canExchangeDown"
                 class="exchange-btn down"
                 @click="handleExchange(grade.name, 'down')"
-                :disabled="((gameStateStore.inventory?.灵石?.[grade.name] || 0) < 1)"
-                :title="t('分解为{0}灵石 (1:100)').replace('{0}', t(grade.exchangeDown))"
+                :disabled="((gameStateStore.inventory?.信用点?.[grade.name] || 0) < 1)"
+                :title="t('分解为{0}信用点 (1:100)').replace('{0}', t(grade.exchangeDown))"
               >
                 {{ t('↓ 分解') }}
               </button>
@@ -514,7 +512,7 @@ const confirmCallback = ref<(() => void) | null>(null)
 
 // 操作锁，防止连点导致状态错乱或数据不同步
 const equipBusy = ref(false)
-const cultivateBusy = ref(false)
+const trainingBusy = ref(false)
 
 // 响应式检测
 const isMobile = computed(() => {
@@ -525,7 +523,7 @@ const isMobile = computed(() => {
 const tabs = computed(() => [
   { id: 'items', label: '物品', icon: Package },
   { id: 'equipment', label: '装备', icon: Sword },
-  { id: 'currency', label: '灵石', icon: Gem },
+  { id: 'currency', label: '信用点', icon: Gem },
 ])
 
 // 装备槽位（短路径：装备）
@@ -664,7 +662,7 @@ const itemList = computed<Item[]>(() => {
       const item = val as Partial<Item>
 
       // 🔍 调试：检查品质数据是否缺失
-      if (!item.品质 && (item.类型 === '功法' || item.类型 === '装备')) {
+      if (!item.品质 && (item.类型 === '程序' || item.类型 === '装备')) {
         console.warn(t('[背包面板-警告] 物品缺少品质数据:'), {
           物品ID: item.物品ID,
           名称: item.名称,
@@ -677,7 +675,7 @@ const itemList = computed<Item[]>(() => {
         ...item,
         物品ID: String(item.物品ID || ''),
         名称: String(item.名称 || ''),
-        类型: String(item.类型 || '其他') as '装备' | '功法' | '丹药' | '材料' | '其他',
+        类型: String(item.类型 || '其他') as '装备' | '程序' | '药剂' | '材料' | '其他',
         品质: item.品质 || { quality: '凡', grade: 1 },
         描述: String(item.描述 || ''),
         数量: Number(item.数量 || 1),
@@ -687,8 +685,8 @@ const itemList = computed<Item[]>(() => {
 })
 
 const itemCategories = computed(() => {
-  // 五个分类：装备、功法、丹药、材料、其他
-  return ['装备', '功法', '丹药', '材料', '其他']
+  // 五个分类：装备、程序、药剂、材料、其他
+  return ['装备', '程序', '药剂', '材料', '其他']
 })
 
 // 品质排序映射，兼容 "*阶" 与简写
@@ -712,8 +710,8 @@ const qualityOrder: { [key: string]: number } = {
 const filteredItems = computed(() => {
   let items = [...itemList.value]
 
-  // 标准化物品类型和品质：允许装备、功法、丹药、材料、其他五种类型，并确保品质格式正确
-  const validTypes = ['装备', '功法', '丹药', '材料', '其他']
+  // 标准化物品类型和品质：允许装备、程序、药剂、材料、其他五种类型，并确保品质格式正确
+  const validTypes = ['装备', '程序', '药剂', '材料', '其他']
   items = items.map((item) => {
     // 标准化类型：不在有效类型列表中的归为"其他"
     const normalizedType = validTypes.includes(item.类型) ? item.类型 : '其他'
@@ -766,7 +764,7 @@ const filteredItems = computed(() => {
   return items
 })
 
-// 格式化物品属性显示（支持嵌套对象，如「后天六司」）
+// 格式化物品属性显示（支持嵌套对象，如「成长六维」）
 const formatItemAttributes = (attributes: Record<string, unknown>): string => {
   if (!attributes || typeof attributes !== 'object') {
     return '无特殊属性'
@@ -778,7 +776,7 @@ const formatItemAttributes = (attributes: Record<string, unknown>): string => {
     if (value === null || value === undefined) continue
 
     if (typeof value === 'object' && !Array.isArray(value)) {
-      // 处理如「后天六司」这类嵌套对象
+      // 处理如「成长六维」这类嵌套对象
       const nested = Object.entries(value as Record<string, unknown>)
         .filter(([, v]) => typeof v === 'number' || typeof v === 'string')
         .map(([k, v]) => `${k}+${v}`)
@@ -792,7 +790,7 @@ const formatItemAttributes = (attributes: Record<string, unknown>): string => {
   return parts.length ? parts.join('、') : '无特殊属性'
 }
 
-// 格式化功法属性加成显示
+// 格式化模块属性加成显示
 const formatAttributeBonus = (attributeBonus: Record<string, unknown>): string => {
   if (!attributeBonus || typeof attributeBonus !== 'object') {
     return '无属性加成'
@@ -810,12 +808,19 @@ const formatAttributeBonus = (attributeBonus: Record<string, unknown>): string =
 const getItemTypeIcon = (type: string): string => {
   const typeIcons: Record<string, string> = {
     装备: '⚔️',
-    功法: '📜',
-    丹药: '💊',
+    程序: '📜',
+    药剂: '💊',
     材料: '💎',
     其他: '📦',
   }
   return typeIcons[type] || '📦'
+}
+
+// 获取物品类型显示名称（避免旧术语）
+const getItemTypeLabel = (type: string): string => {
+  if (type === '程序') return '模块'
+  if (type === '药剂') return '药剂'
+  return type
 }
 
 // 质量等阶规范化（兼容 “凡阶/黄阶/…” 与 “凡/黄/…”；未知返回 '未知'）
@@ -830,10 +835,10 @@ const getNormalizedQuality = (quality: unknown): string => {
 // 获取品级文本显示
 const getGradeText = (grade: number): string => {
   if (grade === 0) return '残缺'
-  if (grade >= 1 && grade <= 3) return '下品'
-  if (grade >= 4 && grade <= 6) return '中品'
-  if (grade >= 7 && grade <= 9) return '上品'
-  if (grade === 10) return '极品'
+  if (grade >= 1 && grade <= 3) return '改良级'
+  if (grade >= 4 && grade <= 6) return '精良级'
+  if (grade >= 7 && grade <= 9) return '高级'
+  if (grade === 10) return '顶级'
   return '未知'
 }
 
@@ -898,22 +903,22 @@ const updateItemInInventory = async (item: Item) => {
   }
 }
 
-// 切换修炼状态
-const toggleCultivate = async (item: Item) => {
-  if (cultivateBusy.value) return
-  if (item.类型 !== '功法') {
-    toast.error(t('只有功法才能修炼'))
+// 切换训练状态
+const toggleTraining = async (item: Item) => {
+  if (trainingBusy.value) return
+  if (item.类型 !== '程序') {
+    toast.error(t('只有模块才能训练'))
     return
   }
-  cultivateBusy.value = true
+  trainingBusy.value = true
   try {
-    if (isCultivating(item)) {
-      await enhancedActionQueue.stopCultivation(item)
+    if (isTraining(item)) {
+      await enhancedActionQueue.stopTraining(item)
     } else {
-      await enhancedActionQueue.cultivateItem(item)
+      await enhancedActionQueue.trainItem(item)
     }
   } finally {
-    cultivateBusy.value = false
+    trainingBusy.value = false
   }
 }
 
@@ -932,8 +937,8 @@ const useItem = async (item: Item) => {
     quantityModalActionLabel.value = t('使用数量')
     quantityModalType.value = 'use'
     quantityModalConfirmText.value = t('确定使用')
-    // 丹药、材料、其他类型都可能有使用效果
-    const consumableTypes = ['丹药', '材料', '其他']
+    // 药剂、材料、其他类型都可能有使用效果
+    const consumableTypes = ['药剂', '材料', '其他']
     quantityModalDescription.value = (consumableTypes.includes(item.类型) && '使用效果' in item ? (item as ConsumableItem).使用效果 : '') || t('暂无特殊效果')
     quantityModalCallback.value = (quantity: number) => useItemWithQuantity(item, quantity)
     showQuantityModal.value = true
@@ -946,8 +951,8 @@ const useItem = async (item: Item) => {
 
 const useItemWithQuantity = async (item: Item, quantity: number) => {
   try {
-    // 丹药、材料、其他类型可以直接使用
-    const consumableTypes = ['丹药', '材料', '其他']
+    // 药剂、材料、其他类型可以直接使用
+    const consumableTypes = ['药剂', '材料', '其他']
     if (!consumableTypes.includes(item.类型)) {
       toast.error(t('该物品无法直接使用'))
       return
@@ -1081,12 +1086,12 @@ const isEquipped = (item: Item | null): boolean => {
   return currentItemState.已装备 === true
 }
 
-// 检查功法是否正在修炼 - 以 角色.修炼.修炼功法 为准
-const isCultivating = (item: Item | null): boolean => {
+// 检查程序是否正在训练 - 以 角色.训练.训练程序 为准
+const isTraining = (item: Item | null): boolean => {
   if (!item || !item.物品ID) return false
 
-  const cultivatingId = (gameStateStore.cultivation as any)?.修炼功法?.物品ID
-  return cultivatingId === item.物品ID
+  const trainingId = (gameStateStore.training as any)?.训练程序?.物品ID
+  return trainingId === item.物品ID
 }
 
 const getItemQualityClass = (
@@ -1099,36 +1104,36 @@ const getItemQualityClass = (
   return `${type}-quality-${q}`
 }
 
-const spiritStoneGrades = [
+const creditGrades = [
   {
-    name: '极品',
+    name: '最高额',
     colorClass: 'grade-legend',
     canExchange: false, // 最高级，不能向上兑换
     canExchangeDown: true,
-    exchangeDown: '上品',
+    exchangeDown: '高额',
   },
   {
-    name: '上品',
+    name: '高额',
     colorClass: 'grade-epic',
     canExchange: true,
     canExchangeDown: true,
-    exchangeUp: '极品',
-    exchangeDown: '中品',
+    exchangeUp: '最高额',
+    exchangeDown: '中额',
   },
   {
-    name: '中品',
+    name: '中额',
     colorClass: 'grade-rare',
     canExchange: true,
     canExchangeDown: true,
-    exchangeUp: '上品',
-    exchangeDown: '下品',
+    exchangeUp: '高额',
+    exchangeDown: '低额',
   },
   {
-    name: '下品',
+    name: '低额',
     colorClass: 'grade-common',
     canExchange: true,
     canExchangeDown: false, // 最低级，不能向下分解
-    exchangeUp: '中品',
+    exchangeUp: '中额',
   },
 ] as const
 
@@ -1153,24 +1158,24 @@ const closeModal = () => {
   showItemModal.value = false
 }
 
-// 灵石兑换功能
+// 信用点兑换功能
 const handleExchange = async (
-  currentGrade: '下品' | '中品' | '上品' | '极品',
+  currentGrade: '低额' | '中额' | '高额' | '最高额',
   direction: 'up' | 'down',
 ) => {
-  const gradeInfo = spiritStoneGrades.find((g) => g.name === currentGrade)
+  const gradeInfo = creditGrades.find((g) => g.name === currentGrade)
   if (!gradeInfo) return
 
   if (direction === 'up' && gradeInfo.canExchange && gradeInfo.exchangeUp) {
     // 向上兑换：100个当前等级 → 1个高级
-    const currentAmount = gameStateStore.inventory?.灵石?.[currentGrade] || 0
+    const currentAmount = gameStateStore.inventory?.信用点?.[currentGrade] || 0
     if (currentAmount >= 100) {
       // 更新数据
-      if (gameStateStore.inventory?.灵石) {
-        ;(gameStateStore.inventory.灵石[currentGrade] as number) = currentAmount - 100
-        const targetGrade = gradeInfo.exchangeUp as '下品' | '中品' | '上品' | '极品'
-        const targetAmount = gameStateStore.inventory.灵石[targetGrade] || 0
-        ;(gameStateStore.inventory.灵石[targetGrade] as number) = targetAmount + 1
+      if (gameStateStore.inventory?.信用点) {
+        ;(gameStateStore.inventory.信用点[currentGrade] as number) = currentAmount - 100
+        const targetGrade = gradeInfo.exchangeUp as '低额' | '中额' | '高额' | '最高额'
+        const targetAmount = gameStateStore.inventory.信用点[targetGrade] || 0
+        ;(gameStateStore.inventory.信用点[targetGrade] as number) = targetAmount + 1
 
         // 保存数据
         await characterStore.saveCurrentGame()
@@ -1178,14 +1183,14 @@ const handleExchange = async (
     }
   } else if (direction === 'down' && gradeInfo.canExchangeDown && gradeInfo.exchangeDown) {
     // 向下分解：1个当前等级 → 100个低级
-    const currentAmount = gameStateStore.inventory?.灵石?.[currentGrade] || 0
+    const currentAmount = gameStateStore.inventory?.信用点?.[currentGrade] || 0
     if (currentAmount >= 1) {
       // 更新数据
-      if (gameStateStore.inventory?.灵石) {
-        ;(gameStateStore.inventory.灵石[currentGrade] as number) = currentAmount - 1
-        const targetGrade = gradeInfo.exchangeDown as '下品' | '中品' | '上品' | '极品'
-        const targetAmount = gameStateStore.inventory.灵石[targetGrade] || 0
-        ;(gameStateStore.inventory.灵石[targetGrade] as number) = targetAmount + 100
+      if (gameStateStore.inventory?.信用点) {
+        ;(gameStateStore.inventory.信用点[currentGrade] as number) = currentAmount - 1
+        const targetGrade = gradeInfo.exchangeDown as '低额' | '中额' | '高额' | '最高额'
+        const targetAmount = gameStateStore.inventory.信用点[targetGrade] || 0
+        ;(gameStateStore.inventory.信用点[targetGrade] as number) = targetAmount + 100
 
         // 保存数据
         await characterStore.saveCurrentGame()
@@ -1867,7 +1872,7 @@ const refreshFromTavern = async () => {
   color: white;
 }
 
-/* 灵石品质样式 - 颜色递增 */
+/* 信用点品质样式 - 颜色递增 */
 .grade-common {
   background: linear-gradient(135deg, #9ca3af, #6b7280);
   border-color: #9ca3af;
@@ -1986,7 +1991,7 @@ const refreshFromTavern = async () => {
   gap: 8px;
 }
 
-/* 灵石标签 */
+/* 信用点标签 */
 .currency-tab {
   padding: 24px;
   overflow-y: auto;
@@ -2061,7 +2066,7 @@ const refreshFromTavern = async () => {
   transition: color 0.3s ease;
 }
 
-/* 灵石图标颜色 */
+/* 信用点图标颜色 */
 .icon-grade-common {
   color: #9ca3af;
 }
@@ -2209,7 +2214,7 @@ const refreshFromTavern = async () => {
   word-break: break-all;
 }
 
-/* 功法效果样式 */
+/* 程序效果样式 */
 .skill-effects {
   display: flex;
   flex-direction: column;
@@ -2249,7 +2254,7 @@ const refreshFromTavern = async () => {
   font-weight: 500;
 }
 
-/* 功法技能样式 */
+/* 程序技能样式 */
 .technique-skills {
   display: flex;
   flex-direction: column;
@@ -2336,13 +2341,13 @@ const refreshFromTavern = async () => {
   font-size: 0.8rem;
 }
 
-.cultivate-btn {
+.train-btn {
   background: var(--color-info);
   border-color: var(--color-info);
   color: white;
 }
 
-.cultivate-btn:hover {
+.train-btn:hover {
   background: var(--color-info-hover);
 }
 

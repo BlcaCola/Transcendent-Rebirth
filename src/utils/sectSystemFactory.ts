@@ -39,7 +39,7 @@ type TechniqueTemplate = {
   description: string;
 };
 
-/** 宗门内容生成选项 */
+/** 组织内容生成选项 */
 export interface SectContentGenerationOptions {
   /** 是否使用AI生成（true=等待AI生成，false=使用本地随机生成） */
   useAIGeneration?: boolean;
@@ -47,7 +47,7 @@ export interface SectContentGenerationOptions {
   nowIso?: string;
 }
 
-/** 宗门框架创建结果 */
+/** 组织框架创建结果 */
 export interface SectFrameworkResult {
   sectSystem: SectSystemV2;
   memberInfo: SectMemberInfo;
@@ -55,109 +55,107 @@ export interface SectFrameworkResult {
 }
 
 const QUALITY_COST: Record<string, number> = {
-  '凡': 80,
-  '黄': 200,
-  '玄': 500,
-  '地': 900,
-  '天': 1500,
-  '仙': 2600,
-  '神': 4200,
+  '民用': 80,
+  '改装': 200,
+  '军规': 500,
+  '特级': 900,
+  '禁忌': 2600,
 };
 
 const TYPE_MULTIPLIER: Record<string, number> = {
-  '丹药': 0.85,
-  '功法': 1.4,
+  '药剂': 0.85,
+  '程序': 1.4,
   '装备': 1.2,
   '材料': 0.65,
-  '其他': 1.0,
+  '杂项': 1.0,
 };
 
 const BASE_SHOP_POOL: ItemTemplate[] = [
-  { name: '聚气丹', type: '丹药', quality: '黄品下', description: '加速灵气运转，稳固修炼节奏。', icon: '*' },
-  { name: '回灵丹', type: '丹药', quality: '黄品中', description: '迅速恢复灵气消耗，适合战斗后补给。', icon: '*' },
-  { name: '疗伤散', type: '丹药', quality: '凡品', description: '外伤止血，缓解疲劳。', icon: '*' },
-  { name: '护身符', type: '装备', quality: '黄品下', description: '减轻低阶术法伤害。', icon: 'O' },
-  { name: '灵石匣', type: '其他', quality: '凡品', description: '短期存放灵石的轻便匣子。', icon: 'O' },
-  { name: '灵草', type: '材料', quality: '凡品', description: '基础炼丹材料，常见药草。', icon: 'O' },
-  { name: '灵砂', type: '材料', quality: '黄品下', description: '炼器辅材，增强灵力导通。', icon: 'O' },
+  { name: '能量注射剂', type: '药剂', quality: '改装下', description: '加速电量恢复，稳定训练节奏。', icon: '*' },
+  { name: '电池回充针', type: '药剂', quality: '改装中', description: '迅速恢复电量消耗，适合战斗后补给。', icon: '*' },
+  { name: '应急止血喷雾', type: '药剂', quality: '民用', description: '外伤止血，缓解疲劳。', icon: '*' },
+  { name: '反应护盾模块', type: '装备', quality: '改装下', description: '减轻低阶火力伤害。', icon: 'O' },
+  { name: '芯币收纳盒', type: '杂项', quality: '民用', description: '短期存放信用点的轻便盒。', icon: 'O' },
+  { name: '合成药草', type: '材料', quality: '民用', description: '基础制剂材料，常见培养物。', icon: 'O' },
+  { name: '导电粉末', type: '材料', quality: '改装下', description: '装配辅材，增强能量导通。', icon: 'O' },
 ];
 
 const BASE_LIBRARY_POOL: TechniqueTemplate[] = [
-  { name: '基础吐纳术', quality: '凡品', description: '稳固灵气吸纳，适合打底修炼。' },
-  { name: '引气诀', quality: '黄品下', description: '引导灵气运转周身经脉。' },
-  { name: '静心诀', quality: '黄品中', description: '宁神静气，提升修炼专注度。' },
-  { name: '护体灵罩', quality: '黄品中', description: '凝聚灵气护体，防御入门术法。' },
+  { name: '基础散热协议', quality: '民用', description: '稳定能量循环，适合打底训练。' },
+  { name: '能量引导协议', quality: '改装下', description: '引导能量流转，提升系统稳定性。' },
+  { name: '心智稳定协议', quality: '改装中', description: '降低过载波动，提升专注度。' },
+  { name: '防护矩阵', quality: '改装中', description: '生成临时护盾，提升基础防御。' },
 ];
 
 const THEME_SHOP_POOL: Record<string, ItemTemplate[]> = {
   sword: [
-    { name: '青锋剑诀残卷', type: '功法', quality: '黄品中', description: '剑意基础篇章，适合入门弟子。', icon: '*' },
-    { name: '玄铁剑胚', type: '装备', quality: '黄品中', description: '可塑性良好的剑胚。', icon: 'O' },
-    { name: '磨剑石', type: '材料', quality: '凡品', description: '打磨剑意，提升锋锐。', icon: 'O' },
+    { name: '近战协议残片', type: '程序', quality: '改装中', description: '近战基础篇章，适合入门成员。', icon: '*' },
+    { name: '合金刀胚', type: '装备', quality: '改装中', description: '可塑性良好的合金胚件。', icon: 'O' },
+    { name: '刃口研磨器', type: '材料', quality: '民用', description: '提升刃口锋锐度。', icon: 'O' },
   ],
   alchemy: [
-    { name: '炼丹要诀', type: '功法', quality: '黄品中', description: '炼丹基础心法，讲究火候与灵压。', icon: '*' },
-    { name: '聚灵炉', type: '装备', quality: '黄品下', description: '小型炼丹炉，稳定火候。', icon: 'O' },
-    { name: '灵药种子', type: '材料', quality: '黄品下', description: '适合灵田培育，产量稳定。', icon: 'O' },
+    { name: '制剂工艺', type: '程序', quality: '改装中', description: '制剂基础流程，讲究温控与纯度。', icon: '*' },
+    { name: '便携合成炉', type: '装备', quality: '改装下', description: '小型制剂合成炉，稳定反应。', icon: 'O' },
+    { name: '药剂培养芯', type: '材料', quality: '改装下', description: '适合培养舱使用，产量稳定。', icon: 'O' },
   ],
   array: [
-    { name: '符箓入门', type: '功法', quality: '黄品下', description: '符箓绘制基础，稳定灵纹结构。', icon: '*' },
-    { name: '小五行阵盘', type: '装备', quality: '黄品中', description: '临时布阵用阵盘，威力有限。', icon: 'O' },
-    { name: '朱砂', type: '材料', quality: '凡品', description: '绘符材料，稳定灵线。', icon: 'O' },
+    { name: '算法标记入门', type: '程序', quality: '改装下', description: '标记绘制基础，稳定协议结构。', icon: '*' },
+    { name: '小五域矩阵盘', type: '装备', quality: '改装中', description: '临时布控用矩阵盘，效果有限。', icon: 'O' },
+    { name: '导电墨', type: '材料', quality: '民用', description: '标记材料，稳定线路。', icon: 'O' },
   ],
   demonic: [
-    { name: '噬灵诀', type: '功法', quality: '黄品中', description: '吞纳外灵，效率更高但风险更大。', icon: '*' },
-    { name: '煞气丹', type: '丹药', quality: '黄品中', description: '短时提升攻击力，副作用明显。', icon: '*' },
-    { name: '血煞石', type: '材料', quality: '黄品下', description: '魔道辅材，气息阴冷。', icon: 'O' },
+    { name: '暗网吞噬协议', type: '程序', quality: '改装中', description: '高效吞并数据流，但风险更大。', icon: '*' },
+    { name: '过载兴奋剂', type: '药剂', quality: '改装中', description: '短时提升输出，副作用明显。', icon: '*' },
+    { name: '污染晶体', type: '材料', quality: '改装下', description: '暗网辅材，能量不稳定。', icon: 'O' },
   ],
   merchant: [
-    { name: '折扣令', type: '其他', quality: '凡品', description: '兑换商会折扣的令牌。', icon: 'O' },
-    { name: '情报玉简', type: '其他', quality: '黄品下', description: '记录周边势力动态的玉简。', icon: 'O' },
-    { name: '行商令', type: '其他', quality: '黄品中', description: '可通行部分坊市关卡。', icon: 'O' },
+    { name: '折扣令', type: '杂项', quality: '民用', description: '兑换商会折扣的令牌。', icon: 'O' },
+    { name: '情报芯片', type: '杂项', quality: '改装下', description: '记录周边势力动态的芯片。', icon: 'O' },
+    { name: '通行许可', type: '杂项', quality: '改装中', description: '可通行部分管控关卡。', icon: 'O' },
   ],
   beast: [
-    { name: '驭兽诀', type: '功法', quality: '黄品中', description: '基础驭兽法门，适合灵兽契约。', icon: '*' },
-    { name: '灵兽饲料', type: '材料', quality: '凡品', description: '补充灵兽体力的饲料。', icon: 'O' },
-    { name: '兽血晶', type: '材料', quality: '黄品下', description: '蕴含灵兽气血精华。', icon: 'O' },
+    { name: '无人机驾驭协议', type: '程序', quality: '改装中', description: '基础无人机控制协议，适合入门。', icon: '*' },
+    { name: '无人机补给包', type: '材料', quality: '民用', description: '补充无人机续航的补给包。', icon: 'O' },
+    { name: '生物样本晶', type: '材料', quality: '改装下', description: '蕴含生体活性样本。', icon: 'O' },
   ],
 };
 
 const THEME_LIBRARY_POOL: Record<string, TechniqueTemplate[]> = {
   sword: [
-    { name: '青锋剑诀', quality: '黄品中', description: '身法与剑意配合的基础剑诀。' },
-    { name: '流云剑步', quality: '玄品下', description: '以身驭剑，步法飘逸难测。' },
-    { name: '御剑术', quality: '玄品下', description: '御剑远攻，提升机动性。' },
+    { name: '近战协议', quality: '改装中', description: '身法与战术配合的基础近战协议。' },
+    { name: '疾行步法', quality: '军规下', description: '高速位移，步法飘逸难测。' },
+    { name: '智能武器控制', quality: '军规下', description: '智能武器远程控制，提升机动性。' },
   ],
   alchemy: [
-    { name: '百草经', quality: '黄品中', description: '药性辨识与灵草搭配要诀。' },
-    { name: '炼丹术', quality: '玄品下', description: '炼丹火候掌控之法。' },
-    { name: '灵药辨识', quality: '凡品', description: '识别灵药品阶与属性。' },
+    { name: '药剂配方库', quality: '改装中', description: '配方辨识与材料搭配要诀。' },
+    { name: '制剂工艺', quality: '军规下', description: '制剂温控与流程掌控之法。' },
+    { name: '药剂识别', quality: '民用', description: '识别药剂品质与属性。' },
   ],
   array: [
-    { name: '符箓精义', quality: '黄品中', description: '灵纹勾勒技巧，提升符箓稳定。' },
-    { name: '小五行阵图', quality: '玄品下', description: '常用阵法结构，稳定防守。' },
+    { name: '算法标记精义', quality: '改装中', description: '标记勾勒技巧，提升协议稳定。' },
+    { name: '小五域阵图', quality: '军规下', description: '常用矩阵结构，稳定防守。' },
   ],
   demonic: [
-    { name: '血煞功', quality: '玄品下', description: '引煞入体，爆发短时增幅。' },
-    { name: '阴冥诀', quality: '黄品中', description: '阴气凝聚，强化神识。' },
+    { name: '暗网增幅协议', quality: '军规下', description: '短时爆发增幅，风险较高。' },
+    { name: '暗影潜行协议', quality: '改装中', description: '降低被侦测概率，强化感知。' },
   ],
   merchant: [
-    { name: '商道心法', quality: '黄品下', description: '洞察人心，稳固交易秩序。' },
-    { name: '鉴宝诀', quality: '玄品下', description: '辨识灵宝真伪与来历。' },
+    { name: '商路策略', quality: '改装下', description: '洞察人心，稳固交易秩序。' },
+    { name: '物资鉴定协议', quality: '军规下', description: '辨识物资真伪与来源。' },
   ],
   beast: [
-    { name: '灵兽感应术', quality: '玄品下', description: '感知灵兽状态与情绪。' },
-    { name: '驭兽印法', quality: '黄品中', description: '稳固灵兽契约的印诀。' },
+    { name: '无人机感应协议', quality: '军规下', description: '感知无人机状态与情绪。' },
+    { name: '无人机绑定协议', quality: '改装中', description: '稳固无人机绑定的协议。' },
   ],
 };
 
 const normalizeSectType = (typeText: string): SectType => {
-  if (/魔道|魔/i.test(typeText)) return '魔道宗门';
-  if (/散修联盟|散修|联盟/i.test(typeText)) return '散修联盟';
-  if (/中立/i.test(typeText)) return '中立宗门';
-  if (/世家|门阀|家族/i.test(typeText)) return '世家';
+  if (/黑域|暗网|影/i.test(typeText)) return '黑域组织';
+  if (/自由|联盟|独立/i.test(typeText)) return '自由网络';
+  if (/中立/i.test(typeText)) return '中立组织';
+  if (/家族|门阀|财团/i.test(typeText)) return '家族集团';
   if (/商会|商盟|商号/i.test(typeText)) return '商会';
-  return '正道宗门';
+  return '守序组织';
 };
 
 const hashString = (input: string) => {
@@ -190,18 +188,18 @@ const pickRandomUnique = <T,>(pool: T[], count: number, rand: () => number) => {
 };
 
 const extractQualityTier = (quality: string) => {
-  const match = quality.match(/[凡黄玄地天仙神]/);
-  return match ? match[0] : '凡';
+  const match = quality.match(/民用|改装|军规|特级|禁忌/);
+  return match ? match[0] : '民用';
 };
 
 const buildThemeKey = (sect: WorldFaction) => {
   const raw = `${sect.类型 || ''}${Array.isArray(sect.特色) ? sect.特色.join('') : sect.特色 || ''}${Array.isArray(sect.特色列表) ? sect.特色列表.join('') : ''}`;
-  if (/剑/i.test(raw)) return 'sword';
-  if (/丹|药/i.test(raw)) return 'alchemy';
-  if (/符|阵/i.test(raw)) return 'array';
+  if (/剑|刀|刃|近战/i.test(raw)) return 'sword';
+  if (/药剂|制剂|合成/i.test(raw)) return 'alchemy';
+  if (/矩阵|算法|标记/i.test(raw)) return 'array';
   if (/商/i.test(raw)) return 'merchant';
-  if (/妖|兽/i.test(raw)) return 'beast';
-  if (/魔|邪|煞/i.test(raw)) return 'demonic';
+  if (/无人机|兽/i.test(raw)) return 'beast';
+  if (/黑域|暗网|煞/i.test(raw)) return 'demonic';
   return 'sword';
 };
 
@@ -218,11 +216,11 @@ const buildShopItems = (sect: WorldFaction, rand: () => number, sectKey: string)
     const cost = Math.max(40, Math.round((baseCost * multiplier * variance) / 10) * 10);
     let stock: number | undefined;
 
-    if (item.type === '功法') {
+    if (item.type === '程序') {
       stock = undefined;
     } else if (item.type === '装备') {
       stock = Math.max(1, Math.floor(rand() * 3) + 1);
-    } else if (item.type === '丹药') {
+    } else if (item.type === '药剂') {
       stock = Math.max(3, Math.floor(rand() * 8) + 3);
     } else if (item.type === '材料') {
       stock = Math.max(5, Math.floor(rand() * 14) + 5);
@@ -275,9 +273,9 @@ export const createJoinedSectState = (
   const rand = createSeededRandom(hashString(`${sectName}_${nowIso}`));
 
   const memberInfo: SectMemberInfo = {
-    宗门名称: sectName,
-    宗门类型: normalizeSectType(String(sect.类型 || '正道宗门')),
-    职位: '外门弟子',
+    组织名称: sectName,
+    组织类型: normalizeSectType(String(sect.类型 || '秩序组织')),
+    职位: '外部成员',
     贡献: 0,
     关系: '友好',
     声望: 0,
@@ -288,15 +286,15 @@ export const createJoinedSectState = (
   return {
     sectSystem: {
       版本: SECT_SYSTEM_VERSION,
-      当前宗门: sectName,
-      宗门档案: {
+      当前组织: sectName,
+      组织档案: {
         [sectName]: sect,
       },
-      宗门成员: {},
-      宗门藏经阁: {
+      组织成员: {},
+      组织资料库: {
         [sectName]: buildLibraryTechniques(sect, rand, sectKey),
       },
-      宗门贡献商店: {
+      组织权限商店: {
         [sectName]: buildShopItems(sect, rand, sectKey),
       },
     },
@@ -309,27 +307,27 @@ export const createJoinedSectState = (
 // ============================================================================
 
 /**
- * 创建默认的宗门内容状态
+ * 创建默认的组织内容状态
  */
 export function createDefaultContentStatus(): SectContentStatus {
   return {
-    藏经阁已初始化: false,
-    贡献商店已初始化: false,
+    资料库已初始化: false,
+    权限商店已初始化: false,
     演变次数: 0,
   };
 }
 
 /**
- * 创建宗门框架（不生成具体内容）
+ * 创建组织框架（不生成具体内容）
  *
  * 使用延迟初始化模式：
- * 1. 玩家加入宗门时只创建框架和成员信息
- * 2. 藏经阁、贡献商店等内容需要手动初始化
+ * 1. 玩家加入组织时只创建框架和成员信息
+ * 2. 资料库、权限商店等内容需要手动初始化
  * 3. 初始化可通过AI生成或本地随机生成
  *
- * @param sect 宗门信息
+ * @param sect 组织信息
  * @param options 选项
- * @returns 宗门框架结果
+ * @returns 组织框架结果
  */
 export function createSectFramework(
   sect: WorldFaction,
@@ -339,9 +337,9 @@ export function createSectFramework(
   const sectName = sect.名称;
 
   const memberInfo: SectMemberInfo = {
-    宗门名称: sectName,
-    宗门类型: normalizeSectType(String(sect.类型 || '正道宗门')),
-    职位: '外门弟子',
+    组织名称: sectName,
+    组织类型: normalizeSectType(String(sect.类型 || '秩序组织')),
+    职位: '外部成员',
     贡献: 0,
     关系: '友好',
     声望: 0,
@@ -354,13 +352,13 @@ export function createSectFramework(
   return {
     sectSystem: {
       版本: SECT_SYSTEM_VERSION,
-      当前宗门: sectName,
-      宗门档案: {
+      当前组织: sectName,
+      组织档案: {
         [sectName]: sect,
       },
-      宗门成员: {},
-      宗门藏经阁: {},  // 空，等待初始化
-      宗门贡献商店: {},  // 空，等待初始化
+      组织成员: {},
+      组织资料库: {},  // 空，等待初始化
+      组织权限商店: {},  // 空，等待初始化
       内容状态: {
         [sectName]: contentStatus,
       },
@@ -371,7 +369,7 @@ export function createSectFramework(
 }
 
 /**
- * 使用本地随机生成初始化藏经阁
+ * 使用本地随机生成初始化资料库
  */
 export function initializeLibraryLocal(
   sect: WorldFaction,
@@ -384,7 +382,7 @@ export function initializeLibraryLocal(
 }
 
 /**
- * 使用本地随机生成初始化贡献商店
+ * 使用本地随机生成初始化权限商店
  */
 export function initializeShopLocal(
   sect: WorldFaction,
@@ -397,7 +395,7 @@ export function initializeShopLocal(
 }
 
 /**
- * 检查宗门内容是否需要初始化
+ * 检查组织内容是否需要初始化
  */
 export function checkSectContentNeedsInit(
   sectSystem: SectSystemV2,
@@ -407,8 +405,8 @@ export function checkSectContentNeedsInit(
 
   if (!status) {
     // 没有状态记录，检查实际内容
-    const hasLibrary = (sectSystem.宗门藏经阁?.[sectName]?.length ?? 0) > 0;
-    const hasShop = (sectSystem.宗门贡献商店?.[sectName]?.length ?? 0) > 0;
+    const hasLibrary = (sectSystem.组织资料库?.[sectName]?.length ?? 0) > 0;
+    const hasShop = (sectSystem.组织权限商店?.[sectName]?.length ?? 0) > 0;
 
     return {
       library: !hasLibrary,
@@ -417,13 +415,13 @@ export function checkSectContentNeedsInit(
   }
 
   return {
-    library: !status.藏经阁已初始化,
-    shop: !status.贡献商店已初始化,
+    library: !status.资料库已初始化,
+    shop: !status.权限商店已初始化,
   };
 }
 
 /**
- * 获取宗门主题关键字（用于AI生成提示）
+ * 获取组织主题关键字（用于AI生成提示）
  */
 export function getSectThemeKeywords(sect: WorldFaction): string[] {
   const themeKey = buildThemeKey(sect);
@@ -431,26 +429,26 @@ export function getSectThemeKeywords(sect: WorldFaction): string[] {
 
   switch (themeKey) {
     case 'sword':
-      keywords.push('剑修', '剑道', '剑意', '御剑');
+      keywords.push('近战', '战术', '刃具', '突进');
       break;
     case 'alchemy':
-      keywords.push('丹道', '炼丹', '药材', '丹炉');
+      keywords.push('制剂', '合成', '药剂', '培养');
       break;
     case 'array':
-      keywords.push('阵法', '符箓', '灵纹', '阵盘');
+      keywords.push('矩阵', '算法', '标记', '阵盘');
       break;
     case 'demonic':
-      keywords.push('魔道', '煞气', '血修', '邪功');
+      keywords.push('黑域', '过载', '暗网', '渗透');
       break;
     case 'merchant':
-      keywords.push('商道', '交易', '鉴宝', '情报');
+      keywords.push('商路', '交易', '鉴定', '情报');
       break;
     case 'beast':
-      keywords.push('驭兽', '灵兽', '妖修', '兽契');
+      keywords.push('无人机', '生体', '操控', '绑定');
       break;
   }
 
-  // 添加宗门特色
+  // 添加组织特色
   if (Array.isArray(sect.特色)) {
     keywords.push(...sect.特色);
   } else if (sect.特色) {

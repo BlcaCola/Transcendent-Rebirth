@@ -21,10 +21,10 @@ export async function generateWorldEvent(args: {
     const playerName =
       (saveData as any)?.角色?.身份?.名字 ||
       (saveData as any)?.角色?.名字 ||
-      '无名修士';
+      '无名游民';
 
-    const realmName = (saveData as any)?.角色?.属性?.境界?.名称 || '凡人';
-    const realmStage = (saveData as any)?.角色?.属性?.境界?.阶段 || '';
+    const rankName = (saveData as any)?.角色?.属性?.阶位?.名称 || '街头人';
+    const rankStage = (saveData as any)?.角色?.属性?.阶位?.阶段 || '';
     const locationDesc = (saveData as any)?.角色?.位置?.描述 || '未知';
     const reputation = Number((saveData as any)?.角色?.属性?.声望 ?? 0);
 
@@ -35,7 +35,7 @@ export async function generateWorldEvent(args: {
         名字: String(n.名字 || ''),
         与玩家关系: String(n.与玩家关系 || ''),
         好感度: Number(n.好感度 ?? 0),
-        境界: n.境界 ? `${n.境界.名称 || ''}${n.境界.阶段 ? '-' + n.境界.阶段 : ''}` : '',
+        阶位: n.阶位 ? `${n.阶位.名称 || ''}${n.阶位.阶段 ? '-' + n.阶位.阶段 : ''}` : '',
       }))
       .filter((n: any) => n.名字)
       .sort((a: any, b: any) => b.好感度 - a.好感度)
@@ -48,12 +48,12 @@ export async function generateWorldEvent(args: {
 # 当前状态
 - 时间: ${now.年}年${now.月}月${now.日}日 ${String(now.小时).padStart(2, '0')}:${String(now.分钟).padStart(2, '0')}
 - 玩家: ${playerName}
-- 境界: ${realmName}${realmStage ? '-' + realmStage : ''}
+- 阶位: ${rankName}${rankStage ? '-' + rankStage : ''}
 - 位置: ${locationDesc}
 - 声望: ${reputation}
 
 # 玩家关系（好感度Top）
-${relationList.length ? relationList.map(r => `- ${r.名字} | 关系:${r.与玩家关系 || '未知'} | 好感:${r.好感度} | 境界:${r.境界 || '未知'}`).join('\n') : '- （暂无）'}
+${relationList.length ? relationList.map(r => `- ${r.名字} | 关系:${r.与玩家关系 || '未知'} | 好感:${r.好感度} | 阶位:${r.阶位 || '未知'}`).join('\n') : '- （暂无）'}
 `.trim();
 
     const finalPrompt = `${promptTemplate}\n\n---\n\n${context}${extra}`.trim();

@@ -6,12 +6,12 @@
 import { useCharacterStore } from '@/stores/characterStore';
 import { useGameStateStore } from '@/stores/gameStateStore';
 import { useActionQueueStore } from '@/stores/actionQueueStore';
-import type { Item, SaveData, CultivationTechniqueReference } from '@/types/game';
+import type { Item, SaveData, ProgramReference } from '@/types/game';
 import { toast } from './toast';
 // import { getTavernHelper } from '@/utils/tavern'; // 已废弃：新架构中不再使用
 
 export interface UndoAction {
-  type: 'equip' | 'unequip' | 'use' | 'discard' | 'cultivate' | 'stop_cultivation';
+  type: 'equip' | 'unequip' | 'use' | 'discard' | 'train' | 'stop_training';
   itemId: string;
   itemName: string;
   quantity?: number;
@@ -20,11 +20,11 @@ export interface UndoAction {
     // 装备操作的恢复数据
     originalSlot?: string | null; // 原来在哪个装备槽位，null表示在背包
     replacedItem?: Item | null; // 被替换的装备
-    // 使用/丢弃操作的恢复数据  
+    // 使用/丢弃操作的恢复数据
     originalQuantity?: number;
-    // 功法修炼的恢复数据
-    originalCultivationState?: {
-      previousTechnique: CultivationTechniqueReference | null;
+    // 模块训练的恢复数据
+    originalTrainingState?: {
+      previousTechnique: ProgramReference | null;
       wasInInventory: boolean;
     };
   };
@@ -34,12 +34,12 @@ export interface UndoAction {
 export class EnhancedActionQueueManager {
   private static instance: EnhancedActionQueueManager | null = null;
   private undoActions: UndoAction[] = [];
-  private readonly storageKey = 'dao_undo_actions';
+  private readonly storageKey = 'protocol_undo_actions';
 
   constructor() {
     this.loadUndoHistoryFromStorage();
   }
-  
+
   static getInstance(): EnhancedActionQueueManager {
     if (!this.instance) {
       this.instance = new EnhancedActionQueueManager();
@@ -88,19 +88,19 @@ export class EnhancedActionQueueManager {
   private ensureRoleBackpack(saveData: SaveData): any {
     const anySave = saveData as any;
     if (!anySave.角色) anySave.角色 = {};
-    if (!anySave.角色.背包) anySave.角色.背包 = { 物品: {}, 灵石: { 下品: 0, 中品: 0, 上品: 0, 极品: 0 } };
+    if (!anySave.角色.背包) anySave.角色.背包 = { 物品: {}, 信用点: { 低额: 0, 中额: 0, 高额: 0, 最高额: 0 } };
     if (!anySave.角色.背包.物品) anySave.角色.背包.物品 = {};
-    if (!anySave.角色.背包.灵石) anySave.角色.背包.灵石 = { 下品: 0, 中品: 0, 上品: 0, 极品: 0 };
+    if (!anySave.角色.背包.信用点) anySave.角色.背包.信用点 = { 低额: 0, 中额: 0, 高额: 0, 最高额: 0 };
     return anySave.角色.背包;
   }
 
-  private ensureRoleCultivation(saveData: SaveData): any {
+  private ensureRoleTraining(saveData: SaveData): any {
     const anySave = saveData as any;
     if (!anySave.角色) anySave.角色 = {};
-    if (!anySave.角色.修炼) anySave.角色.修炼 = { 修炼功法: null, 修炼状态: { 模式: '未修炼' } };
-    return anySave.角色.修炼;
+    if (!anySave.角色.训练) anySave.角色.训练 = { 训练程序: null, 训练状态: { 模式: '未训练' } };
+    return anySave.角色.训练;
   }
-  
+
   /**
    * 装备物品 - 直接修改装备栏并支持撤回
    */
@@ -179,7 +179,7 @@ export class EnhancedActionQueueManager {
       // 注意：不从背包中移除物品，装备和背包是独立的
       // 被替换的装备也不放回背包，而是丢失（符合游戏逻辑）
 
-      // 应用装备属性加成到存档的 角色.身份.后天六司（V3）
+      // 应用装备属性加成到存档的 角色.身份.成长六维（V3）
       const { applyEquipmentBonus } = await import('./equipmentBonusApplier');
       applyEquipmentBonus(saveData, item.物品ID);
 
@@ -219,7 +219,7 @@ export class EnhancedActionQueueManager {
       return false;
     }
   }
-  
+
   /**
    * 卸下装备 - 直接修改装备栏并支持撤回
    */
@@ -307,7 +307,7 @@ export class EnhancedActionQueueManager {
 
       // 注意：不需要将装备放回背包，因为装备从未从背包中移除
 
-      // 移除装备属性加成从存档的 角色.身份.后天六司（V3）
+      // 移除装备属性加成从存档的 角色.身份.成长六维（V3）
       const { removeEquipmentBonus } = await import('./equipmentBonusApplier');
       removeEquipmentBonus(saveData, item.物品ID);
 
@@ -344,7 +344,7 @@ export class EnhancedActionQueueManager {
       return false;
     }
   }
-  
+
   /**
    * 使用物品 - 直接减少数量并支持撤回
    */
@@ -398,7 +398,7 @@ export class EnhancedActionQueueManager {
       this.saveUndoHistoryToStorage();
 
       // 添加到动作队列显示
-      const consumableTypes = ['丹药', '材料', '其他'];
+      const consumableTypes = ['药剂', '材料', '其他'];
       const useEffect = (consumableTypes.includes(item.类型) && '使用效果' in item) ? item.使用效果 : item.描述 || '无特殊效果';
       actionQueue.addAction({
         type: 'use',
@@ -416,11 +416,11 @@ export class EnhancedActionQueueManager {
       return false;
     }
   }
-  
+
   /**
-   * 修炼功法 - 直接修改修炼状态并支持撤回
+   * 训练模块 - 直接修改训练状态并支持撤回
    */
-  async cultivateItem(item: Item): Promise<boolean> {
+  async trainItem(item: Item): Promise<boolean> {
     const actionQueue = useActionQueueStore();
 
     try {
@@ -428,12 +428,12 @@ export class EnhancedActionQueueManager {
       const gameStateStore = useGameStateStore();
       const saveData = gameStateStore.toSaveData();
       if (!saveData) {
-        toast.error('存档数据不存在，无法修炼功法');
+        toast.error('存档数据不存在，无法训练模块');
         return false;
       }
 
-      if (item.类型 !== '功法') {
-        toast.error('只能修炼功法类物品');
+      if (item.类型 !== '程序') {
+        toast.error('只能训练模块类物品');
         return false;
       }
 
@@ -444,50 +444,50 @@ export class EnhancedActionQueueManager {
         return false;
       }
 
-      let previousTechnique: CultivationTechniqueReference | null = null;
+      let previousTechnique: ProgramReference | null = null;
 
-      // 检查是否已经在修炼其他功法
-      const cultivationState = this.ensureRoleCultivation(saveData);
-      const currentTechnique = cultivationState.修炼功法;
+      // 检查是否已经在训练其他模块
+      const trainingState = this.ensureRoleTraining(saveData);
+      const currentTechnique = trainingState.训练程序;
       if (currentTechnique && currentTechnique.物品ID !== item.物品ID) {
-        // 保存完整的功法数据+进度
+        // 保存完整的模块数据+进度
         previousTechnique = { ...currentTechnique };
 
-        // 清除之前功法的已装备状态 - 使用响应式替换
+        // 清除之前模块的已装备状态 - 使用响应式替换
         const previousId = currentTechnique.物品ID;
         const previousInventoryItem = inventoryItems[previousId];
-        if (previousInventoryItem && previousInventoryItem.类型 === '功法') {
+        if (previousInventoryItem && previousInventoryItem.类型 === '程序') {
           inventoryItems[previousId] = {
             ...previousInventoryItem,
             已装备: false,
-            修炼中: false
+            训练中: false
           };
         }
       }
 
-      // 获取功法的完整数据作为基础
+      // 获取模块的完整数据作为基础
       const inventoryItem = inventoryItems[item.物品ID];
-      if (!inventoryItem || inventoryItem.类型 !== '功法') {
-        toast.error('物品不是功法类型');
+      if (!inventoryItem || inventoryItem.类型 !== '程序') {
+        toast.error('物品不是模块类型');
         return false;
       }
 
-      // 设置修炼功法 - 只存储引用（物品ID和名称）
-      // 修炼进度存储在背包物品中，不存储在这里
-      cultivationState.修炼功法 = {
+      // 设置训练模块 - 只存储引用（物品ID和名称）
+      // 训练进度存储在背包物品中，不存储在这里
+      trainingState.训练程序 = {
         物品ID: inventoryItem.物品ID,
         名称: inventoryItem.名称
       };
 
-      // 设置功法的已装备和修炼中标记 - 使用响应式替换
+      // 设置模块的已装备和训练中标记 - 使用响应式替换
       inventoryItems[item.物品ID] = {
         ...inventoryItem,
         已装备: true,
-        修炼中: true
+        训练中: true
       };
       // 移除时间戳记录，简化逻辑
 
-      // 注意：修炼功法不从背包移除，功法和背包是独立的
+      // 注意：训练模块不从背包移除，模块和背包是独立的
 
       // 🔥 [新架构] 更新 gameStateStore 并保存到 IndexedDB
       gameStateStore.loadFromSaveData(saveData);
@@ -495,11 +495,11 @@ export class EnhancedActionQueueManager {
 
       // 创建撤回数据
       const undoAction: UndoAction = {
-        type: 'cultivate',
+        type: 'train',
         itemId: item.物品ID,
         itemName: item.名称,
         restoreData: {
-          originalCultivationState: {
+          originalTrainingState: {
             previousTechnique,
             wasInInventory: true
           }
@@ -507,31 +507,31 @@ export class EnhancedActionQueueManager {
       };
       this.undoActions.push(undoAction);
       this.saveUndoHistoryToStorage();
-      
+
       // 添加到动作队列显示
       actionQueue.addAction({
-        type: 'cultivate',
+        type: 'train',
         itemName: item.名称,
         itemType: item.类型,
-        description: previousTechnique 
-          ? `开始修炼《${item.名称}》功法，停止修炼《${previousTechnique.名称}》`
-          : `开始修炼《${item.名称}》功法`
+        description: previousTechnique
+          ? `开始训练《${item.名称}》模块，停止训练《${previousTechnique.名称}》`
+          : `开始训练《${item.名称}》模块`
       });
-      
-      // toast.success(`开始修炼《${item.名称}》`); // 弹窗逻辑已移至Store
+
+      // toast.success(`开始训练《${item.名称}》`); // 弹窗逻辑已移至Store
       return true;
-      
+
     } catch (error) {
-      console.error('修炼功法失败:', error);
-      toast.error('修炼功法失败');
+      console.error('训练模块失败:', error);
+      toast.error('训练模块失败');
       return false;
     }
   }
-  
+
   /**
-   * 停止修炼功法
+   * 停止训练模块
    */
-  async stopCultivation(item: Item): Promise<boolean> {
+  async stopTraining(item: Item): Promise<boolean> {
     const actionQueue = useActionQueueStore();
 
     try {
@@ -543,18 +543,18 @@ export class EnhancedActionQueueManager {
         return false;
       }
 
-      const cultivationState = this.ensureRoleCultivation(saveData);
-      if (!cultivationState?.修炼功法) {
-        toast.error('当前没有正在修炼的功法');
+      const trainingState = this.ensureRoleTraining(saveData);
+      if (!trainingState?.训练程序) {
+        toast.error('当前没有正在训练的模块');
         return false;
       }
 
-      const techniqueToStop = cultivationState.修炼功法;
+      const techniqueToStop = trainingState.训练程序;
       const techniqueId = techniqueToStop.物品ID;
       const techniqueName = techniqueToStop.名称;
 
       if (techniqueName !== item.名称) {
-        toast.error('操作的功法与当前修炼的功法不符');
+        toast.error('操作的模块与当前训练的模块不符');
         return false;
       }
 
@@ -567,31 +567,31 @@ export class EnhancedActionQueueManager {
 
       const inventoryItem = inventoryItems[techniqueId];
 
-      // 清空修炼槽位，设置修炼状态为false（设置为null）
-      cultivationState.修炼功法 = null;
+      // 清空训练槽位，设置训练状态为false（设置为null）
+      trainingState.训练程序 = null;
 
-      // 清除功法的已装备和修炼中标记 - 使用响应式替换
-      if (inventoryItem && inventoryItem.类型 === '功法') {
+      // 清除模块的已装备和训练中标记 - 使用响应式替换
+      if (inventoryItem && inventoryItem.类型 === '程序') {
         inventoryItems[techniqueId] = {
           ...inventoryItem,
           已装备: false,
-          修炼中: false
+          训练中: false
         };
       }
 
-      // 注意：停止修炼功法不放回背包，功法和背包是独立的
+      // 注意：停止训练模块不放回背包，模块和背包是独立的
 
       // 🔥 [新架构] 更新 gameStateStore 并保存到 IndexedDB
       gameStateStore.loadFromSaveData(saveData);
       await gameStateStore.saveGame();
 
-      // 创建撤回数据 - 保存完整的功法数据+进度
+      // 创建撤回数据 - 保存完整的模块数据+进度
       const undoAction: UndoAction = {
-        type: 'cultivate',
+        type: 'train',
         itemId: item.物品ID,
         itemName: item.名称,
         restoreData: {
-          originalCultivationState: {
+          originalTrainingState: {
             previousTechnique: techniqueToStop ? { ...techniqueToStop } : null,
             wasInInventory: false
           }
@@ -599,25 +599,25 @@ export class EnhancedActionQueueManager {
       };
       this.undoActions.push(undoAction);
       this.saveUndoHistoryToStorage();
-      
+
       // 添加到动作队列显示
       actionQueue.addAction({
-        type: 'stop_cultivation',
+        type: 'stop_training',
         itemName: item.名称,
         itemType: item.类型,
-        description: `停止修炼《${item.名称}》功法`
+        description: `停止训练《${item.名称}》模块`
       });
-      
-      // toast.success(`已停止修炼《${item.名称}》`); // 弹窗逻辑已移至Store
+
+      // toast.success(`已停止训练《${item.名称}》`); // 弹窗逻辑已移至Store
       return true;
-      
+
     } catch (error) {
-      console.error('停止修炼失败:', error);
-      toast.error('停止修炼失败');
+      console.error('停止训练失败:', error);
+      toast.error('停止训练失败');
       return false;
     }
   }
-  
+
   /**
    * 撤回上一个动作
    */
@@ -639,7 +639,7 @@ export class EnhancedActionQueueManager {
         toast.error('存档数据不存在');
         return false;
       }
-      
+
       switch (lastAction.type) {
         case 'equip':
           await this.undoEquip(lastAction, saveData);
@@ -650,11 +650,11 @@ export class EnhancedActionQueueManager {
         case 'use':
           await this.undoUse(lastAction, saveData);
           break;
-        case 'cultivate':
-          await this.undoCultivate(lastAction, saveData);
+        case 'train':
+          await this.undoTrain(lastAction, saveData);
           break;
       }
-      
+
       // 从动作队列中移除最后一个对应的动作
       const actions = actionQueue.pendingActions;
       for (let i = actions.length - 1; i >= 0; i--) {
@@ -663,10 +663,10 @@ export class EnhancedActionQueueManager {
           break;
         }
       }
-      
+
       // toast.success(`已撤回：${lastAction.itemName}`); // 弹窗逻辑已移至Store
       return true;
-      
+
     } catch (error) {
       console.error('撤回动作失败:', error);
       toast.error('撤回失败');
@@ -720,8 +720,8 @@ export class EnhancedActionQueueManager {
         case 'use':
           await this.undoUse(action, saveData);
           break;
-        case 'cultivate':
-          await this.undoCultivate(action, saveData);
+        case 'train':
+          await this.undoTrain(action, saveData);
           break;
         default:
           break;
@@ -749,7 +749,7 @@ export class EnhancedActionQueueManager {
       return false;
     }
   }
-  
+
   private async undoEquip(action: UndoAction, saveData: SaveData): Promise<void> {
     const equipmentSlots = this.ensureEquipmentSlots(saveData);
     const inventoryItems = this.ensureRoleBackpack(saveData).物品;
@@ -802,7 +802,7 @@ export class EnhancedActionQueueManager {
       console.log('[撤销历史] 移除了一个已抵消的动作:', { type, itemName });
     }
   }
-  
+
   private async undoUnequip(action: UndoAction, saveData: SaveData): Promise<void> {
     // 撤回卸下操作 = 重新装备
     if (!action.restoreData?.originalSlot) return;
@@ -824,7 +824,7 @@ export class EnhancedActionQueueManager {
     const { applyEquipmentBonus } = await import('./equipmentBonusApplier');
     applyEquipmentBonus(saveData, action.itemId);
   }
-  
+
   private async undoUse(action: UndoAction, saveData: SaveData): Promise<void> {
     if (action.itemData) {
         const backpack = this.ensureRoleBackpack(saveData);
@@ -833,42 +833,42 @@ export class EnhancedActionQueueManager {
         toast.warning('物品已完全消失，且无备份数据，无法恢复');
     }
   }
-  
-  private async undoCultivate(action: UndoAction, saveData: SaveData): Promise<void> {
-    const cultivationState = action.restoreData?.originalCultivationState;
-    if (!cultivationState) return;
+
+  private async undoTrain(action: UndoAction, saveData: SaveData): Promise<void> {
+    const trainingState = action.restoreData?.originalTrainingState;
+    if (!trainingState) return;
 
     // 获取背包物品对象
     const inventoryItems = this.ensureRoleBackpack(saveData).物品;
     if (!inventoryItems || typeof inventoryItems !== 'object') {
-      console.error('背包数据异常，无法撤回修炼');
+      console.error('背包数据异常，无法撤回训练');
       return;
     }
 
-    const cultivation = this.ensureRoleCultivation(saveData);
+    const training = this.ensureRoleTraining(saveData);
 
-    // 由于修炼功法不再涉及背包操作，撤回时只需要恢复修炼状态
-    if (cultivationState.previousTechnique) {
-      // 恢复之前的修炼功法 - previousTechnique 现在已包含完整的数据+进度
-      const previousId = cultivationState.previousTechnique.物品ID;
-      cultivation.修炼功法 = { ...cultivationState.previousTechnique };
+    // 由于训练程序不再涉及背包操作，撤回时只需要恢复训练状态
+    if (trainingState.previousTechnique) {
+      // 恢复之前的训练程序 - previousTechnique 现在已包含完整的数据+进度
+      const previousId = trainingState.previousTechnique.物品ID;
+      training.训练程序 = { ...trainingState.previousTechnique };
 
-      // 标记背包中的功法为已装备和修炼中
+      // 标记背包中的程序为已装备和训练中
       const previousItem = inventoryItems[previousId];
-      if (previousItem && previousItem.类型 === '功法') {
+      if (previousItem && previousItem.类型 === '程序') {
         inventoryItems[previousId] = {
           ...previousItem,
           已装备: true,
-          修炼中: true
+          训练中: true
         };
       }
     } else {
-      // 清空修炼槽位
-      cultivation.修炼功法 = null;
+      // 清空训练槽位
+      training.训练程序 = null;
     }
 
   }
-  
+
   /**
    * 清空撤回历史
    */
@@ -876,42 +876,42 @@ export class EnhancedActionQueueManager {
     this.undoActions = [];
     this.saveUndoHistoryToStorage();
   }
-  
+
   /**
    * 获取可撤回动作数量
    */
   getUndoActionsCount(): number {
     return this.undoActions.length;
   }
-  
+
   /**
    * 移除冲突的动作（装备/卸下互斥）
    */
   private removeConflictingActions(itemId: string, conflictType: 'equip' | 'unequip'): void {
     const actionQueue = useActionQueueStore();
-    
+
     // 从显示队列中移除冲突的动作
-    const conflictingActions = actionQueue.pendingActions.filter(action => 
-      action.itemName && action.type === conflictType && 
+    const conflictingActions = actionQueue.pendingActions.filter(action =>
+      action.itemName && action.type === conflictType &&
       // 这里需要通过名称匹配，因为action中没有itemId
       this.findItemByName(action.itemName)?.物品ID === itemId
     );
-    
+
     conflictingActions.forEach(action => {
       actionQueue.removeAction(action.id);
     });
-    
+
     // 从撤回历史中移除对应的记录
-    this.undoActions = this.undoActions.filter(undoAction => 
+    this.undoActions = this.undoActions.filter(undoAction =>
       !(undoAction.itemId === itemId && undoAction.type === conflictType)
     );
     this.saveUndoHistoryToStorage();
-    
+
     if (conflictingActions.length > 0) {
       toast.info('已移除冲突的操作');
     }
   }
-  
+
   /**
    * 通过名称查找物品（辅助函数）
    */
@@ -922,7 +922,7 @@ export class EnhancedActionQueueManager {
 
     const equipmentSlots = this.ensureEquipmentSlots(saveData);
     const inventoryItems = this.ensureRoleBackpack(saveData).物品;
-    
+
     // 在背包中查找
     if (inventoryItems) {
       for (const item of Object.values(inventoryItems as Record<string, any>)) {
@@ -931,7 +931,7 @@ export class EnhancedActionQueueManager {
         }
       }
     }
-    
+
     // 在装备槽位中查找（槽位存物品ID，需回查背包）
     for (let i = 1; i <= 6; i++) {
       const slotKey = `装备${i}`;
@@ -940,10 +940,10 @@ export class EnhancedActionQueueManager {
       const equippedItem = inventoryItems?.[equippedItemId];
       if (equippedItem && equippedItem.名称 === itemName) return equippedItem;
     }
-    
+
     return null;
   }
-  
+
   /**
    * 🔥 [已废弃] 同步装备栏到酒馆变量
    * 新架构中数据已在 gameStateStore 统一管理，无需单独同步

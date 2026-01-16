@@ -29,15 +29,15 @@
       </div>
 
       <div class="menu-section">
-        <div class="section-header">{{ t('修炼模块') }}</div>
+        <div class="section-header">{{ t('训练模块') }}</div>
         <div class="tile-grid">
           <button class="menu-tile" @click="handleTechniques">
             <BookOpen :size="18" />
-            <span>{{ t('功法技能') }}</span>
+            <span>{{ t('模块技能') }}</span>
           </button>
           <button class="menu-tile" @click="handleThousandDao">
             <Zap :size="18" />
-            <span>{{ t('大道感悟') }}</span>
+            <span>{{ t('流派解析') }}</span>
           </button>
         </div>
       </div>
@@ -65,7 +65,7 @@
           </button>
           <button class="menu-tile" @click="handleSect">
             <Home :size="18" />
-            <span>{{ t('宗门') }}</span>
+            <span>{{ t('组织') }}</span>
           </button>
           <button class="menu-tile" @click="handleMemoryCenter">
             <Brain :size="18" />

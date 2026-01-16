@@ -10,7 +10,7 @@
             {{ backendReady ? (isAdmin ? '管理员权限' : '无权限') : '后端不可用' }}
           </span>
         </div>
-        <p class="subtitle">世界/出身/天赋/天资/灵根 数据管理</p>
+        <p class="subtitle">世界/出身/模块/模块阶位/改造核心 数据管理</p>
       </div>
 
       <div v-if="!backendConfigured" class="locked">
@@ -123,7 +123,7 @@
                   <div class="cell name">用户名</div>
                   <div class="cell name">角色名</div>
                   <div class="cell">世界</div>
-                  <div class="cell">境界</div>
+                  <div class="cell">等级</div>
                   <div class="cell num">年龄</div>
                   <div class="cell time">创建时间</div>
                 </div>
@@ -207,7 +207,7 @@
                 <select v-model="redemptionForm.reward_type" class="input small">
                   <option value="ai">AI</option>
                   <option value="points">点数</option>
-                  <option value="item">道具</option>
+                  <option value="item">物资</option>
                 </select>
                 <input
                   v-model.number="redemptionForm.reward_value"
@@ -428,9 +428,9 @@ const allTabs = [
   { id: 'admins', label: '管理员管理', group: '用户管理' },
   { id: 'worlds', label: '世界', group: '开局配置' },
   { id: 'origins', label: '出身', group: '开局配置' },
-  { id: 'talents', label: '天赋', group: '开局配置' },
-  { id: 'talent_tiers', label: '天资', group: '开局配置' },
-  { id: 'spirit_roots', label: '灵根', group: '开局配置' },
+  { id: 'talents', label: '模块', group: '开局配置' },
+  { id: 'talent_tiers', label: '模块阶位', group: '开局配置' },
+  { id: 'spirit_roots', label: '改造核心', group: '开局配置' },
   { id: 'invitation_codes', label: '邀请码管理', group: '其他' },
   { id: 'codes', label: '兑换码', group: '其他' },
   { id: 'workshop', label: '创意工坊', group: '其他' },

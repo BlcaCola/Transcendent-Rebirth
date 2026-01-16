@@ -388,30 +388,30 @@ const handleCreationComplete = async (rawPayload: CharacterCreationPayload) => {
         await characterStore.commitMetadataToStorage();
       }
       // 从酒馆获取当前活跃的Persona名字
-      let personaName: string = '无名道友';
+      let personaName: string = '无名游民';
       try {
         const helper = getTavernHelper();
         if (helper) {
           const vars = await helper.getVariables({ type: 'global' });
           // 尝试获取当前Persona的名字
           const name = vars['persona.name'] || vars['name'] || rawPayload.characterName;
-          personaName = (typeof name === 'string' ? name : rawPayload.characterName) || '无名道友';
+          personaName = (typeof name === 'string' ? name : rawPayload.characterName) || '无名游民';
           console.log('[创角完成] 从酒馆Personas获取名字:', personaName);
         }
       } catch (error) {
         console.warn('[创角完成] 无法从酒馆获取Persona名字，使用用户输入:', error);
-        personaName = rawPayload.characterName || '无名道友';
+        personaName = rawPayload.characterName || '无名行者';
       }
 
       const convertedAttributes = rawPayload.baseAttributes ? {
-        根骨: rawPayload.baseAttributes.root_bone ?? 0,
-        灵性: rawPayload.baseAttributes.spirituality ?? 0,
-        悟性: rawPayload.baseAttributes.comprehension ?? 0,
-        气运: rawPayload.baseAttributes.fortune ?? 0,
+        体质: rawPayload.baseAttributes.root_bone ?? 0,
+        能源: rawPayload.baseAttributes.spirituality ?? 0,
+        算法: rawPayload.baseAttributes.comprehension ?? 0,
+        资源感知: rawPayload.baseAttributes.fortune ?? 0,
         魅力: rawPayload.baseAttributes.charm ?? 0,
-        心性: rawPayload.baseAttributes.temperament ?? 0
+        心智: rawPayload.baseAttributes.temperament ?? 0
       } : {
-        根骨: 0, 灵性: 0, 悟性: 0, 气运: 0, 魅力: 0, 心性: 0
+        体质: 0, 能源: 0, 算法: 0, 资源感知: 0, 魅力: 0, 心智: 0
       };
 
       const baseInfo: CharacterBaseInfo = {
@@ -420,24 +420,24 @@ const handleCreationComplete = async (rawPayload: CharacterCreationPayload) => {
         出生日期: { 年: 0, 月: 1, 日: 1 }, // 临时占位符，后续由角色初始化流程计算
         种族: rawPayload.race ?? '人族', // 添加种族，使用 ?? 避免空字符串被当作 falsy
         世界: rawPayload.world || { name: '未知世界' } as any,
-        天资: rawPayload.talentTier || { name: '凡品' } as any,
+        模块阶位: rawPayload.talentTier || { name: '基础级' } as any,
         出生: rawPayload.origin || '随机出身',
-        灵根: rawPayload.spiritRoot || '随机灵根',
-        天赋: (rawPayload.talents?.map((t: Talent) => ({
+        改造核心: rawPayload.spiritRoot || '随机改造',
+        模块: (rawPayload.talents?.map((t: Talent) => ({
           id: t.id,
           name: t.name,
           description: t.description || '',
           talent_cost: t.talent_cost,
           rarity: t.rarity
         })) || []) as Talent[],
-        先天六司: convertedAttributes,
-        后天六司: {
-          根骨: 0,
-          灵性: 0,
-          悟性: 0,
-          气运: 0,
+        初始六维: convertedAttributes,
+        成长六维: {
+          体质: 0,
+          能源: 0,
+          算法: 0,
+          资源感知: 0,
           魅力: 0,
-          心性: 0,
+          心智: 0,
         }
       };
 

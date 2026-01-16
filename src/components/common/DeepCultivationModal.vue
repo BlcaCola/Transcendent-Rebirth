@@ -2,29 +2,29 @@
   <div v-if="visible" class="modal-overlay" @click.self="handleClose">
     <div class="deep-cultivation-modal">
       <div class="modal-header">
-        <h3>{{ $t('深度修炼') }}</h3>
+        <h3>{{ $t('深度训练') }}</h3>
         <button class="close-btn" @click="handleClose">
           <X :size="20" />
         </button>
       </div>
 
       <div class="modal-content">
-        <!-- 功法信息 -->
+        <!-- 模块信息 -->
         <div v-if="technique" class="technique-info-section">
           <div class="info-header">
             <div class="technique-icon" :class="getTechniqueQualityClass">📖</div>
             <div class="technique-details">
               <h4 class="technique-name" :class="getTechniqueQualityClass">{{ technique.名称 }}</h4>
               <div class="technique-quality">
-                {{ technique.品质?.quality || '凡' }}品 {{ technique.品质?.grade || 0 }}阶
+                {{ formatQualityLabel(technique.品质?.quality) }} {{ technique.品质?.grade || 0 }}阶
               </div>
             </div>
           </div>
 
-          <!-- 当前修炼进度 -->
+          <!-- 当前训练进度 -->
           <div class="progress-section">
             <div class="progress-label">
-              <span>{{ $t('当前修炼进度') }}</span>
+              <span>{{ $t('当前训练进度') }}</span>
               <span class="progress-percent">{{ currentProgress }}%</span>
             </div>
             <div class="progress-bar-bg">
@@ -32,18 +32,18 @@
             </div>
           </div>
 
-          <!-- 功法效果 -->
-          <div v-if="technique.功法效果" class="effects-section">
-            <h5>{{ $t('功法效果') }}</h5>
+          <!-- 模块效果 -->
+          <div v-if="technique.模块效果" class="effects-section">
+            <h5>{{ $t('模块效果') }}</h5>
             <ul class="effects-list">
-              <li v-if="technique.功法效果.修炼速度加成">
+              <li v-if="technique.模块效果.训练速度加成">
                 <span class="effect-icon">🚀</span>
-                {{ $t('修炼速度: +{0}%').replace('{0}', ((technique.功法效果.修炼速度加成 - 1) * 100).toFixed(0)) }}
+                {{ $t('训练速度: +{0}%').replace('{0}', ((technique.模块效果.训练速度加成 - 1) * 100).toFixed(0)) }}
               </li>
-              <li v-if="technique.功法效果.属性加成">
+              <li v-if="technique.模块效果.属性加成">
                 <span class="effect-icon">💪</span>
                 {{ $t('属性加成:') }}
-                <span v-for="(value, key) in technique.功法效果.属性加成" :key="key" class="attr-bonus">
+                <span v-for="(value, key) in technique.模块效果.属性加成" :key="key" class="attr-bonus">
                   {{ key }}+{{ value }}
                 </span>
               </li>
@@ -51,10 +51,10 @@
           </div>
         </div>
 
-        <!-- 修炼天数选择 -->
+        <!-- 训练天数选择 -->
         <div class="cultivation-days-section">
-          <label class="section-label">{{ $t('选择修炼天数') }}</label>
-          <p class="section-hint">{{ $t('AI将根据修炼天数生成详细的修炼过程和结果') }}</p>
+          <label class="section-label">{{ $t('选择训练天数') }}</label>
+          <p class="section-hint">{{ $t('AI将根据训练天数生成详细的训练过程和结果') }}</p>
 
           <div class="input-group">
             <input
@@ -91,7 +91,7 @@
           :disabled="!isValidDays"
           @click="handleConfirm"
         >
-          {{ $t('开始修炼') }}
+          {{ $t('开始训练') }}
         </button>
       </div>
     </div>
@@ -137,6 +137,22 @@ const presetDays = [
 const isValidDays = computed(() => {
   return selectedDays.value >= 1 && selectedDays.value <= 3650;
 });
+
+const QUALITY_LABEL_MAP: Record<string, string> = {
+  凡: '基础级',
+  黄: '改良级',
+  玄: '精良级',
+  地: '高级',
+  天: '顶级',
+  圣: '史诗级',
+  神: '传奇级',
+  仙: '神话级'
+};
+
+const formatQualityLabel = (quality?: string): string => {
+  if (!quality) return '基础级';
+  return QUALITY_LABEL_MAP[quality] || `${quality}`;
+};
 
 const getTechniqueQualityClass = computed(() => {
   const quality = props.technique?.品质?.quality || '凡';
@@ -257,7 +273,7 @@ watch(() => props.visible, (newVal) => {
   gap: 24px;
 }
 
-/* 功法信息区域 */
+/* 模块信息区域 */
 .technique-info-section {
   background: var(--color-surface-light);
   border: 1px solid var(--color-border);
@@ -413,7 +429,7 @@ watch(() => props.visible, (newVal) => {
   margin-left: 4px;
 }
 
-/* 修炼天数选择区域 */
+/* 训练天数选择区域 */
 .cultivation-days-section {
   display: flex;
   flex-direction: column;

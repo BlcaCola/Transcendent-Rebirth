@@ -369,14 +369,14 @@ const saveVariable = async (item: EditingItem) => {
         { from: '角色.身体.部位开发', to: 'bodyPartDevelopment' },
         { from: '角色.背包', to: 'inventory' },
         { from: '角色.装备', to: 'equipment' },
-        { from: '角色.功法', to: 'techniqueSystem' },
-        { from: '角色.修炼', to: 'cultivation' },
-        { from: '角色.大道', to: 'thousandDao' },
+        { from: '角色.程序', to: 'techniqueSystem' },
+        { from: '角色.训练', to: 'cultivation' },
+        { from: '角色.流派', to: 'thousandDao' },
         { from: '角色.技能', to: 'skillState' },
 
         // 社交
         { from: '社交.关系', to: 'relationships' },
-        { from: '社交.宗门', to: 'sectSystem' },
+        { from: '社交.组织', to: 'sectSystem' },
         { from: '社交.事件', to: 'eventSystem' },
         { from: '社交.记忆', to: 'memory' },
 

@@ -13,7 +13,7 @@
           <stop offset="100%" stop-color="rgba(100, 181, 246, 0.1)" />
         </linearGradient>
       </defs>
-      
+
       <g :transform="`translate(${center}, ${center})`">
         <!-- Hexagon Grid Lines -->
         <polygon v-for="level in gridLevels" :key="`grid-${level}`" :points="getHexagonPoints(level / gridLevels)" class="grid-line" />
@@ -78,12 +78,12 @@ const gridLevels = 5;
 const statOrder: AttributeKey[] = ['root_bone', 'spirituality', 'comprehension', 'fortune', 'charm', 'temperament'];
 
 const statNames: Record<AttributeKey, string> = {
-  root_bone: t('根骨'),
-  spirituality: t('灵性'),
-  comprehension: t('悟性'),
-  fortune: t('气运'),
+  root_bone: t('体质'),
+  spirituality: t('能源'),
+  comprehension: t('算法'),
+  fortune: t('资源感知'),
   charm: t('魅力'),
-  temperament: t('心性'),
+  temperament: t('心智'),
 };
 
 const getHexagonPoints = (scale = 1) => {

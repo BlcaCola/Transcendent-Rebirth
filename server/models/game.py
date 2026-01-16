@@ -44,10 +44,10 @@ class Origin(Model):
 
 
 class SpiritRoot(Model):
-    """灵根模型"""
+    """改造核心模型"""
     id = fields.IntField(pk=True)
-    name = fields.CharField(max_length=100, description="灵根名称")
-    description = fields.TextField(description="灵根描述")
+    name = fields.CharField(max_length=100, description="改造核心名称")
+    description = fields.TextField(description="改造核心描述")
     elements = fields.JSONField(description="元素组成")
     is_active = fields.BooleanField(default=True, description="是否启用")
     order = fields.IntField(default=0, description="排序")

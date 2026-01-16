@@ -51,9 +51,9 @@ export function validateAndRepairCommandValue(command: TavernCommand): Validatio
   const errors: string[] = [];
 
   try {
-    // 1. 玩家境界对象
-    if (key === '角色.属性.境界' && action === 'set') {
-      const result = validateRealmObject(value, '玩家');
+    // 1. 玩家等级对象
+    if (key === '角色.属性.阶位' && action === 'set') {
+      const result = validateRankObject(value, '玩家');
       errors.push(...result.errors);
     }
 
@@ -76,7 +76,7 @@ export function validateAndRepairCommandValue(command: TavernCommand): Validatio
     }
 
     // 5. 物品对象（set操作）
-    // 只验证完整物品对象，跳过设置物品子属性的操作（如 .描述、.使用效果、.数量、.修炼进度 等）
+    // 只验证完整物品对象，跳过设置物品子属性的操作（如 .描述、.使用效果、.数量、.训练进度 等）
     if (key.startsWith('角色.背包.物品.') && action === 'set') {
       // 计算 key 中的点数量来判断是设置完整物品还是物品属性
       // 角色.背包.物品.item_xxx = 3个点 = 设置完整物品对象
@@ -100,7 +100,7 @@ export function validateAndRepairCommandValue(command: TavernCommand): Validatio
         (value as any).名字 &&
         (value as any).性别 &&
         (value as any).出生日期 &&
-        ((value as any).外貌描述 || (value as any).性格特征 || (value as any).境界);
+        ((value as any).外貌描述 || (value as any).性格特征 || (value as any).阶位);
 
       // 如果看起来是完整NPC对象，则执行完整性验证
       if (isLikelyFullNpcObject) {
@@ -110,17 +110,17 @@ export function validateAndRepairCommandValue(command: TavernCommand): Validatio
       // 否则视为部分更新，跳过验证（避免误伤 set|社交.关系.NPC|{"好感度":...} 之类的指令）
     }
 
-    // 7. NPC境界对象
-    if (key.includes('社交.关系.') && key.endsWith('.境界') && action === 'set') {
-      const result = validateRealmObject(value, 'NPC');
+    // 7. NPC等级对象
+    if (key.includes('社交.关系.') && key.endsWith('.阶位') && action === 'set') {
+      const result = validateRankObject(value, 'NPC');
       errors.push(...result.errors);
     }
 
-    // 8. 大道对象
-    if (key.startsWith('角色.大道.大道列表.') && action === 'set' && (key.match(/\./g) || []).length === 3) {
-      // 从 key 中提取道名（如 "角色.大道.大道列表.剑道" -> "剑道"）
-      const daoName = key.split('.')[3];
-      const result = validateDaoObject(value, daoName);
+    // 8. 流派对象
+    if (key.startsWith('角色.流派.流派列表.') && action === 'set' && (key.match(/\./g) || []).length === 3) {
+      // 从 key 中提取流派名（如 "角色.流派.流派列表.黑客流" -> "黑客流"）
+      const protocolName = key.split('.')[3];
+      const result = validateProtocolObject(value, protocolName);
       errors.push(...result.errors);
     }
 
@@ -144,33 +144,33 @@ export function validateAndRepairCommandValue(command: TavernCommand): Validatio
 }
 
 /**
- * 验证境界对象
+ * 验证等级对象
  */
-function validateRealmObject(value: any, type: '玩家' | 'NPC'): ValidationResult {
+function validateRankObject(value: any, type: '玩家' | 'NPC'): ValidationResult {
   const errors: string[] = [];
 
   if (typeof value !== 'object' || value === null) {
-    errors.push('境界必须是对象类型');
+    errors.push('等级必须是对象类型');
     return { valid: false, errors };
   }
 
-  // 玩家和NPC境界统一验证：必需名称和阶段，其他字段可选
-  if (!value.名称) errors.push('境界缺少"名称"字段');
-  if (!value.阶段) errors.push('境界缺少"阶段"字段');
+  // 玩家和NPC阶位统一验证：必需名称和阶段，其他字段可选
+  if (!value.名称) errors.push('等级缺少"名称"字段');
+  if (!value.阶段) errors.push('等级缺少"阶段"字段');
 
   // 可选字段类型检查（如果提供了就检查类型）
   if (value.当前进度 !== undefined) {
     const numeric = coerceNumeric(value.当前进度);
-    if (numeric === null) errors.push('境界"当前进度"字段类型错误，应为数字');
+    if (numeric === null) errors.push('等级"当前进度"字段类型错误，应为数字');
     else value.当前进度 = numeric;
   }
   if (value.下一级所需 !== undefined) {
     const numeric = coerceNumeric(value.下一级所需);
-    if (numeric === null) errors.push('境界"下一级所需"字段类型错误，应为数字');
+    if (numeric === null) errors.push('等级"下一级所需"字段类型错误，应为数字');
     else value.下一级所需 = numeric;
   }
-  if (value.突破描述 !== undefined && typeof value.突破描述 !== 'string') {
-    errors.push('境界"突破描述"字段类型错误，应为字符串');
+  if (value.升级描述 !== undefined && typeof value.升级描述 !== 'string') {
+    errors.push('等级"升级描述"字段类型错误，应为字符串');
   }
 
   return { valid: errors.length === 0, errors };
@@ -243,21 +243,21 @@ function validateItemObject(value: any): ValidationResult {
   if (typeof value.数量 !== 'number') errors.push('物品缺少"数量"字段或类型错误');
   if (value.描述 === undefined) errors.push('物品缺少"描述"字段');
 
-  // 功法类型特殊处理
-  if (value.类型 === '功法') {
-    if (!Array.isArray(value.功法技能)) {
-      errors.push('功法物品缺少"功法技能"数组');
-    } else if (value.功法技能.length === 0) {
-      errors.push('功法物品的"功法技能"数组不能为空，至少需要1个技能');
+  // 程序类型特殊处理
+  if (value.类型 === '程序') {
+    if (!Array.isArray(value.程序技能)) {
+      errors.push('程序物品缺少"程序技能"数组');
+    } else if (value.程序技能.length === 0) {
+      errors.push('程序物品的"程序技能"数组不能为空，至少需要1个技能');
     } else {
       // 验证每个技能对象
-      value.功法技能.forEach((skill: any, index: number) => {
+      value.程序技能.forEach((skill: any, index: number) => {
         if (typeof skill !== 'object' || skill === null) {
-          errors.push(`功法技能[${index}]不是对象类型`);
+          errors.push(`程序技能[${index}]不是对象类型`);
         } else {
-          if (!skill.技能名称) errors.push(`功法技能[${index}]缺少"技能名称"字段`);
-          if (skill.技能描述 === undefined) errors.push(`功法技能[${index}]缺少"技能描述"字段`);
-          if (typeof skill.熟练度要求 !== 'number') errors.push(`功法技能[${index}]缺少"熟练度要求"字段或类型错误`);
+          if (!skill.技能名称) errors.push(`程序技能[${index}]缺少"技能名称"字段`);
+          if (skill.技能描述 === undefined) errors.push(`程序技能[${index}]缺少"技能描述"字段`);
+          if (typeof skill.熟练度要求 !== 'number') errors.push(`程序技能[${index}]缺少"熟练度要求"字段或类型错误`);
         }
       });
     }
@@ -282,10 +282,10 @@ function validateNPCObject(value: any): ValidationResult {
   if (!value.性别) errors.push('NPC缺少"性别"字段');
   if (!value.出生日期) errors.push('NPC缺少"出生日期"字段');
 
-  if (!value.境界) {
-    errors.push('NPC缺少"境界"字段');
+  if (!value.阶位) {
+    errors.push('NPC缺少"阶位"字段');
   } else {
-    const realmResult = validateRealmObject(value.境界, 'NPC');
+    const realmResult = validateRankObject(value.阶位, 'NPC');
     errors.push(...realmResult.errors);
   }
 
@@ -304,8 +304,8 @@ function validateNPCObject(value: any): ValidationResult {
   if (typeof value.好感度 !== 'number') errors.push('NPC缺少"好感度"字段或类型错误');
 
   // 可选字段验证
-  if (value.天赋 !== undefined && !Array.isArray(value.天赋)) {
-    errors.push('NPC天赋必须是数组类型');
+  if (value.模块 !== undefined && !Array.isArray(value.模块)) {
+    errors.push('NPC模块必须是数组类型');
   }
 
   if (value.私密信息 && typeof value.私密信息 === 'object') {
@@ -326,32 +326,32 @@ function validateNPCObject(value: any): ValidationResult {
 }
 
 /**
- * 验证大道对象
+ * 验证流派对象
  * 支持自动补全缺失字段
- * @param value 大道对象
- * @param daoNameFromKey 从 key 中提取的道名（如 "剑道"）
+ * @param value 流派对象
+ * @param protocolNameFromKey 从 key 中提取的流派名（如 "黑客流"）
  */
-function validateDaoObject(value: any, daoNameFromKey?: string): ValidationResult {
+function validateProtocolObject(value: any, protocolNameFromKey?: string): ValidationResult {
   const errors: string[] = [];
 
   if (typeof value !== 'object' || value === null) {
-    errors.push('大道对象必须是对象类型');
+    errors.push('流派对象必须是对象类型');
     return { valid: false, errors };
   }
 
   // 🔥 自动补全缺失字段，而不是直接拒绝
-  // 优先使用 key 中提取的道名
-  if (!value.道名) {
-    const possibleName = daoNameFromKey || value.name || value.名称;
+  // 优先使用 key 中提取的流派名
+  if (!value.流派名) {
+    const possibleName = protocolNameFromKey || value.name || value.名称;
     if (possibleName) {
-      value.道名 = possibleName;
+      value.流派名 = possibleName;
     } else {
-      errors.push('大道对象缺少"道名"字段');
+      errors.push('流派对象缺少"流派名"字段');
     }
   }
 
   if (value.描述 === undefined) {
-    value.描述 = value.description || '修行之道';
+    value.描述 = value.description || '系统流派';
   }
 
   if (!Array.isArray(value.阶段列表)) {

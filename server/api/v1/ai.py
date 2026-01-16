@@ -100,7 +100,7 @@ async def save_ai_content(
         name = str(content.get("name", "")).strip()
         description = str(content.get("description", "")).strip()
         if not name or not description:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="灵根内容缺少 name 或 description")
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="改造核心内容缺少 name 或 description")
         elements = content.get("elements") if isinstance(content.get("elements"), dict) else {}
         order = int(content.get("order", 0) or 0)
         created = await SpiritRoot.create(

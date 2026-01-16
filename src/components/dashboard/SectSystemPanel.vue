@@ -29,21 +29,21 @@ const route = useRoute();
 const router = useRouter();
 const gameStateStore = useGameStateStore();
 
-// 判断是否已加入宗门
+// 判断是否已加入组织
 const hasJoinedSect = computed(() => {
   const sectInfo = gameStateStore.sectMemberInfo;
-  return sectInfo && sectInfo.宗门名称;
+  return sectInfo && sectInfo.组织名称;
 });
 
 // 所有Tab定义
 const allTabs = [
-  { name: 'SectOverview', label: '宗门概览', icon: Home, requireJoin: false },
-  { name: 'SectMembers', label: '宗门成员', icon: Users, requireJoin: true },
-  { name: 'SectLibrary', label: '宗门藏经', icon: BookOpen, requireJoin: true },
+  { name: 'SectOverview', label: '组织概览', icon: Home, requireJoin: false },
+  { name: 'SectMembers', label: '组织成员', icon: Users, requireJoin: true },
+  { name: 'SectLibrary', label: '组织资料库', icon: BookOpen, requireJoin: true },
   { name: 'SectContribution', label: '贡献兑换', icon: Coins, requireJoin: true },
 ];
 
-// 根据是否加入宗门过滤Tab
+// 根据是否加入组织过滤Tab
 const tabs = computed(() => {
   return allTabs.filter(tab => !tab.requireJoin || hasJoinedSect.value);
 });

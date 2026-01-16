@@ -2,9 +2,9 @@
 
 /**
  * @fileoverview
- * 坤舆图志 - 游戏核心数据结构天规
+ * 系统蓝图 - 游戏核心数据结构规范
  * 此文件定义了整个游戏存档、角色、NPC等核心数据的TypeScript类型。
- * 所有数据结构均基于道友提供的最新《大道坤舆图》。
+ * 所有数据结构均基于最新的系统设计文档。
  */
 
 import type { QualityType, GradeType } from '@/data/itemQuality';
@@ -19,7 +19,7 @@ export interface AIMetadata {}
 
 // --- 系统与规则（可嵌入提示与限制） ---
 export interface AttributeLimitConfig {
-  先天六司?: {
+  初始六维?: {
     每项上限: number; // 六项单项最大值（默认10）
   };
 }
@@ -62,7 +62,7 @@ export interface MemoryEntry {
   type: 'user_action' | 'ai_response' | 'system_event' | 'summary' | 'short' | 'mid' | 'long';
   hidden?: boolean; // 是否为隐藏记忆
   convertedFrom?: 'short' | 'mid' | 'long'; // 转换来源
-  category: 'combat' | 'social' | 'cultivation' | 'exploration' | 'other';
+  category: 'combat' | 'social' | 'training' | 'exploration' | 'other';
   metadata?: {
     location?: string;
     npcs?: string[];
@@ -89,36 +89,36 @@ export interface ProcessedResponse {
   };
 }
 
-// --- 天道系统相关类型 ---
-export interface HeavenlyCalculation {
-  天道值: number;
+// --- 系统规则相关类型 ---
+export interface SystemCalibration {
+  系统值: number;
   修正因子: number;
   基础计算: any;
   [key: string]: any;
 }
 
-// 简化的核心属性类型（仅用于天道系统内部计算）
+// 简化的核心属性类型（仅用于系统规则内部计算）
 export interface CoreAttributes {
   攻击力: number;
   防御力: number;
-  灵识: number;
+  感知: number;
   敏捷: number;
-  气运: number;
-  境界加成: number;
+  资源感知: number;
+  阶位加成: number;
 }
 
-// 简化的死亡状态类型（仅用于天道系统内部判定）
+// 简化的死亡状态类型（仅用于系统规则内部判定）
 export interface DeathState {
   已死亡: boolean;
   死亡时间?: string;
   死亡原因?: string;
 }
 
-// 简化的天道系统类型（仅用于内部计算，不存储到 PlayerStatus）
-export interface HeavenlySystem {
+// 简化的系统规则类型（仅用于内部计算，不存储到 PlayerStatus）
+export interface SystemCore {
   版本: string;
   角色名称: string;
-  境界等级: number;
+  阶位等级: number;
   核心属性: CoreAttributes;
   死亡状态: DeathState;
   更新时间: string;
@@ -126,42 +126,42 @@ export interface HeavenlySystem {
 
 // --- 基础与通用类型 ---
 
-export interface Vector2 {
-  X: number;
-  Y: number;
+export interface Rank {
+  名称: string;        // 阶位名称
+  阶段: string;        // 阶位阶段，如"初期"、"中期"、"后期"、"圆满"
+  当前进度: number;    // 当前训练进度
+  下一级所需: number;  // 升级到下一阶段所需进度
+  升级描述: string;    // 升级到下一阶段的描述
 }
+// 阶位子阶段类型
+export type RankStage = '初期' | '中期' | '后期' | '圆满' | '极境';
 
-export interface ValuePair<T> {
-  当前: T;
-  上限: T;
+// 阶位子阶段定义
+export interface RankStageDefinition {
+  stage: RankStage;
+  title: string;
+  breakthrough_difficulty: '简单' | '普通' | '困难' | '极难' | '逆天';
+  resource_multiplier: number; // 资源倍数（生命值、电量、带宽）
+  lifespan_bonus: number; // 寿命加成
+  special_abilities: string[]; // 特殊能力
 }
-
-/** 英文字段名的ValuePair（用于vitals字段） */
-export interface EnglishValuePair<T> {
-  current: T;
-  max: T;
-}
-
-/** 物品品质信息 - 新版本 */
-
-export interface ItemQuality {
-  quality: QualityType; // 品质等级：神、仙、天、地、玄、黄、凡
+  quality: QualityType; // 品质等级：超核、传奇、精英、专业、增强、标准
   grade: GradeType; // 品级：0-10
 }
 
 
-// --- 先天六司 ---
+// --- 初始六维 ---
 
 export interface InnateAttributes {
-  根骨: number;
-  灵性: number;
-  悟性: number;
-  气运: number;
+  体质: number;
+  能源: number;
+  算法: number;
+  资源感知: number;
   魅力: number;
-  心性: number;
+  心智: number;
 }
 
-/** 英文键名的先天六司，用于组件传参 */
+/** 英文键名的初始六维，用于组件传参 */
 
 export interface InnateAttributesEnglish {
   root_bone: number;
@@ -176,33 +176,33 @@ export type AttributeKey = keyof InnateAttributesEnglish;
 
 // --- 物品与背包 ---
 
-/** 装备增幅或功法属性加成 */
+/** 装备增幅或程序属性加成 */
 export interface AttributeBonus {
-  气血上限?: number;
-  灵气上限?: number;
-  神识上限?: number;
-  后天六司?: Partial<InnateAttributes>;
+  生命值上限?: number;
+  电量上限?: number;
+  带宽上限?: number;
+  成长六维?: Partial<InnateAttributes>;
   [key: string]: any; // 允许其他动态属性
 }
 
-/** 功法技能（背包中功法物品的技能数组） */
-export interface TechniqueSkill {
+/** 程序技能（背包中程序物品的技能数组） */
+export interface ProgramSkill {
   技能名称: string;
   技能描述: string;
   消耗?: string;
-  熟练度要求?: number; // 达到此修炼进度后解锁（0-100百分比）
+  熟练度要求?: number; // 达到此训练进度后解锁（0-100百分比）
   [key: string]: any; // 允许其他动态属性
 }
 
-/** 功法效果 */
-export interface TechniqueEffects {
-  修炼速度加成?: number;
+/** 程序效果 */
+export interface ProgramEffects {
+  训练速度加成?: number;
   属性加成?: Partial<InnateAttributes & { [key: string]: number }>;
   特殊能力?: string[];
 }
 
 /** 物品类型 */
-export type ItemType = '装备' | '功法' | '丹药' | '材料' | '其他';
+export type ItemType = '装备' | '程序' | '药剂' | '材料' | '其他';
 
 /** 基础物品接口 */
 export interface BaseItem {
@@ -211,7 +211,7 @@ export interface BaseItem {
   类型: ItemType;
   品质: ItemQuality;
   数量: number;
-  已装备?: boolean; // true表示装备中/修炼中，false表示未装备
+  已装备?: boolean; // true表示装备中/训练中，false表示未装备
   描述: string;
   可叠加?: boolean;
 }
@@ -223,38 +223,38 @@ export interface EquipmentItem extends BaseItem {
   特殊效果?: string | AttributeBonus;
 }
 
-/** 功法类型物品 */
-export interface TechniqueItem extends BaseItem {
-  类型: '功法';
-  功法效果?: TechniqueEffects;
-  功法技能?: TechniqueSkill[]; // ✅ 改为数组格式
-  修炼进度?: number; // 0-100 百分比
-  修炼中?: boolean; // 是否正在修炼（兼容旧代码）
+/** 程序类型物品 */
+export interface ProgramItem extends BaseItem {
+  类型: '程序';
+  程序效果?: ProgramEffects;
+  程序技能?: ProgramSkill[]; // ✅ 改为数组格式
+  训练进度?: number; // 0-100 百分比
+  训练中?: boolean; // 是否正在训练（兼容旧代码）
   已解锁技能?: string[]; // ✅ 已解锁的技能名称列表
-  // 注意：新代码应使用 已装备 字段，修炼中 仅为向后兼容
+  // 注意：新代码应使用 已装备 字段，训练中 仅为向后兼容
 }
 
-/** 消耗品/材料类型物品（丹药、材料、其他） */
+/** 消耗品/材料类型物品（药剂、材料、其他） */
 export interface ConsumableItem extends BaseItem {
-  类型: '丹药' | '材料' | '其他';
+  类型: '药剂' | '材料' | '其他';
   使用效果?: string;
 }
 
 /** 物品的联合类型 */
-export type Item = EquipmentItem | TechniqueItem | ConsumableItem;
+export type Item = EquipmentItem | ProgramItem | ConsumableItem;
 
 
-/** 修炼功法引用（只存储引用，不存储完整数据） */
-export interface CultivationTechniqueReference {
-  物品ID: string;    // 引用背包中的功法ID
-  名称: string;      // 功法名称（用于快速显示）
+/** 训练程序引用（只存储引用，不存储完整数据） */
+export interface ProgramReference {
+  物品ID: string;    // 引用背包中的程序ID
+  名称: string;      // 程序名称（用于快速显示）
 }
 
 /** 掌握的技能（技能数据+进度合并） */
 export interface MasteredSkill {
   技能名称: string;
   技能描述: string;
-  来源: string; // 来源功法名称
+  来源: string; // 来源程序名称
   消耗?: string; // 消耗说明
 
   // 进度数据（与技能数据合并）
@@ -263,16 +263,16 @@ export interface MasteredSkill {
 }
 
 export interface Inventory extends AIMetadata {
-  灵石: {
-    下品: number;
-    中品: number;
-    上品: number;
-    极品: number;
+  信用点: {
+    低额: number;
+    中额: number;
+    高额: number;
+    最高额: number;
   };
   物品: Record<string, Item>; // 物品现在是对象结构，key为物品ID，value为Item对象
 }
 
-/** 功法中的技能信息 */
+/** 程序中的技能信息 */
 export interface SkillInfo {
   name: string;
   description: string;
@@ -281,53 +281,53 @@ export interface SkillInfo {
   unlocked: boolean;
 }
 
-// --- 宗门系统相关类型 ---
+// --- 组织系统相关类型 ---
 
-/** 宗门类型 */
-export type SectType = '正道宗门' | '魔道宗门' | '中立宗门' | '商会' | '世家' | '散修联盟';
+/** 组织类型 */
+export type FactionType = '企业集团' | '地下组织' | '街区帮派' | '情报网络' | '商会' | '家族' | '独立联盟';
 
-/** 宗门职位 */
-export type SectPosition = '散修' | '外门弟子' | '内门弟子' | '核心弟子' | '传承弟子' | '执事' | '长老' | '太上长老' | '副掌门' | '掌门';
+/** 组织职位 */
+export type FactionPosition = '独行者' | '外围成员' | '内部成员' | '核心成员' | '继承人' | '执行官' | '顾问' | '董事' | '副掌门' | '首领';
 
-/** 宗门关系 */
-export type SectRelationship = '仇敌' | '敌对' | '冷淡' | '中立' | '友好' | '盟友' | '附庸';
+/** 组织关系 */
+export type FactionRelationship = '仇敌' | '敌对' | '冷淡' | '中立' | '友好' | '盟友' | '附庸';
 
-/** 修为境界等级 */
-export type RealmLevel = '练气' | '筑基' | '金丹' | '元婴' | '化神' | '炼虚' | '合体' | '渡劫';
+/** 阶位等级 */
+export type RankLevel = '街头级' | '区域级' | '城域级' | '核心级' | '主权级' | '超域级' | '星域级' | '极域级';
 
-/** 宗门成员信息 */
-export interface SectMemberInfo {
-  宗门名称: string;
-  宗门类型: SectType;
-  职位: SectPosition;
+/** 组织成员信息 */
+export interface FactionMemberInfo {
+  组织名称: string;
+  组织类型: FactionType;
+  职位: FactionPosition;
   贡献: number;
-  关系: SectRelationship;
+  关系: FactionRelationship;
   声望: number;
   加入日期: string;
   描述?: string;
 }
 
-/** 宗门基础信息 */
-export interface SectInfo {
-  名称: string; // 宗门名称
-  类型: SectType; // 宗门类型
-  等级: '一流' | '二流' | '三流' | '末流'; // 宗门等级
+/** 组织基础信息 */
+export interface FactionInfo {
+  名称: string; // 组织名称
+  类型: FactionType; // 组织类型
+  等级: '一流' | '二流' | '三流' | '末流'; // 组织等级
   位置?: string; // 总部位置
-  描述: string; // 宗门描述
-  特色: string[]; // 宗门特色
-  成员数量: SectMemberCount; // 成员数量统计
-  与玩家关系: SectRelationship; // 与玩家的关系
-  声望: number; // 玩家在该宗门的声望
+  描述: string; // 组织描述
+  特色: string[]; // 组织特色
+  成员数量: FactionMemberCount; // 成员数量统计
+  与玩家关系: FactionRelationship; // 与玩家的关系
+  声望: number; // 玩家在该组织的声望
   可否加入: boolean; // 是否可以加入
   加入条件?: string[]; // 加入条件
   加入好处?: string[]; // 加入后的好处
-  // 新增：宗门领导和实力展示
+  // 新增：组织领导和实力展示
   领导层?: {
-    宗主: string; // 宗主姓名
-    宗主修为: string; // 如"元婴后期"
-    副宗主?: string; // 副宗主姓名（如有）
-    长老数量: number; // 长老总数
-    最强修为: string; // 宗门内最强修为
+    首领: string; // 首领姓名
+    首领等级: string; // 如"核心级"
+    副首领?: string; // 副首领姓名（如有）
+    顾问数量: number; // 顾问总数
+    最强等级: string; // 组织内最高阶位
   };
   // 新增：简化的势力范围信息
   势力范围?: {
@@ -337,68 +337,68 @@ export interface SectInfo {
   };
 }
 
-/** 宗门成员数量统计 */
-export interface SectMemberCount {
+/** 组织成员数量统计 */
+export interface FactionMemberCount {
   总数?: number; // 总成员数
   total?: number; // 英文字段名兼容
-  按境界?: Record<RealmLevel, number>; // 按境界统计
-  byRealm?: Record<string, number>; // 英文字段名兼容
-  按职位?: Record<SectPosition, number>; // 按职位统计
+  按阶位?: Record<RankLevel, number>; // 按阶位统计
+  byRank?: Record<string, number>; // 英文字段名兼容
+  按职位?: Record<FactionPosition, number>; // 按职位统计
   byPosition?: Record<string, number>; // 英文字段名兼容
 }
 
-/** 宗门系统数据 */
-export interface SectSystemData extends AIMetadata {
-  availableSects: SectInfo[]; // 可用的宗门列表
-  sectRelationships: Record<string, number>; // 与各宗门的关系值
-  sectHistory: string[]; // 宗门历史记录 (修复拼写错误)
+/** 组织系统数据 */
+export interface FactionSystemData extends AIMetadata {
+  availableFactions: FactionInfo[]; // 可用的组织列表
+  factionRelationships: Record<string, number>; // 与各组织的关系值
+  factionHistory: string[]; // 组织历史记录 (修复拼写错误)
 }
 
-/** 宗门系统迁移记录 */
-export interface SectMigrationRecord {
+/** 组织系统迁移记录 */
+export interface FactionMigrationRecord {
   来源版本: number;
   目标版本: number;
   时间: string;
   说明?: string;
 }
 
-/** 宗门系统数据 - V2 */
-export interface SectSystemV2 extends AIMetadata {
+/** 组织系统数据 - V2 */
+export interface FactionSystemV2 extends AIMetadata {
   版本: number;
-  当前宗门?: string | null;
-  宗门档案: Record<string, WorldFaction>;
-  宗门成员?: Record<string, string[]>;
-  宗门藏经阁?: Record<string, any[]>;
-  宗门贡献商店?: Record<string, any[]>;
-  迁移记录?: SectMigrationRecord;
-  内容状态?: Record<string, SectContentStatus>; // 宗门内容初始化状态
+  当前组织?: string | null;
+  组织档案: Record<string, WorldFaction>;
+  组织成员?: Record<string, string[]>;
+  组织档案库?: Record<string, any[]>;
+  组织供应站?: Record<string, any[]>;
+  迁移记录?: FactionMigrationRecord;
+  内容状态?: Record<string, FactionContentStatus>; // 组织内容初始化状态
 }
 
-/** 宗门内容初始化状态 */
-export interface SectContentStatus {
-  藏经阁已初始化: boolean;
-  贡献商店已初始化: boolean;
+/** 组织内容初始化状态 */
+export interface FactionContentStatus {
+  档案库已初始化: boolean;
+  供应站已初始化: boolean;
   最后更新时间?: string;
   演变次数: number; // AI随机增加内容的次数
 }
 
-/** 宗门藏经阁功法 - 扩展版本 */
-export interface SectLibraryTechniqueExtended {
+/** 组织档案库程序 - 扩展版本 */
+export interface FactionArchiveProgramExtended {
   id: string;
   name: string;
   quality: string;
   qualityTier: string;
   cost: number;
   description: string;
-  功法效果?: string;
-  境界要求?: string;
-  职位要求?: string; // 外门弟子/内门弟子/核心弟子等
+  程序效果?: string;
+  阶位要求?: string;
+  职位要求?: string; // 外围成员/内部成员/核心成员等
   已被兑换?: boolean;
   剩余数量?: number;
 }
 
-/** 宗门贡献商店物品 - 扩展版本 */
-export interface SectShopItemExtended {
+/** 组织供应站物品 - 扩展版本 */
+export interface FactionSupplyItemExtended {
   id: string;
   name: string;
   icon: string;
@@ -413,31 +413,31 @@ export interface SectShopItemExtended {
   稀有度?: '普通' | '稀有' | '珍贵' | '极品';
 }
 
-// --- 三千大道系统 ---
+// --- 流派系统 ---
 
-/** 大道阶段定义 */
-export interface DaoStage {
+/** 流派阶段定义 */
+export interface ProtocolStage {
   名称: string;
   描述: string;
   突破经验: number;
 }
 
-/** 大道数据（大道定义+进度合并） */
-export interface DaoData {
-  道名: string;
+/** 流派数据（流派定义+进度合并） */
+export interface ProtocolData {
+  流派名: string;
   描述: string;
-  阶段列表: DaoStage[]; // 大道的所有阶段定义
+  阶段列表: ProtocolStage[]; // 流派的所有阶段定义
 
-  // 进度数据（与大道数据合并）
+  // 进度数据（与流派数据合并）
   是否解锁: boolean;
   当前阶段: number; // 阶段索引，0为"入门"
   当前经验: number;
   总经验: number;
 }
 
-/** 三千大道系统数据 */
-export interface ThousandDaoSystem extends AIMetadata {
-  大道列表: Record<string, DaoData>; // 以大道名称为key，数据+进度合并
+/** 流派系统数据 */
+export interface ProtocolSystem extends AIMetadata {
+  流派列表: Record<string, ProtocolData>; // 以流派名称为key，数据+进度合并
 }
 
 // --- 装备 ---
@@ -448,10 +448,10 @@ export interface EquipmentSlot {
   物品ID: string;
   装备特效?: string[];
   装备增幅?: {
-    气血上限?: number;
-    灵气上限?: number;
-    神识上限?: number;
-    后天六司?: Partial<InnateAttributes>;
+    生命值上限?: number;
+    电量上限?: number;
+    带宽上限?: number;
+    成长六维?: Partial<InnateAttributes>;
   };
   耐久度?: ValuePair<number>;
   品质?: ItemQuality;
@@ -490,28 +490,28 @@ export interface StatusEffect {
 
 // --- 角色实时状态 ---
 
-export interface Realm {
-  名称: string;        // 境界名称，如"练气"、"筑基"
-  阶段: string;        // 境界阶段，如"初期"、"中期"、"后期"、"圆满"
-  当前进度: number;    // 当前修炼进度
-  下一级所需: number;  // 突破到下一阶段所需进度
-  突破描述: string;    // 突破到下一阶段的描述
+export interface Rank {
+  名称: string;        // 阶位名称
+  阶段: string;        // 阶位阶段，如"初期"、"中期"、"后期"、"圆满"
+  当前进度: number;    // 当前训练进度
+  下一级所需: number;  // 升级到下一阶段所需进度
+  升级描述: string;    // 升级到下一阶段的描述
 }
-// 境界子阶段类型
-export type RealmStage = '初期' | '中期' | '后期' | '圆满' | '极境';
+// 阶位子阶段类型
+export type RankStage = '初期' | '中期' | '后期' | '圆满' | '极境';
 
-// 境界子阶段定义
-export interface RealmStageDefinition {
-  stage: RealmStage;
+// 阶位子阶段定义
+export interface RankStageDefinition {
+  stage: RankStage;
   title: string;
   breakthrough_difficulty: '简单' | '普通' | '困难' | '极难' | '逆天';
-  resource_multiplier: number; // 资源倍数（气血、灵气、神识）
+  resource_multiplier: number; // 资源倍数（生命值、电量、带宽）
   lifespan_bonus: number; // 寿命加成
   special_abilities: string[]; // 特殊能力
-  can_cross_realm_battle?: boolean; // 是否可越阶战斗
+  can_cross_rank_battle?: boolean; // 是否可越阶战斗
 }
 
-export interface RealmDefinition {
+export interface RankDefinition {
   level: number;
   name: string;
   title: string;
@@ -519,48 +519,48 @@ export interface RealmDefinition {
   lifespan: string;
   activityScope: string;
   gapDescription: string;
-  stages?: RealmStageDefinition[]; // 境界子阶段，凡人境界没有子阶段
+  stages?: RankStageDefinition[]; // 阶位子阶段，凡人阶位没有子阶段
 }
 
 
 
 export interface PlayerStatus extends AIMetadata {
-  境界: Realm; // 境界包含了修为进度（当前进度 = 修为当前，下一级所需 = 修为最大）
+  阶位: Rank; // 阶位包含了训练进度（当前进度 = 训练当前，下一级所需 = 训练最大）
   声望: number;
   位置: {
     描述: string;
     x?: number; // 经度坐标 (Longitude, 通常 100-115)
     y?: number; // 纬度坐标 (Latitude, 通常 25-35)
-    灵气浓度?: number; // 当前位置的灵气浓度，1-100，影响修炼速度
+    信号强度?: number; // 当前位置的信号强度，1-100，影响训练速度
   };
-  气血: ValuePair<number>;
-  灵气: ValuePair<number>;
-  神识: ValuePair<number>;
+  生命值: ValuePair<number>;
+  电量: ValuePair<number>;
+  带宽: ValuePair<number>;
   寿命: ValuePair<number>;
   状态效果?: StatusEffect[];
-  宗门信息?: SectMemberInfo;
+  组织信息?: FactionMemberInfo;
   事件系统?: EventSystem;
   // 注意: 玩家的NSFW数据存储在 SaveData.身体部位开发 中，不使用 PrivacyProfile
 }
 
 // --- MECE短路径：拆分“属性/位置/效果” ---
-// 属性：动态数值（境界/气血/灵气/神识/寿命/声望等）
-export type PlayerAttributes = Pick<PlayerStatus, '境界' | '声望' | '气血' | '灵气' | '神识' | '寿命'>;
+// 属性：动态数值（阶位/生命值/电量/带宽/寿命/声望等）
+export type PlayerAttributes = Pick<PlayerStatus, '阶位' | '声望' | '生命值' | '电量' | '带宽' | '寿命'>;
 // 位置：空间信息（从 PlayerStatus.位置 提取）
 export type PlayerLocation = PlayerStatus['位置'];
 
 /** 用于UI组件显示的角色状态信息 */
 export interface CharacterStatusForDisplay {
   name: string;
-  realm: Realm;
+  rank: Rank;
   age: number; // 来自寿命的当前值
   hp: string;
   mana: string;
   spirit: string;
   lifespan: ValuePair<number>;
   声望: number;
-  cultivation_exp: number;
-  cultivation_exp_max: number;
+  training_exp: number;
+  training_exp_max: number;
   root_bone: number;
   spirituality: number;
   comprehension: number;
@@ -577,7 +577,7 @@ export interface WorldContinent {
   name?: string; // 兼容英文名
   描述: string;
   地理特征?: string[];
-  修真环境?: string;
+  科技生态?: string;
   气候?: string;
   天然屏障?: string[];
   大洲边界?: { x: number; y: number }[];
@@ -585,11 +585,11 @@ export interface WorldContinent {
   factions?: (string | number)[]; // 兼容英文名
 }
 
-/** 世界势力信息 - 统一的宗门/势力数据结构 */
+/** 世界势力信息 - 统一的组织/势力数据结构 */
 export interface WorldFaction {
   id?: string | number; // 增加可选的id字段
   名称: string;
-  类型: '修仙宗门' | '魔道宗门' | '中立宗门' | '修仙世家' | '魔道势力' | '商会组织' | '散修联盟' | string;
+  类型: '企业集团' | '地下组织' | '街区帮派' | '情报网络' | '商会' | '家族' | '独立联盟' | string;
   等级: '超级' | '一流' | '二流' | '三流' | string;
   所在大洲?: string; // 增加可选的所在大洲字段
   位置?: string | { x: number; y: number }; // 支持字符串描述或坐标
@@ -599,27 +599,27 @@ export interface WorldFaction {
   与玩家关系?: '敌对' | '中立' | '友好' | '盟友' | string;
   声望值?: number;
 
-  // 宗门系统扩展字段 - 只对宗门类型势力有效
-  特色列表?: string[]; // 宗门特色列表，替代 特色 字符串
+  // 组织系统扩展字段 - 只对组织类型势力有效
+  特色列表?: string[]; // 组织特色列表，替代 特色 字符串
 
-  // 宗门成员统计
-  成员数量?: SectMemberCount;
+  // 组织成员统计
+  成员数量?: FactionMemberCount;
 
-  // 宗门领导层 - 新增必需字段
+  // 组织领导层 - 新增必需字段
   领导层?: {
-    宗主: string;
-    宗主修为: string; // 如"化神中期"、"元婴后期"等
-    副宗主?: string;
-    圣女?: string;
-    圣子?: string;
-    太上长老?: string;
-    太上长老修为?: string;
-    长老数量?: number; // 宗门长老数量
-    最强修为: string; // 宗门内最高修为境界
+    首领: string;
+    首领等级: string; // 如"核心级"
+    副首领?: string;
+    首席分析师?: string;
+    首席工程师?: string;
+    董事?: string;
+    董事等级?: string;
+    顾问数量?: number; // 组织顾问数量
+    最强等级: string; // 组织内最高阶位
     综合战力?: number; // 1-100的综合战力评估
-    核心弟子数?: number;
-    内门弟子数?: number;
-    外门弟子数?: number;
+    核心成员数?: number;
+    内部成员数?: number;
+    外围成员数?: number;
   };
 
   // 势力范围详情
@@ -638,7 +638,7 @@ export interface WorldFaction {
 /** 世界地点信息 */
 export interface WorldLocation {
   名称: string;
-  类型: '城池' | '宗门' | '秘境' | '险地' | '商会' | '坊市' | '洞府' | string;
+  类型: '城区' | '组织' | '禁区' | '险地' | '商会' | '黑市' | '避难所' | string;
   位置: string;
   coordinates?: { x: number; y: number }; // 原始坐标数据
   描述: string;
@@ -678,10 +678,10 @@ export interface WorldInfo {
 
 /** 事件类型（可扩展） */
 export type EventType =
-  | '宗门大战'
+  | '组织冲突'
   | '世界变革'
-  | '异宝降世'
-  | '秘境现世'
+  | '稀有资源出现'
+  | '禁区现世'
   | '人物风波'
   | '势力变动'
   | '天灾人祸'
@@ -797,20 +797,20 @@ export interface NpcProfile {
   外貌描述: string; // AI生成的外貌描述，必填
   性格特征: string[]; // 如：['冷静', '谨慎', '好色']
 
-  // === 修炼属性 ===
-  境界: Realm;
-  灵根: CharacterBaseInfo['灵根'];
-  天赋: CharacterBaseInfo['天赋']; // 天赋列表
-  先天六司: InnateAttributes; // NPC只有一个六司字段，不分先天/最终
+  // === 训练属性 ===
+  阶位: Rank;
+  改造核心: CharacterBaseInfo['改造核心'];
+  模块: CharacterBaseInfo['模块']; // 模块列表
+  初始六维: InnateAttributes; // NPC只有一个六维字段，不分初始/最终
 
   // === 社交关系 ===
-  与玩家关系: string; // 如：道侣、师徒、朋友、敌人、陌生人
+  与玩家关系: string; // 如：搭档、同事、朋友、敌人、陌生人
   好感度: number; // -100 到 100
   当前位置: {
     描述: string;
     x?: number; // 经度坐标 (Longitude, 通常 100-115)
     y?: number; // 纬度坐标 (Latitude, 通常 25-35)
-    灵气浓度?: number; // 当前位置的灵气浓度，1-100
+    信号强度?: number; // 当前位置的信号强度，1-100
   };
   势力归属?: string;
 
@@ -827,7 +827,7 @@ export interface NpcProfile {
 
   // === 资产物品 ===
   背包: {
-    灵石: { 下品: number; 中品: number; 上品: number; 极品: number };
+    信用点: { 低额: number; 中额: number; 高额: number; 最高额: number };
     物品: Record<string, Item>;
   };
 
@@ -875,33 +875,15 @@ export interface GameMessage {
 
 // 保持人物关系为严格的字典，键为NPC名称/ID，值为NpcProfile
 
-export interface SaveData {
-  [key: string]: any;
-}
-
-
 // --- 单个存档槽位 ---
 
 export interface SaveSlot {
-  id?: string;
-  存档名: string;
-  保存时间: string | null;
-  最后保存时间?: string | null; // 新增：最后保存时间
-  游戏内时间?: string;
   游戏时长?: number; // 游戏时长（秒）
   角色名字?: string; // 角色名字
-  境界?: string; // 当前境界
   位置?: string; // 当前位置
-  修为进度?: number; // 修为进度
+  训练进度?: number; // 训练进度
   世界地图?: WorldMap;
-  存档数据?: SaveData | null;
-  // 联机模式专属字段
-  云端同步信息?: {
-    最后同步: string;
-    版本: number;
-    需要同步: boolean;
-    后端创建失败?: boolean; // 标记后端创建是否失败
-  };
+  存档数据?: any | null;
 }
 
 // --- 角色基础信息 (静态) ---
@@ -911,14 +893,14 @@ export interface CharacterBaseInfo extends AIMetadata {
   性别: '男' | '女' | '其他' | string;
   出生日期: { 年: number; 月: number; 日: number; 小时?: number; 分钟?: number }; // 出生日期（用于自动计算年龄）
   种族?: string; // 添加种族字段
-  境界?: string; // NPC当前境界
+  阶位?: string; // NPC当前阶位
   世界: World;
-  天资: TalentTier;
+  模块阶位: TalentTier;
   出生: Origin | string;
-  灵根: SpiritRoot | string;
-  天赋: Talent[];
-  先天六司: InnateAttributes;
-  后天六司: InnateAttributes; // 后天获得的六司加成（装备、大道等），开局默认全为0
+  改造核心: SpiritRoot | string;
+  模块: Talent[];
+  初始六维: InnateAttributes;
+  成长六维: InnateAttributes; // 成长获得的六维加成（装备、流派等），开局默认全为0
   创建时间?: string; // 添加创建时间字段
   描述?: string; // 添加描述字段
 }
@@ -962,7 +944,7 @@ export type QueueActionType =
   | 'item_use'      // 使用物品
   | 'item_equip'    // 装备物品
   | 'item_discard'  // 丢弃物品
-  | 'item_practice' // 修炼功法
+  | 'item_train'    // 训练程序
   | 'npc_interact'  // NPC互动
   | 'custom';       // 自定义动作
 
@@ -1004,74 +986,74 @@ export interface LocalStorageRoot {
 export type Continent = WorldContinent;
 export type Location = WorldLocation;
 
-// --- 修炼速度系统 ---
+// --- 训练速度系统 ---
 
-/** 修炼速度影响因子 */
-export interface CultivationSpeedFactors {
-  灵气浓度系数: number;    // 0.1 - 2.0，基于位置灵气浓度(1-100)
-  先天六司系数: number;    // 0.5 - 2.0，基于先天六司综合值
-  后天六司系数: number;    // 0.0 - 0.6，基于后天六司综合值（额外加成）
+/** 训练速度影响因子 */
+export interface TrainingSpeedFactors {
+  信号强度系数: number;    // 0.1 - 2.0，基于位置信号强度(1-100)
+  初始六维系数: number;    // 0.5 - 2.0，基于初始六维综合值
+  成长六维系数: number;    // 0.0 - 0.6，基于成长六维综合值（额外加成）
   状态效果系数: number;    // 0.5 - 2.0，基于buff/debuff
-  功法加成系数: number;    // 0.0 - 1.0，基于当前修炼功法
-  环境加成系数: number;    // 0.0 - 0.5，洞府、宗门福地等
+  程序加成系数: number;    // 0.0 - 1.0，基于当前训练程序
+  环境加成系数: number;    // 0.0 - 0.5，避难所、组织中心等
 }
 
-/** 修炼速度计算结果 */
-export interface CultivationSpeedResult {
-  基础速度: number;        // 每回合基础修为增加
+/** 训练速度计算结果 */
+export interface TrainingSpeedResult {
+  基础速度: number;        // 每回合基础进度增加
   综合系数: number;        // 所有因子的综合乘数
   最终速度: number;        // 基础速度 * 综合系数
-  预计突破时间: string;    // 预计到达下一阶段的游戏时间
-  因子详情: CultivationSpeedFactors;
+  预计升级时间: string;    // 预计到达下一阶段的游戏时间
+  因子详情: TrainingSpeedFactors;
 }
 
-/** 境界突破时间标准（游戏时间） */
-export interface RealmBreakthroughTime {
-  境界名称: string;
+/** 阶位升级时间标准（游戏时间） */
+export interface RankUpgradeTime {
+  阶位名称: string;
   阶段: string;
-  最短月数: number;        // 最短突破时间（月）
-  标准月数: number;        // 标准突破时间（月）
-  最长月数: number;        // 最长突破时间（月）
+  最短月数: number;        // 最短升级时间（月）
+  标准月数: number;        // 标准升级时间（月）
+  最长月数: number;        // 最长升级时间（月）
   // 兼容旧格式
   最短时间?: string;       // 如 "1年"
   标准时间?: string;       // 如 "5年"
   最长时间?: string;       // 如 "20年"
-  突破难度?: '简单' | '普通' | '困难' | '极难' | '逆天';
+  升级难度?: '简单' | '普通' | '困难' | '极难' | '逆天';
 }
 
-// --- 六司系统约束 ---
+// --- 六维系统约束 ---
 
-/** 六司约束配置 */
-export interface SixSiConstraints {
-  先天六司: {
+/** 六维约束配置 */
+export interface SixDimConstraints {
+  初始六维: {
     每项上限: 10;          // 固定值，不可修改
     总分上限: 60;          // 6项 × 10
     对加成权重: 0.7;       // 占总加成的70%
   };
-  后天六司: {
+  成长六维: {
     每项上限: 20;          // 单项最大值
-    单次增加上限: 3;       // 每次最多增加1-3点（极稀有机缘可达5点）
+    单次增加上限: 3;       // 每次最多增加1-3点（极稀有资源可达5点）
     单次减少上限: 5;       // 每次最多减少1-5点（惩罚）
     对加成权重: 0.3;       // 占总加成的30%
-    获取方式: string[];    // ['装备', '天赋', '丹药', '机缘', '大道感悟']
+    获取方式: string[];    // ['装备', '模块', '药剂', '资源事件', '流派研习']
   };
 }
 
-/** 六司加成结果 */
-export interface SixSiBonus {
-  修炼速度加成: number;    // 百分比 0-100
+/** 六维加成结果 */
+export interface SixDimBonus {
+  训练速度加成: number;    // 百分比 0-100
   战斗力加成: number;      // 百分比 0-100
   感知范围加成: number;    // 百分比 0-100
   交际能力加成: number;    // 百分比 0-100
-  机缘概率加成: number;    // 百分比 0-100
+  资源概率加成: number;    // 百分比 0-100
 }
 
-/** 六司权重配置 */
-export interface SixSiWeights {
-  根骨: number;
-  灵性: number;
-  悟性: number;
-  心性: number;
-  气运: number;
+/** 六维权重配置 */
+export interface SixDimWeights {
+  体质: number;
+  能源: number;
+  算法: number;
+  心智: number;
+  资源感知: number;
   魅力: number;
 }

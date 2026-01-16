@@ -12,7 +12,7 @@
       </div>
     </div>
 
-    <!-- 藏经阁分层 -->
+    <!-- 模块库分层 -->
     <div class="library-floors">
       <div
         v-for="floor in libraryFloors"
@@ -36,8 +36,8 @@
           <div v-if="expandedFloor === floor.level && floor.accessible" class="floor-content">
             <div v-if="floor.techniques.length === 0" class="empty-floor">
               <BookOpen :size="32" class="empty-icon" />
-              <p>此层暂无可学功法</p>
-              <p class="hint">功法将由AI根据剧情生成</p>
+              <p>此层暂无可解锁模块</p>
+              <p class="hint">模块将由AI根据剧情生成</p>
             </div>
             <div v-else class="technique-list">
               <div
@@ -62,11 +62,11 @@
                     v-if="!tech.owned"
                     class="learn-btn"
                     :disabled="!tech.canAfford"
-                    @click="learnTechnique(tech)"
+                    @click="unlockModule(tech)"
                   >
-                    {{ tech.canAfford ? '学习' : '贡献不足' }}
+                    {{ tech.canAfford ? '解锁' : '贡献不足' }}
                   </button>
-                  <span v-else class="owned-badge">已学习</span>
+                  <span v-else class="owned-badge">已解锁</span>
                 </div>
               </div>
             </div>
@@ -78,7 +78,7 @@
     <!-- 提示信息 -->
     <div class="library-tips">
       <Info :size="14" />
-      <span>功法需要通过游戏剧情获取或让AI生成，此处展示已有功法供兑换学习</span>
+      <span>模块需要通过游戏剧情获取或让AI生成，此处展示已有模块供兑换解锁</span>
     </div>
   </div>
 </template>
@@ -95,74 +95,74 @@ const expandedFloor = ref<number | null>(1);
 
 // 职位等级映射
 const positionLevels: Record<string, number> = {
-  '记名弟子': 0,
-  '外门弟子': 1,
-  '内门弟子': 2,
-  '真传弟子': 3,
-  '核心弟子': 4,
-  '长老': 5,
-  '太上长老': 6
+  '见习成员': 0,
+  '外围成员': 1,
+  '内部成员': 2,
+  '精英成员': 3,
+  '核心成员': 4,
+  '干部': 5,
+  '元老': 6
 };
 
-// 玩家宗门信息
+// 玩家组织信息
 const playerSectInfo = computed(() => gameStateStore.sectMemberInfo);
-const playerPosition = computed(() => playerSectInfo.value?.职位 || '散修');
+const playerPosition = computed(() => playerSectInfo.value?.职位 || '游民');
 const playerContribution = computed(() => playerSectInfo.value?.贡献 || 0);
 const playerPositionLevel = computed(() => positionLevels[playerPosition.value] ?? -1);
 
-// 获取背包中的功法
-const ownedTechniqueIds = computed(() => {
+// 获取背包中的模块
+const ownedModuleIds = computed(() => {
   const items = gameStateStore.inventory?.物品 || {};
   return Object.values(items)
-    .filter((item: any) => item.类型 === '功法')
+    .filter((item: any) => item.类型 === '模块')
     .map((item: any) => item.物品ID);
 });
 
-// 藏经阁分层数据
+// 模块库分层数据
 const libraryFloors = computed(() => {
-  const techniques = getAvailableTechniques();
+  const modules = getAvailableModules();
 
   return [
     {
       level: 1,
       name: '第一层',
       icon: '📖',
-      requirement: '外门弟子可入',
+      requirement: '外围成员可入',
       minPosition: 1,
       accessible: playerPositionLevel.value >= 1,
-      techniques: techniques.filter(t => ['凡', '黄'].includes(t.qualityTier))
+      techniques: modules.filter(t => ['民用', '改装'].includes(t.qualityTier))
     },
     {
       level: 2,
       name: '第二层',
       icon: '📚',
-      requirement: '内门弟子可入',
+      requirement: '内部成员可入',
       minPosition: 2,
       accessible: playerPositionLevel.value >= 2,
-      techniques: techniques.filter(t => t.qualityTier === '玄')
+      techniques: modules.filter(t => t.qualityTier === '军规')
     },
     {
       level: 3,
       name: '第三层',
       icon: '📜',
-      requirement: '真传弟子可入',
+      requirement: '精英成员可入',
       minPosition: 3,
       accessible: playerPositionLevel.value >= 3,
-      techniques: techniques.filter(t => t.qualityTier === '地')
+      techniques: modules.filter(t => t.qualityTier === '特级')
     },
     {
       level: 4,
       name: '禁区密库',
       icon: '🔮',
-      requirement: '核心弟子+长老令牌',
+      requirement: '核心成员+高层权限',
       minPosition: 4,
       accessible: playerPositionLevel.value >= 4,
-      techniques: techniques.filter(t => ['天', '仙', '神'].includes(t.qualityTier))
+      techniques: modules.filter(t => t.qualityTier === '禁忌')
     }
   ];
 });
 
-type LibraryTechnique = {
+type LibraryModule = {
   id: string;
   name: string;
   quality: string;
@@ -174,22 +174,22 @@ type LibraryTechnique = {
 };
 
 const extractQualityTier = (quality: string) => {
-  const match = quality.match(/[凡黄玄地天仙神]/);
-  return match ? match[0] : '凡';
+  const match = quality.match(/民用|改装|军规|特级|禁忌/);
+  return match ? match[0] : '民用';
 };
 
-// 获取可用功法列表（来自宗门系统）
-function getAvailableTechniques(): LibraryTechnique[] {
-  const sectName = playerSectInfo.value?.宗门名称;
+// 获取可用模块列表（来自组织系统）
+function getAvailableModules(): LibraryModule[] {
+  const sectName = playerSectInfo.value?.组织名称;
   if (!sectName) return [];
 
-  const rawTechniques = gameStateStore.sectSystem?.宗门藏经阁?.[sectName];
+  const rawTechniques = gameStateStore.sectSystem?.组织模块库?.[sectName];
   if (!Array.isArray(rawTechniques)) return [];
 
   return rawTechniques.map((raw: any, index: number) => {
     const id = raw?.id || raw?.物品ID || `sect_tech_${index}`;
-    const name = raw?.name || raw?.名称 || '未知功法';
-    const quality = raw?.quality || raw?.品质 || '凡品';
+    const name = raw?.name || raw?.名称 || '未知模块';
+    const quality = raw?.quality || raw?.品质 || '民用';
     const qualityTier = raw?.qualityTier || extractQualityTier(String(quality));
     const cost = Number(raw?.cost ?? raw?.价格 ?? 0);
     const description = raw?.description || raw?.描述 || '';
@@ -201,7 +201,7 @@ function getAvailableTechniques(): LibraryTechnique[] {
       qualityTier,
       cost,
       description,
-      owned: ownedTechniqueIds.value.includes(id),
+      owned: ownedModuleIds.value.includes(id),
       canAfford: playerContribution.value >= cost,
     };
   });
@@ -216,16 +216,16 @@ function toggleFloor(floor: { level: number; accessible: boolean }) {
 }
 
 function getQualityClass(quality: string): string {
-  if (quality.includes('凡')) return 'quality-common';
-  if (quality.includes('黄')) return 'quality-yellow';
-  if (quality.includes('玄')) return 'quality-xuan';
-  if (quality.includes('地')) return 'quality-earth';
-  if (quality.includes('天')) return 'quality-heaven';
+  if (quality.includes('民用')) return 'quality-common';
+  if (quality.includes('改装')) return 'quality-yellow';
+  if (quality.includes('军规')) return 'quality-xuan';
+  if (quality.includes('特级')) return 'quality-earth';
+  if (quality.includes('禁忌')) return 'quality-heaven';
   return 'quality-common';
 }
 
-function learnTechnique(tech: { id: string; name: string; cost: number }) {
-  const promptText = `我想用${tech.cost}贡献点在藏经阁学习「${tech.name}」`;
+function unlockModule(tech: { id: string; name: string; cost: number }) {
+  const promptText = `我想用${tech.cost}贡献点在模块库解锁「${tech.name}」`;
   sendChat(promptText);
   toast.success('已发送到对话');
 }

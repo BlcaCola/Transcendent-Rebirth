@@ -333,11 +333,11 @@ class AIBidirectionalSystemClass {
       // --- 角色核心状态速览 ---
       const attributes = stateForAI.角色?.属性;
       const character = stateForAI.角色?.身份;
-      const formatTalentsForPrompt = (talents: any): string => {
-        if (!talents) return '无';
-        if (typeof talents === 'string') return talents;
-        if (Array.isArray(talents)) {
-          return talents.map(t => {
+      const formatModulesForPrompt = (modules: any): string => {
+        if (!modules) return '无';
+        if (typeof modules === 'string') return modules;
+        if (Array.isArray(modules)) {
+          return modules.map(t => {
             if (typeof t === 'string') return t;
             if (typeof t === 'object' && t !== null) {
               return t.name || t.名称 || '';
@@ -350,11 +350,11 @@ class AIBidirectionalSystemClass {
 
       let coreStatusSummary = '# 角色核心状态速览\n';
       if (attributes) {
-        coreStatusSummary += `\n- 生命: 气血${attributes.气血?.当前}/${attributes.气血?.上限} 灵气${attributes.灵气?.当前}/${attributes.灵气?.上限} 神识${attributes.神识?.当前}/${attributes.神识?.上限} 寿元${attributes.寿命?.当前}/${attributes.寿命?.上限}`;
+        coreStatusSummary += `\n- 生命: 生命值${attributes.生命值?.当前}/${attributes.生命值?.上限} 电量${attributes.电量?.当前}/${attributes.电量?.上限} 带宽${attributes.带宽?.当前}/${attributes.带宽?.上限} 寿命${attributes.寿命?.当前}/${attributes.寿命?.上限}`;
 
-        if (attributes.境界) {
-          const realm = attributes.境界;
-          coreStatusSummary += `\n- 境界: ${realm.名称}-${realm.阶段} (${realm.当前进度}/${realm.下一级所需})`;
+        if (attributes.阶位) {
+          const rank = attributes.阶位;
+          coreStatusSummary += `\n- 阶位: ${rank.名称}-${rank.阶段} (${rank.当前进度}/${rank.下一级所需})`;
         }
 
         if (attributes.声望) {
@@ -369,47 +369,47 @@ class AIBidirectionalSystemClass {
             .join(', ')}`;
         }
       }
-      if (character?.天赋) {
-        coreStatusSummary += `\n- 天赋: ${formatTalentsForPrompt(character.天赋)}`;
+      if (character?.模块) {
+        coreStatusSummary += `\n- 模块: ${formatModulesForPrompt(character.模块)}`;
       }
 
       // 🎲 前端计算判定相关数值（确保准确性）
       const diceRoll = Math.floor(Math.random() * 100) + 1; // 1-100
-      const innate = character?.先天六司 || {};
-      const acquired = character?.后天六司 || {};
-      const fortune = (innate.气运 || 5) + (acquired.气运 || 0); // 先天+后天气运
-      const fortuneMultiplier = 1 + fortune / 100; // 气运修正系数
-      const modifiedDice = Math.round(diceRoll * fortuneMultiplier);
+      const innate = character?.初始六维 || {};
+      const acquired = character?.成长六维 || {};
+      const resourceSense = (innate.资源感知 || 5) + (acquired.资源感知 || 0); // 初始+成长资源感知
+      const resourceMultiplier = 1 + resourceSense / 100; // 资源感知修正系数
+      const modifiedDice = Math.round(diceRoll * resourceMultiplier);
       const diceBonus = Math.round((modifiedDice - 50) / 5); // 转换为判定加成
 
-      // 计算灵气浓度的环境修正（如果有位置信息）
+      // 计算信号强度的环境修正（如果有位置信息）
       const currentLocation = stateForAI.角色?.位置;
-      const spiritDensity = currentLocation?.灵气浓度 || 50; // 默认50
+      const signalStrength = currentLocation?.信号强度 || 50; // 默认50
 
       // 🔥 结构化判定数据（直接传给AI使用，无需AI自己计算）
       const judgmentData = {
         骰子: {
           原始值: diceRoll,
-          气运总和: fortune,
-          气运系数: fortuneMultiplier,
+          资源感知总和: resourceSense,
+          资源感知系数: resourceMultiplier,
           修正后值: modifiedDice,
           最终加成: diceBonus
         },
         环境: {
-          灵气浓度: spiritDensity,
-          修炼修正: Math.round((spiritDensity - 50) / 10),  // 修炼突破用
-          炼制修正: Math.round((spiritDensity - 50) / 15),  // 炼丹炼器用
-          战斗修正: Math.round((spiritDensity - 50) / 20)   // 战斗用
+          信号强度: signalStrength,
+          训练修正: Math.round((signalStrength - 50) / 10),  // 训练升级用
+          制造修正: Math.round((signalStrength - 50) / 15),  // 制造改装用
+          战斗修正: Math.round((signalStrength - 50) / 20)   // 战斗用
         }
       };
 
       coreStatusSummary += `\n\n# 本回合判定数据（前端已计算）
-**骰子加成**: ${diceBonus >= 0 ? '+' : ''}${diceBonus} (原始骰子${diceRoll} × 气运系数${fortuneMultiplier.toFixed(2)} = ${modifiedDice})
+**骰子加成**: ${diceBonus >= 0 ? '+' : ''}${diceBonus} (原始骰子${diceRoll} × 资源感知系数${resourceMultiplier.toFixed(2)} = ${modifiedDice})
 **环境修正**:
-  - 灵气浓度: ${spiritDensity}
-  - 修炼/突破: ${judgmentData.环境.修炼修正 >= 0 ? '+' : ''}${judgmentData.环境.修炼修正}
-  - 炼丹/炼器: ${judgmentData.环境.炼制修正 >= 0 ? '+' : ''}${judgmentData.环境.炼制修正}
-  - 战斗施法: ${judgmentData.环境.战斗修正 >= 0 ? '+' : ''}${judgmentData.环境.战斗修正}
+  - 信号强度: ${signalStrength}
+  - 训练/升级: ${judgmentData.环境.训练修正 >= 0 ? '+' : ''}${judgmentData.环境.训练修正}
+  - 制造/改装: ${judgmentData.环境.制造修正 >= 0 ? '+' : ''}${judgmentData.环境.制造修正}
+  - 战斗行动: ${judgmentData.环境.战斗修正 >= 0 ? '+' : ''}${judgmentData.环境.战斗修正}
 
 ⚠️ **重要**：判定时直接使用以上数值，不要自己计算！
 - 骰子加成固定为: ${diceBonus >= 0 ? '+' : ''}${diceBonus}
@@ -437,7 +437,7 @@ ${assembledPrompt}
 ${coreStatusSummary}
 ${vectorMemorySection ? `\n${vectorMemorySection}\n` : ''}
 # 游戏状态
-你正在修仙世界《超凡新生》中扮演GM。以下是当前完整游戏存档(JSON格式):
+你正在赛博世界《超凡新生》中扮演GM。以下是当前完整游戏存档(JSON格式):
 ${stateJsonString}
 `.trim();
 
@@ -485,8 +485,8 @@ ${stateJsonString}
         if (ownerInfo) {
           agentPrompt += `\n该角色信息：`;
           if (ownerInfo.name) agentPrompt += `\n- 名称：${ownerInfo.name}`;
-          if (ownerInfo.cultivation_level) agentPrompt += `\n- 境界：${ownerInfo.cultivation_level}`;
-          if (ownerInfo.sect) agentPrompt += `\n- 宗门：${ownerInfo.sect}`;
+          if (ownerInfo.cultivation_level) agentPrompt += `\n- 等级：${ownerInfo.cultivation_level}`;
+          if (ownerInfo.sect) agentPrompt += `\n- 组织：${ownerInfo.sect}`;
           if (ownerInfo.personality) agentPrompt += `\n- 性格：${ownerInfo.personality}`;
         }
         agentPrompt += `\n\n该玩家设定的行为指南：\n${travelTarget.离线代理提示词}`;
@@ -961,7 +961,7 @@ ${step1Text}
           '四处走动熟悉环境',
           '查看自身状态',
           '与附近的人交谈',
-          '寻找修炼之地',
+          '寻找训练点',
           '打听周围消息'
         ];
 
@@ -1128,8 +1128,8 @@ ${step1Text}
             '四处走动熟悉环境',
             '查看自身状态',
             '与附近的人交谈',
-            '寻找修炼之地',
-            '打听周围消息'
+            '寻找安全据点',
+            '打听周围情报'
           ];
         }
 
@@ -1162,9 +1162,9 @@ ${step1Text}
     return gameTime.分钟 ?? 0;
   }
   private _formatGameTime(gameTime: GameTime | undefined): string {
-    if (!gameTime) return '【仙历元年】';
+    if (!gameTime) return '【霓虹纪元元年】';
     const minutes = this._getMinutes(gameTime);
-    return `【仙道${gameTime.年}年${gameTime.月}月${gameTime.日}日 ${String(gameTime.小时).padStart(2, '0')}:${String(minutes).padStart(2, '0')}】`;
+    return `【霓虹纪元${gameTime.年}年${gameTime.月}月${gameTime.日}日 ${String(gameTime.小时).padStart(2, '0')}:${String(minutes).padStart(2, '0')}】`;
   }
   public async processGmResponse(
     response: GM_Response,
@@ -1678,49 +1678,49 @@ ${saveDataJson}`;
             物品ID: `item_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             名称: itemName,
             类型: '杂物',
-            品质: { quality: '凡品', grade: 0 },
+            品质: { quality: '标准级', grade: 0 },
             数量: 1,
             描述: `一个普通的${itemName}。`
           }
         };
       }
 
-      // 修复: 新增功法但缺少功法技能数组，导致后续生成/校验报错
+      // 修复: 新增模块但缺少技能数组，导致后续生成/校验报错
       const isInventoryItemCreation =
         (cmd.action === 'push' && inventoryRootKeys.has(cmd.key)) ||
         (cmd.action === 'set' &&
           typeof cmd.key === 'string' &&
           Array.from(inventoryRootKeys).some((root) => cmd.key.startsWith(root + '.')));
 
-      if (isInventoryItemCreation && cmd.value && typeof cmd.value === 'object' && cmd.value.类型 === '功法') {
-        return { ...cmd, value: this._repairTechniqueItem(cmd.value) };
+      if (isInventoryItemCreation && cmd.value && typeof cmd.value === 'object' && cmd.value.类型 === '程序') {
+        return { ...cmd, value: this._repairProgramItem(cmd.value) };
       }
 
       return cmd;
     });
   }
 
-  private _repairTechniqueItem(item: any): any {
+  private _repairProgramItem(item: any): any {
     if (!item || typeof item !== 'object') return item;
-    if (item.类型 !== '功法') return item;
+    if (item.类型 !== '程序') return item;
 
     const repaired: any = { ...item };
 
-    const techniqueName = typeof repaired.名称 === 'string' && repaired.名称.trim() ? repaired.名称.trim() : '未知功法';
+    const programName = typeof repaired.名称 === 'string' && repaired.名称.trim() ? repaired.名称.trim() : '未知程序';
 
     const progress =
-      typeof repaired.修炼进度 === 'number' && Number.isFinite(repaired.修炼进度) ? repaired.修炼进度 : 0;
-    repaired.修炼进度 = progress;
+      typeof repaired.训练进度 === 'number' && Number.isFinite(repaired.训练进度) ? repaired.训练进度 : 0;
+    repaired.训练进度 = progress;
 
-    if (!Array.isArray(repaired.功法技能)) {
-      repaired.功法技能 = [];
+    if (!Array.isArray(repaired.程序技能)) {
+      repaired.程序技能 = [];
     }
 
-    repaired.功法技能 = repaired.功法技能
+    repaired.程序技能 = repaired.程序技能
       .filter((s: any) => s && typeof s === 'object')
       .map((s: any, idx: number) => {
         const skillName =
-          typeof s.技能名称 === 'string' && s.技能名称.trim() ? s.技能名称.trim() : `${techniqueName}·招式${idx + 1}`;
+          typeof s.技能名称 === 'string' && s.技能名称.trim() ? s.技能名称.trim() : `${programName}·指令${idx + 1}`;
         const skillDescription = typeof s.技能描述 === 'string' ? s.技能描述 : '';
         const unlockThreshold =
           typeof s.熟练度要求 === 'number' && Number.isFinite(s.熟练度要求) ? s.熟练度要求 : 0;
@@ -1728,14 +1728,14 @@ ${saveDataJson}`;
         return { ...s, 技能名称: skillName, 技能描述: skillDescription, 熟练度要求: unlockThreshold, 消耗: cost };
       });
 
-    if (repaired.功法技能.length === 0) {
-      console.warn(`[AI双向系统] 预处理: 功法 "${techniqueName}" 缺少功法技能，已自动补齐基础技能以防报错。`);
-      repaired.功法技能 = [
+    if (repaired.程序技能.length === 0) {
+      console.warn(`[AI双向系统] 预处理: 程序 "${programName}" 缺少技能，已自动补齐基础技能以防报错。`);
+      repaired.程序技能 = [
         {
-          技能名称: `${techniqueName}·运功`,
-          技能描述: `运转${techniqueName}的基础法门，凝聚灵气并稳固气机。`,
+          技能名称: `${programName}·调校`,
+          技能描述: `调校${programName}的基础协议，稳定电量并优化输出。`,
           熟练度要求: 0,
-          消耗: '灵气10'
+          消耗: '电量10'
         }
       ];
     }
@@ -1747,7 +1747,7 @@ ${saveDataJson}`;
       .filter((v: any) => typeof v === 'string' && v.trim().length > 0)
       .map((v: string) => v.trim());
 
-    for (const s of repaired.功法技能) {
+    for (const s of repaired.程序技能) {
       const unlockThreshold = typeof s.熟练度要求 === 'number' ? s.熟练度要求 : 0;
       if (progress >= unlockThreshold && typeof s.技能名称 === 'string' && !repaired.已解锁技能.includes(s.技能名称)) {
         repaired.已解锁技能.push(s.技能名称);
@@ -1820,8 +1820,8 @@ ${saveDataJson}`;
         }
         const newValue = currentValue + value;
 
-        // 🔥 防止灵石变成负数
-        if (path.includes('灵石') && newValue < 0) {
+        // 🔥 防止信用点变成负数
+        if (path.includes('信用点') && newValue < 0) {
           console.warn(`[AI双向系统] ${path} 执行add后会变成负数 (${currentValue} + ${value} = ${newValue})，已限制为0`);
           set(saveData, path, 0);
         } else {

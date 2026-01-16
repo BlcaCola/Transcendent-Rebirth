@@ -91,12 +91,12 @@
           <div class="loading-spinner"></div>
           <div class="spinner-glow"></div>
         </div>
-        <h2 class="loading-title">{{ $t('道法自然，天地初开') }}</h2>
-        <p class="loading-message">{{ $t('正在加载修仙世界...') }}</p>
+        <h2 class="loading-title">{{ $t('霓虹启动，系统自检') }}</h2>
+        <p class="loading-message">{{ $t('正在加载赛博世界...') }}</p>
         <div class="loading-steps">
           <div class="loading-step">
             <span class="step-icon">✓</span>
-            <span class="step-text">{{ $t('连接天道') }}</span>
+            <span class="step-text">{{ $t('连接主机') }}</span>
           </div>
           <div class="loading-step">
             <span class="step-icon">✓</span>
@@ -174,7 +174,7 @@ const maybePromptSectMigration = () => {
 
   lastMigrationPromptKey.value = saveKey;
   uiStore.showDetailModal({
-    title: '宗门存档迁移',
+    title: '组织存档迁移',
     component: SectMigrationModal,
     props: {
       reasons: check.reasons,
@@ -205,17 +205,17 @@ const panelTitles: Record<string, { title: string; icon: IconComponent }> = {
   CharacterDetails: { title: '人物详情', icon: User },
   Memory: { title: '记忆中心', icon: Brain },
   Relationships: { title: '人物关系', icon: Users },
-  Cultivation: { title: '修炼系统', icon: BookOpen },
-  Techniques: { title: '修炼功法', icon: Zap },
-  ThousandDao: { title: '三千大道', icon: Scroll },
+  Cultivation: { title: '训练系统', icon: BookOpen },
+  Techniques: { title: '模块协议', icon: Zap },
+  ThousandDao: { title: '专精目录', icon: Scroll },
   Settings: { title: '系统设置', icon: Settings },
   Save: { title: '保存游戏', icon: Save },
   WorldMap: { title: '世界地图', icon: Map },
   Events: { title: '世界事件', icon: Bell },
-  Sect: { title: '宗门势力', icon: Home },
-  SectOverview: { title: '宗门概览', icon: Home },
-  SectMembers: { title: '宗门成员', icon: Users },
-  SectLibrary: { title: '宗门藏经', icon: BookOpen },
+  Sect: { title: '组织势力', icon: Home },
+  SectOverview: { title: '组织概览', icon: Home },
+  SectMembers: { title: '组织成员', icon: Users },
+  SectLibrary: { title: '组织档案', icon: BookOpen },
   SectContribution: { title: '贡献兑换', icon: Coins },
   GameVariables: { title: '游戏变量', icon: Database },
   Prompts: { title: '提示词管理', icon: FileText },

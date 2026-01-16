@@ -16,7 +16,7 @@
             <span class="spirit-icon">✧</span>
             <span class="spirit-glow"></span>
           </span>
-          <span class="spirit-label">{{ t('灵气') }}</span>
+          <span class="spirit-label">{{ t('信号强度') }}</span>
           <span class="spirit-value">{{ spiritDensity }}</span>
           <span class="spirit-bar">
             <span class="spirit-bar-fill" :style="{ width: spiritDensity + '%' }"></span>
@@ -43,7 +43,7 @@
 import { computed, ref, onMounted } from 'vue'
 import { Maximize, Minimize } from 'lucide-vue-next'
 import { useGameStateStore } from '@/stores/gameStateStore'
-import { formatRealmWithStage } from '@/utils/realmUtils'
+import { formatRankWithStage } from '@/utils/realmUtils'
 import { useI18n } from '@/i18n'
 import { getFullscreenElement, requestFullscreen, exitFullscreen, explainFullscreenError } from '@/utils/fullscreen'
 import type { GameTime } from '@/types/game'
@@ -75,7 +75,7 @@ const characterName = computed(() => {
 
 const characterRealm = computed(() => {
   try {
-    return formatRealmWithStage(gameStateStore.attributes?.境界)
+    return formatRankWithStage(gameStateStore.attributes?.阶位)
   } catch (e) {
     console.error('[TopBar] Error getting characterRealm:', e)
     return t('凡人')
@@ -93,7 +93,7 @@ const currentLocation = computed(() => {
 
 const spiritDensity = computed(() => {
   try {
-    return gameStateStore.location?.灵气浓度 || 0
+    return gameStateStore.location?.信号强度 || 0
   } catch (e) {
     return 0
   }
@@ -110,11 +110,11 @@ const spiritDensityClass = computed(() => {
 
 const spiritDensityTooltip = computed(() => {
   const density = spiritDensity.value
-  if (density >= 80) return t('灵气充沛 - 极佳修炼环境')
-  if (density >= 60) return t('灵气浓郁 - 良好修炼环境')
-  if (density >= 40) return t('灵气适中 - 普通修炼环境')
-  if (density >= 20) return t('灵气稀薄 - 修炼困难')
-  return t('灵气枯竭 - 难以修炼')
+  if (density >= 80) return t('信号强度高 - 训练效率极佳')
+  if (density >= 60) return t('信号强度良好 - 训练效率较高')
+  if (density >= 40) return t('信号强度中等 - 训练效率正常')
+  if (density >= 20) return t('信号偏弱 - 训练效率受限')
+  return t('信号枯竭 - 难以训练')
 })
 
 const gameTime = computed(() => {
@@ -124,12 +124,12 @@ const gameTime = computed(() => {
       const minutes = getMinutes(time)
       const formattedMinutes = minutes.toString().padStart(2, '0')
       const formattedHours = time.小时.toString().padStart(2, '0')
-      return `${t('仙道')}${time.年}${t('年')}${time.月}${t('月')}${time.日}${t('日')} ${formattedHours}:${formattedMinutes}`
+      return `${t('霓虹纪元')}${time.年}${t('年')}${time.月}${t('月')}${time.日}${t('日')} ${formattedHours}:${formattedMinutes}`
     }
-    return `${t('仙道')}${t('元年')}1${t('月')}1${t('日')} 00:00`
+    return `${t('霓虹纪元')}${t('元年')}1${t('月')}1${t('日')} 00:00`
   } catch (e) {
     console.error('[TopBar] Error getting gameTime:', e)
-    return `${t('仙道')}${t('元年')}1${t('月')}1${t('日')} 00:00`
+    return `${t('霓虹纪元')}${t('元年')}1${t('月')}1${t('日')} 00:00`
   }
 })
 
@@ -332,7 +332,7 @@ onMounted(() => {
   box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
 }
 
-/* 灵气浓度等级样式 */
+/* 信号强度等级样式 */
 .spirit-density.density-very-high {
   background: linear-gradient(135deg, rgba(168, 85, 247, 0.12) 0%, rgba(192, 132, 252, 0.16) 100%);
   border-color: rgba(168, 85, 247, 0.35);

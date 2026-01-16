@@ -591,24 +591,24 @@ const buildWorldInfoFromGraph = (mapGraph: MapGraphResponse, worldLabel: string)
 const calculateSpiritDensity = (poi: any): number => {
   if (!poi) return 20;
 
-  // 根据类型设定灵气浓度范围
+  // 根据类型设定信号强度范围
   let min = 10, max = 30;
 
   switch (poi.type) {
-    case 'sect_power': // 宗门
+    case 'sect_power': // 组织
       min = 50; max = 90;
       break;
     case 'safehouse':
-    case 'blessed_land': // 洞天福地
+    case 'blessed_land': // 高端安全区
       min = 70; max = 100;
       break;
-    case 'treasure_land': // 奇珍异地
+    case 'treasure_land': // 稀有资源区
       min = 60; max = 90;
       break;
-    case 'natural_landmark': // 名山大川
+    case 'natural_landmark': // 自然地标
       min = 30; max = 70;
       break;
-    case 'dangerous_area': // 凶险之地
+    case 'dangerous_area': // 高危区域
       min = 20; max = 80;
       break;
     case 'town':
@@ -619,7 +619,7 @@ const calculateSpiritDensity = (poi: any): number => {
       min = 10; max = 30;
   }
 
-  // 基于POI ID的确定性随机，保证同一个地点的灵气浓度不变
+  // 基于POI ID的确定性随机，保证同一个地点的信号强度不变
   let seedVal = 0;
   if (typeof poi.id === 'number') {
     seedVal = poi.id;
@@ -639,13 +639,13 @@ const buildOnlineLocation = (mapGraph: MapGraphResponse, worldLabel: string): Pl
   const viewerId = mapGraph.viewer_poi_id ?? mapGraph.pois?.[0]?.id;
   const viewerPoi = viewerId ? mapGraph.pois.find((poi) => poi.id === viewerId) : undefined;
   const label = viewerPoi?.poi_key ? `${poiKeyToName(viewerPoi.poi_key)}` : worldLabel;
-  const spiritDensity = calculateSpiritDensity(viewerPoi);
+  const signalStrength = calculateSpiritDensity(viewerPoi);
 
   return {
     描述: label,
     x: viewerPoi?.x,
     y: viewerPoi?.y,
-    灵气浓度: spiritDensity
+    信号强度: signalStrength
   };
 };
 

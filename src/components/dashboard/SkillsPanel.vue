@@ -8,7 +8,7 @@
         @click="activeTab = 'cultivation'"
       >
         <Zap :size="16" />
-        <span>{{ t('修炼') }}</span>
+        <span>{{ t('训练') }}</span>
       </button>
       <button
         class="panel-tab"
@@ -25,14 +25,14 @@
         @click="activeTab = 'library'"
       >
         <BookOpen :size="16" />
-        <span>{{ t('功法库') }}</span>
+        <span>{{ t('模块库') }}</span>
         <span v-if="techniqueTotalCount" class="tab-count">{{ techniqueTotalCount }}</span>
       </button>
     </div>
 
-    <!-- 修炼页面 -->
+    <!-- 训练页面 -->
     <div v-if="activeTab === 'cultivation'" class="tab-content">
-      <!-- 当前修炼功法 -->
+      <!-- 当前训练模块 -->
       <div class="cultivation-card" :class="cultivationSkills ? getQualityBorderClass(cultivationSkills) : ''">
         <div class="cultivation-header">
           <div class="cultivation-info">
@@ -40,30 +40,30 @@
               <ScrollText :size="20" />
             </div>
             <div class="technique-meta">
-              <span class="meta-label">{{ cultivationSkills ? t('当前修炼') : t('未在修炼') }}</span>
+              <span class="meta-label">{{ cultivationSkills ? t('当前训练') : t('未在训练') }}</span>
               <span class="technique-name" :class="cultivationSkills ? getQualityTextClass(cultivationSkills) : ''">
-                {{ cultivationSkills?.名称 || t('请从功法库选择功法') }}
+                {{ cultivationSkills?.名称 || t('请从模块库选择模块') }}
               </span>
             </div>
           </div>
 
           <div class="cultivation-actions">
             <template v-if="cultivationSkills">
-              <button class="action-btn primary" @click="startCultivation('normal')" :title="t('修炼')">
+              <button class="action-btn primary" @click="startCultivation('normal')" :title="t('训练')">
                 <Zap :size="16" />
-                <span>{{ t('修炼') }}</span>
+                <span>{{ t('训练') }}</span>
               </button>
-              <button class="action-btn" @click="startCultivation('secluded')" :title="t('闭关')">
+              <button class="action-btn" @click="startCultivation('secluded')" :title="t('静默训练')">
                 <Moon :size="16" />
-                <span>{{ t('闭关') }}</span>
+                <span>{{ t('静默训练') }}</span>
               </button>
-              <button class="action-btn" @click="showCultivationDialog" :title="t('深修')">
+              <button class="action-btn" @click="showCultivationDialog" :title="t('深度训练')">
                 <Clock :size="16" />
-                <span>{{ t('深修') }}</span>
+                <span>{{ t('深度训练') }}</span>
               </button>
-              <button v-if="canBreakthrough" class="action-btn warning" @click="attemptBreakthrough" :title="t('突破')">
+              <button v-if="canBreakthrough" class="action-btn warning" @click="attemptBreakthrough" :title="t('升级')">
                 <TrendingUp :size="16" />
-                <span>{{ t('突破') }}</span>
+                <span>{{ t('升级') }}</span>
               </button>
               <button class="action-btn danger" @click="unequipSkill" :title="t('卸下')">
                 <X :size="16" />
@@ -73,15 +73,15 @@
           </div>
         </div>
 
-        <!-- 修炼统计 -->
+        <!-- 训练统计 -->
         <div v-if="cultivationSkills" class="cultivation-stats">
           <div class="stat-item">
             <span class="stat-label">{{ t('品质') }}</span>
-            <span class="stat-value" :class="getQualityTextClass(cultivationSkills)">{{ cultivationSkills.品质?.quality || '凡' }}品</span>
+            <span class="stat-value" :class="getQualityTextClass(cultivationSkills)">{{ formatQualityLabel(cultivationSkills.品质?.quality) }}</span>
           </div>
           <div class="stat-item">
             <span class="stat-label">{{ t('进度') }}</span>
-            <span class="stat-value">{{ formatProgress(cultivationSkills.修炼进度) }}%</span>
+            <span class="stat-value">{{ formatProgress(cultivationSkills.训练进度) }}%</span>
           </div>
           <div class="stat-item">
             <span class="stat-label">{{ t('速度') }}</span>
@@ -92,22 +92,22 @@
             <span class="stat-value success">{{ allLearnedSkills.length }}/{{ sortedSkills.length }}</span>
           </div>
           <div v-if="canBreakthrough" class="stat-item highlight">
-            <span class="stat-label">{{ t('突破率') }}</span>
+            <span class="stat-label">{{ t('升级率') }}</span>
             <span class="stat-value warning">{{ breakthroughChance }}%</span>
           </div>
         </div>
 
         <!-- 进度条 -->
         <div v-if="cultivationSkills" class="progress-bar">
-          <div class="progress-fill" :style="{ width: formatProgress(cultivationSkills.修炼进度) + '%' }"></div>
+          <div class="progress-fill" :style="{ width: formatProgress(cultivationSkills.训练进度) + '%' }"></div>
         </div>
       </div>
 
-      <!-- 功法技能列表 -->
+      <!-- 模块技能列表 -->
       <div v-if="cultivationSkills && sortedSkills.length > 0" class="skills-section">
         <div class="section-header">
           <Sparkles :size="16" />
-          <span>{{ t('功法技能') }}</span>
+          <span>{{ t('模块技能') }}</span>
           <span class="section-count">{{ allLearnedSkills.length }}/{{ sortedSkills.length }}</span>
         </div>
         <div class="skills-grid">
@@ -126,7 +126,7 @@
             <p class="skill-desc">{{ skill.技能描述 || t('暂无描述') }}</p>
             <div v-if="!isTechniqueSkillUnlocked(skill.技能名称)" class="skill-progress">
               <div class="progress-info">
-                <span>{{ formatProgress(cultivationSkills.修炼进度) }}%</span>
+                <span>{{ formatProgress(cultivationSkills.训练进度) }}%</span>
                 <span>/</span>
                 <span>{{ getTechniqueSkillUnlockAt(skill) }}%</span>
               </div>
@@ -176,17 +176,17 @@
       </div>
     </div>
 
-    <!-- 功法库 -->
+    <!-- 模块库 -->
     <div v-else class="tab-content">
       <!-- 搜索栏 -->
       <div class="search-bar">
         <Search :size="16" />
-        <input v-model="techniqueQuery" type="text" :placeholder="t('搜索功法...')" />
+        <input v-model="techniqueQuery" type="text" :placeholder="t('搜索模块...')" />
       </div>
 
       <div v-if="filteredInventoryTechniques.length === 0" class="empty-state">
         <BookOpen :size="32" class="empty-icon" />
-        <p>{{ t('功法库为空或无匹配结果') }}</p>
+        <p>{{ t('模块库为空或无匹配结果') }}</p>
       </div>
 
       <div v-else class="library-grid">
@@ -201,19 +201,19 @@
         >
           <div class="technique-header">
             <span class="technique-name" :class="getQualityTextClass(technique)">{{ technique.名称 }}</span>
-            <span v-if="isEquipped(technique)" class="equipped-badge">{{ t('修炼中') }}</span>
+            <span v-if="isEquipped(technique)" class="equipped-badge">{{ t('训练中') }}</span>
           </div>
           <p class="technique-desc">{{ technique.描述 || t('暂无描述') }}</p>
           <div class="technique-footer">
-            <span class="quality-tag" :class="getQualityTextClass(technique)">{{ (technique.品质?.quality || '凡') }}品</span>
-            <span class="skill-count">{{ technique.功法技能?.length || 0 }} {{ t('技能') }}</span>
+            <span class="quality-tag" :class="getQualityTextClass(technique)">{{ formatQualityLabel(technique.品质?.quality) }}</span>
+            <span class="skill-count">{{ technique.程序技能?.length || 0 }} {{ t('技能') }}</span>
           </div>
           <div class="technique-actions">
             <button
               v-if="isEquipped(technique)"
               class="tech-btn"
               disabled
-            >{{ t('修炼中') }}</button>
+            >{{ t('训练中') }}</button>
             <button
               v-else
               class="tech-btn primary"
@@ -227,7 +227,7 @@
     <DeepCultivationModal
       :visible="showDialog"
       :technique="techniqueForModal"
-      :current-progress="getCultivationProgress()"
+      :current-progress="getTrainingProgress()"
       @close="closeDialog"
       @confirm="handleCultivationConfirm"
     />
@@ -243,7 +243,7 @@ import { useCharacterStore } from '@/stores/characterStore';
 import { useGameStateStore } from '@/stores/gameStateStore';
 import { useUIStore } from '@/stores/uiStore';
 import { EnhancedActionQueueManager } from '@/utils/enhancedActionQueue';
-import type { MasteredSkill, TechniqueItem, TechniqueSkill } from '@/types/game';
+import type { MasteredSkill, ProgramItem, ProgramSkill } from '@/types/game';
 
 const { t } = useI18n();
 const gameStateStore = useGameStateStore();
@@ -257,35 +257,35 @@ const techniqueQuery = ref('');
 const masteredQuery = ref('');
 const selectedMasteredSkillKey = ref<string | null>(null);
 
-const cultivationSkills = computed((): TechniqueItem | null => {
+const cultivationSkills = computed((): ProgramItem | null => {
   const inventory = gameStateStore.inventory?.物品;
   if (!inventory) return null;
 
-  const refId = (gameStateStore as any).cultivationTechnique?.物品ID as string | undefined;
+  const refId = (gameStateStore as any).trainingProgram?.物品ID as string | undefined;
   if (refId && inventory[refId]) {
-    return inventory[refId] as TechniqueItem;
+    return inventory[refId] as ProgramItem;
   }
 
   const found = Object.values(inventory).find(item => {
     const type = (item as any)?.类型 || (item as any)?.type;
-    const isTechnique = type === '功法' || String(type || '').includes('功法');
-    const equipped = (item as any)?.已装备 === true || (item as any)?.修炼中 === true;
+    const isTechnique = type === '程序' || String(type || '').includes('程序');
+    const equipped = (item as any)?.已装备 === true || (item as any)?.训练中 === true;
     return isTechnique && equipped;
   });
-  return (found as TechniqueItem) || null;
+  return (found as ProgramItem) || null;
 });
 
-const allTechniques = computed((): TechniqueItem[] => {
+const allTechniques = computed((): ProgramItem[] => {
   const inventory = gameStateStore.inventory?.物品;
   if (!inventory) return [];
-  return Object.values(inventory).filter((item): item is TechniqueItem => {
+  return Object.values(inventory).filter((item): item is ProgramItem => {
     const type = (item as any)?.类型 || (item as any)?.type;
-    return type === '功法' || String(type || '').includes('功法');
+    return type === '程序' || String(type || '').includes('程序');
   });
 });
 
-const inventoryTechniques = computed((): TechniqueItem[] => {
-  return allTechniques.value.filter(t => !(t as any).已装备 && !(t as any).修炼中);
+const inventoryTechniques = computed((): ProgramItem[] => {
+  return allTechniques.value.filter(t => !(t as any).已装备 && !(t as any).训练中);
 });
 
 const techniqueTotalCount = computed(() => {
@@ -293,19 +293,19 @@ const techniqueTotalCount = computed(() => {
 });
 
 const sortedSkills = computed(() => {
-  if (!cultivationSkills.value?.功法技能) return [];
-  return [...cultivationSkills.value.功法技能].sort((a, b) =>
+  if (!cultivationSkills.value?.程序技能) return [];
+  return [...cultivationSkills.value.程序技能].sort((a, b) =>
     (getTechniqueSkillUnlockAt(a)) - (getTechniqueSkillUnlockAt(b))
   );
 });
 
 const allLearnedSkills = computed(() => {
-  if (!cultivationSkills.value?.功法技能) return [];
+  if (!cultivationSkills.value?.程序技能) return [];
   const unlocked = cultivationSkills.value.已解锁技能 || [];
-  return cultivationSkills.value.功法技能.filter(s => unlocked.includes(s.技能名称));
+  return cultivationSkills.value.程序技能.filter(s => unlocked.includes(s.技能名称));
 });
 
-const getTechniqueSkillUnlockAt = (skill: TechniqueSkill): number => {
+const getTechniqueSkillUnlockAt = (skill: ProgramSkill): number => {
   const raw = (skill.熟练度要求 ?? (skill as any).解锁需要熟练度) as unknown;
   const n = typeof raw === 'number' ? raw : Number(raw || 0);
   if (isNaN(n)) return 0;
@@ -316,8 +316,8 @@ const isTechniqueSkillUnlocked = (skillName: string): boolean => {
   return cultivationSkills.value?.已解锁技能?.includes(skillName) || false;
 };
 
-const getTechniqueSkillUnlockProgress = (skill: TechniqueSkill): number => {
-  const currentProgress = cultivationSkills.value?.修炼进度 || 0;
+const getTechniqueSkillUnlockProgress = (skill: ProgramSkill): number => {
+  const currentProgress = cultivationSkills.value?.训练进度 || 0;
   const requiredProgress = getTechniqueSkillUnlockAt(skill) || 100;
   return Math.min(100, (currentProgress / requiredProgress) * 100);
 };
@@ -341,7 +341,7 @@ const selectMasteredSkill = (skill: MasteredSkill) => {
 
 const canBreakthrough = computed(() => {
   if (!cultivationSkills.value) return false;
-  return (cultivationSkills.value.修炼进度 || 0) >= 100;
+  return (cultivationSkills.value.训练进度 || 0) >= 100;
 });
 
 const getQualitySpeedBonus = (quality?: string): number => {
@@ -356,7 +356,7 @@ const cultivationSpeed = computed(() => {
   if (!technique) return '0';
   const baseSpeed = 1;
   const qualityBonus = getQualitySpeedBonus(technique.品质?.quality);
-  const effectBonus = technique.功法效果?.修炼速度加成 || 1;
+  const effectBonus = technique.程序效果?.训练速度加成 || 1;
   return (baseSpeed * qualityBonus * effectBonus).toFixed(1);
 });
 
@@ -377,20 +377,20 @@ const startCultivation = async (type: 'normal' | 'secluded') => {
 
   if (type === 'normal') {
     actionQueue.addAction({
-      type: 'cultivate',
+      type: 'train',
       itemName: cultivationSkills.value.名称,
-      itemType: t('功法'),
-      description: `开始修炼《${cultivationSkills.value.名称}》，提升功法熟练度`,
+      itemType: t('模块'),
+      description: `开始训练《${cultivationSkills.value.名称}》，提升模块熟练度`,
     });
-    uiStore.showToast(`开始修炼《${cultivationSkills.value.名称}》`, { type: 'success' });
+    uiStore.showToast(`开始训练《${cultivationSkills.value.名称}》`, { type: 'success' });
   } else {
     actionQueue.addAction({
-      type: 'secluded_cultivation',
+      type: 'train',
       itemName: cultivationSkills.value.名称,
-      itemType: t('闭关'),
-      description: `进入闭关状态，专心修炼《${cultivationSkills.value.名称}》，效率大幅提升`,
+      itemType: t('静默训练'),
+      description: `进入静默训练状态，专心训练《${cultivationSkills.value.名称}》，效率大幅提升`,
     });
-    uiStore.showToast(`进入闭关修炼《${cultivationSkills.value.名称}》`, { type: 'info' });
+    uiStore.showToast(`进入静默训练《${cultivationSkills.value.名称}》`, { type: 'info' });
   }
 };
 
@@ -403,29 +403,45 @@ const attemptBreakthrough = async () => {
   actionQueue.addAction({
     type: 'breakthrough',
     itemName: cultivationSkills.value.名称,
-    itemType: t('突破'),
-    description: `尝试突破《${cultivationSkills.value.名称}》的当前境界，进入更高层次`,
+    itemType: t('升级'),
+    description: `尝试升级《${cultivationSkills.value.名称}》的当前阶段，进入更高层次`,
   });
-  uiStore.showToast(`尝试突破《${cultivationSkills.value.名称}》`, { type: 'warning' });
+  uiStore.showToast(`尝试升级《${cultivationSkills.value.名称}》`, { type: 'warning' });
 };
 
-const techniqueForModal = computed((): TechniqueItem | null => cultivationSkills.value);
+const techniqueForModal = computed((): ProgramItem | null => cultivationSkills.value);
 
 const formatProgress = (progress?: number): string => Math.min(100, Math.max(0, progress || 0)).toFixed(1);
 
-const getQualityTextClass = (item: TechniqueItem): string => `text-quality-${item?.品质?.quality || '凡'}`;
-const getQualityBorderClass = (item: TechniqueItem): string => `border-quality-${item?.品质?.quality || '凡'}`;
-const getQualityBgClass = (item: TechniqueItem): string => `bg-quality-${item?.品质?.quality || '凡'}`;
-
-const isEquipped = (technique: TechniqueItem): boolean => {
-  return (technique as any).已装备 === true || (technique as any).修炼中 === true;
+const QUALITY_LABEL_MAP: Record<string, string> = {
+  凡: '基础',
+  黄: '改良',
+  玄: '精良',
+  地: '稀有',
+  天: '卓越',
+  圣: '史诗',
+  神: '传奇',
+  仙: '神话'
 };
 
-const getCultivationProgress = (): number => cultivationSkills.value?.修炼进度 || 0;
+const formatQualityLabel = (quality?: string): string => {
+  const label = QUALITY_LABEL_MAP[quality || '凡'] || QUALITY_LABEL_MAP.凡;
+  return `${label}级`;
+};
 
-const equipTechnique = async (technique: TechniqueItem) => {
+const getQualityTextClass = (item: ProgramItem): string => `text-quality-${item?.品质?.quality || '凡'}`;
+const getQualityBorderClass = (item: ProgramItem): string => `border-quality-${item?.品质?.quality || '凡'}`;
+const getQualityBgClass = (item: ProgramItem): string => `bg-quality-${item?.品质?.quality || '凡'}`;
+
+const isEquipped = (technique: ProgramItem): boolean => {
+  return (technique as any).已装备 === true || (technique as any).训练中 === true;
+};
+
+const getTrainingProgress = (): number => cultivationSkills.value?.训练进度 || 0;
+
+const equipTechnique = async (technique: ProgramItem) => {
   if (!technique?.物品ID) return;
-  if ((technique as any).已装备 === true || (technique as any).修炼中 === true) return;
+  if ((technique as any).已装备 === true || (technique as any).训练中 === true) return;
   const action = async () => {
     try {
       await characterStore.equipTechnique(technique.物品ID!);
@@ -437,8 +453,8 @@ const equipTechnique = async (technique: TechniqueItem) => {
 
   if (cultivationSkills.value) {
     uiStore.showRetryDialog({
-      title: t('切换功法'),
-      message: `${t('当前正在修炼')}《${cultivationSkills.value.名称}》，${t('确定要切换到')}《${technique.名称}》${t('吗')}？`,
+      title: t('切换模块'),
+      message: `${t('当前正在训练')}《${cultivationSkills.value.名称}》，${t('确定要切换到')}《${technique.名称}》${t('吗')}？`,
       onConfirm: action,
       onCancel: () => {},
     });
@@ -453,17 +469,17 @@ const unequipSkill = async () => {
   if (!cultivationSkills.value?.物品ID) return;
   const skillToUnequip = cultivationSkills.value;
   uiStore.showRetryDialog({
-    title: t('卸下功法'),
+    title: t('卸下模块'),
     message: `${t('确定要卸下')}《${skillToUnequip.名称}》${t('吗')}？`,
     confirmText: t('确定卸下'),
     cancelText: t('取消'),
     onConfirm: async () => {
       try {
-        // 检查是否有正在修炼的功法，且与要卸下的功法匹配
-        const cultivatingId = (gameStateStore.cultivation as any)?.修炼功法?.物品ID;
+        // 检查是否有正在训练的模块，且与要卸下的模块匹配
+        const cultivatingId = (gameStateStore.training as any)?.训练程序?.物品ID;
         if (cultivatingId === skillToUnequip.物品ID) {
-          // 只有当前正在修炼这个功法时才停止修炼
-          await enhancedActionQueue.stopCultivation(skillToUnequip as any);
+          // 只有当前正在训练该模块时才停止训练
+          await enhancedActionQueue.stopTraining(skillToUnequip as any);
         }
         await characterStore.unequipTechnique(skillToUnequip.物品ID!);
       } catch (error) {
@@ -488,27 +504,27 @@ const handleCultivationConfirm = async (totalDays: number) => {
   try {
     const { useActionQueueStore } = await import('@/stores/actionQueueStore');
     useActionQueueStore().addAction({
-      type: 'cultivate',
+      type: 'train',
       itemName: cultivationSkills.value.名称,
-      itemType: t('功法'),
-      description: `对《${cultivationSkills.value.名称}》进行${totalDays}天的深度修炼`,
+      itemType: t('模块'),
+      description: `对《${cultivationSkills.value.名称}》进行${totalDays}天的深度训练`,
     });
   } catch (error) {
-    console.error('[SkillsPanel] Add deep cultivation action failed:', error);
+    console.error('[SkillsPanel] Add deep training action failed:', error);
   }
 };
 
 const checkAndUnlockSkills = () => {
   if (!cultivationSkills.value) return;
   const technique = cultivationSkills.value;
-  if (!technique.功法技能 || !Array.isArray(technique.功法技能)) return;
+  if (!technique.程序技能 || !Array.isArray(technique.程序技能)) return;
 
-  const currentProgress = technique.修炼进度 || 0;
+  const currentProgress = technique.训练进度 || 0;
   let unlocked = false;
 
   if (!technique.已解锁技能) technique.已解锁技能 = [];
 
-  technique.功法技能.forEach(skill => {
+  technique.程序技能.forEach(skill => {
     const unlockThreshold = skill.熟练度要求 || 0;
     if (currentProgress >= unlockThreshold && !technique.已解锁技能!.includes(skill.技能名称)) {
       technique.已解锁技能!.push(skill.技能名称);
@@ -534,8 +550,8 @@ const filteredInventoryTechniques = computed(() => {
 
   const qualityRank: Record<string, number> = { 仙: 1, 神: 2, 圣: 3, 道: 4, 天: 5, 地: 6, 玄: 7, 黄: 8, 凡: 9 };
   return [...list].sort((a, b) => {
-    const ae = (a as any).已装备 === true || (a as any).修炼中 === true;
-    const be = (b as any).已装备 === true || (b as any).修炼中 === true;
+    const ae = (a as any).已装备 === true || (a as any).训练中 === true;
+    const be = (b as any).已装备 === true || (b as any).训练中 === true;
     if (ae !== be) return ae ? -1 : 1;
     const qa = qualityRank[a.品质?.quality || '凡'] ?? 99;
     const qb = qualityRank[b.品质?.quality || '凡'] ?? 99;
@@ -632,7 +648,7 @@ const filteredInventoryTechniques = computed(() => {
   font-size: 14px;
 }
 
-/* 修炼卡片 */
+/* 训练卡片 */
 .cultivation-card {
   background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.03) 0%, var(--color-surface) 100%);
   border: 1px solid var(--color-border);
@@ -737,7 +753,7 @@ const filteredInventoryTechniques = computed(() => {
   border-color: #ef4444;
 }
 
-/* 修炼统计 */
+/* 训练统计 */
 .cultivation-stats {
   display: flex;
   gap: 12px;
@@ -787,7 +803,7 @@ const filteredInventoryTechniques = computed(() => {
   transition: width 0.3s;
 }
 
-/* 功法技能区域 */
+/* 程序技能区域 */
 .skills-section {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -1047,7 +1063,7 @@ const filteredInventoryTechniques = computed(() => {
 .bg-quality-黄 { background: rgba(234, 179, 8, 0.15); color: #eab308; }
 .bg-quality-凡 { background: rgba(var(--color-primary-rgb), 0.1); }
 
-/* 功法库网格 */
+/* 程序库网格 */
 .library-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));

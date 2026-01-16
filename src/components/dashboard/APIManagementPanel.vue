@@ -673,7 +673,7 @@ const getFunctionName = (type: APIUsageType): string => {
     instruction_generation: '指令生成',
     world_generation: '世界生成',
       event_generation: '事件生成',
-      sect_generation: '宗门生成'
+      sect_generation: '组织生成'
     };
   return names[type] || type;
 };
@@ -691,7 +691,7 @@ const getFunctionDesc = (type: APIUsageType): string => {
       instruction_generation: '将用户模糊指令转化为明确游戏指令（一次对话生成）',
       world_generation: '生成世界、地点等（可配置Raw/标准模式）',
         event_generation: '生成世界事件（可配置Raw/标准模式）',
-        sect_generation: '生成宗门内容如藏经阁、贡献商店（可配置Raw/标准模式）'
+        sect_generation: '生成组织内容如资料库、贡献商店（可配置Raw/标准模式）'
       };
     return descs[type] || '';
   } else {
@@ -705,7 +705,7 @@ const getFunctionDesc = (type: APIUsageType): string => {
       instruction_generation: '将用户模糊指令转化为明确游戏指令（一次对话生成）',
       world_generation: '生成世界、地点等内容（开局时使用）',
         event_generation: '生成世界事件（可用快速模型）',
-        sect_generation: '生成宗门内容如藏经阁、贡献商店（可用快速模型）'
+        sect_generation: '生成组织内容如资料库、贡献商店（可用快速模型）'
       };
     return descs[type] || '';
   }

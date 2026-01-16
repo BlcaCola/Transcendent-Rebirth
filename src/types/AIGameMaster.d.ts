@@ -1,11 +1,11 @@
 /**
  * 此文件定义了与 AI Game Master (游戏主控) 交互的核心数据结构。
- * 它是整个动态交互系统的“天道法则”。
- * 基于《超凡新生·AI交互完全参考书》 v1.0.0 天道定稿
+ * 它是整个动态交互系统的“系统规则”。
+ * 基于《超凡新生·AI交互完全参考书》 v1.0.0 系统定稿
  */
 
 // =======================================================================
-//                           核心：天道指令
+//                           核心：系统指令
 // =======================================================================
 
 /**
@@ -38,38 +38,38 @@ export interface GameCharacter {
     description: string;
   };
 
-  // ==================== 修为境界 ====================
-  cultivation: {
-    realm: string;
-    realm_progress: number;
+  // ==================== 阶位 ====================
+  rank: {
+    title: string;
+    progress: number;
     lifespan_remaining: number;
-    breakthrough_bottleneck?: string;
+    upgrade_bottleneck?: string;
   };
 
-  // ==================== 六维根骨 ====================
+  // ==================== 六维属性 ====================
   attributes: {
     STR: number; // 力量
     CON: number; // 体质
     DEX: number; // 身法
-    INT: number; // 悟性
-    SPI: number; // 神魂
-    LUK: number; // 气运
+    INT: number; // 算法
+    SPI: number; // 心智
+    LUK: number; // 资源感知
   };
 
   // ==================== 三大资源 ====================
   resources: {
-    qi: { current: number; max: number };   // 气血
-    ling: { current: number; max: number }; // 灵气
-    shen: { current: number; max: number }; // 神识
+    hp: { current: number; max: number };      // 生命值
+    energy: { current: number; max: number };  // 电量
+    bandwidth: { current: number; max: number }; // 带宽
   };
 
-  // ==================== 天赋资质 ====================
-  qualities: {
+  // ==================== 模块资质 ====================
+  modules: {
     origin: {
       name: string;
       effects: string[];
     };
-    spiritRoot: {
+    augmentCore: {
       name: string;
       quality: string;
       attributes: string[];
@@ -78,14 +78,14 @@ export interface GameCharacter {
       name: string;
       effects: string[];
     };
-    talents: Array<{
+    modules: Array<{
       name: string;
       type: string;
       effects: string[];
     }>;
   };
 
-  // ==================== 修仙百艺 ====================
+  // ==================== 技能专长 ====================
   skills: {
     [key: string]: { // 动态支持多种技艺
       level: number;
@@ -94,21 +94,21 @@ export interface GameCharacter {
     };
   };
 
-  // ==================== 功法装备 ====================
-  cultivation_arts: {
-    main_technique?: {
+  // ==================== 程序装备 ====================
+  program_loadout: {
+    main_program?: {
       name: string;
       rank: string;
       proficiency: number;
       special_effects: string[];
     };
-    combat_techniques?: Array<{
+    combat_programs?: Array<{
       name: string;
       type: string;
       cost: number;
       cooldown: number;
     }>;
-    auxiliary_techniques?: string[];
+    auxiliary_programs?: string[];
   };
 
   equipment: {
@@ -163,7 +163,7 @@ export interface GameCharacter {
 // =======================================================================
 
 /**
- * 发送给 AI Game Master 的结构化请求对象 (天道请求)。
+ * 发送给 AI Game Master 的结构化请求对象 (系统请求)。
  * 它现在直接使用完整的角色数据结构。
  */
 export interface GM_Request {
@@ -184,7 +184,7 @@ export interface GM_Request {
 }
 
 /**
- * AI Game Master 返回的结构化响应对象 (天道响应)。
+ * AI Game Master 返回的结构化响应对象 (系统响应)。
  */
 export interface GM_Response {
   /** AI生成的主要叙事内容，用于展示给用户。也作为短期记忆存储 */
@@ -202,7 +202,7 @@ export interface GM_Response {
   json?: any;
   /** 处理后的具体出身（从随机出身转化而来） */
   processedOrigin?: string;
-  /** 处理后的具体灵根（从随机灵根转化而来） */
+  /** 处理后的具体改造核心（从随机改造转化而来） */
   processedSpiritRoot?: string;
   /** AI缓存的世界数据 */
   cachedWorldData?: any;

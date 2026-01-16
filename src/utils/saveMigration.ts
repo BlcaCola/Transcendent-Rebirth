@@ -1,5 +1,6 @@
 import type { SaveData, GameTime, EventSystem } from '@/types/game';
 import type { SaveDataV3 } from '@/types/saveSchemaV3';
+import type { SaveDataV4 } from '@/types/saveSchemaV4';
 
 export type SaveMigrationIssue =
   | 'legacy-root-keys'
@@ -25,19 +26,19 @@ const LEGACY_ROOT_KEYS = [
   '玩家角色信息',
   '角色基础信息',
   '玩家角色基础信息',
-  '修行状态',
+  '训练状态',
   '状态效果',
   '叙事历史',
   '对话历史',
   '任务系统',
   '事件系统',
-  '宗门系统',
+  '组织系统',
   '世界信息',
   '人物关系',
   '装备栏',
   '游戏时间',
-  '三千大道',
-  '修炼功法',
+  '专精体系',
+  '训练程序',
   '掌握技能',
   '身体部位开发',
 ] as const;
@@ -82,6 +83,20 @@ export function isSaveDataV3(saveData: SaveData | null | undefined): saveData is
     isPlainObject(anySave.社交) &&
     isPlainObject(anySave.世界) &&
     isPlainObject(anySave.系统)
+  );
+}
+
+export function isSaveDataV4(saveData: SaveData | null | undefined): saveData is SaveDataV4 {
+  if (!saveData || typeof saveData !== 'object') return false;
+  const anySave = saveData as any;
+  return (
+    isPlainObject(anySave.元数据) &&
+    isPlainObject(anySave.角色) &&
+    isPlainObject(anySave.社交) &&
+    isPlainObject(anySave.世界) &&
+    isPlainObject(anySave.系统) &&
+    isPlainObject(anySave.角色.档案) &&
+    isPlainObject(anySave.角色.能力)
   );
 }
 
@@ -139,7 +154,7 @@ const buildDefaultOnline = (): SaveDataV3['系统']['联机'] => ({
 });
 
 const buildDefaultWorldInfo = (nowIso: string) => ({
-  世界名称: '九寰仙岛',
+  世界名称: '霓虹群岛',
   大陆信息: [],
   势力信息: [],
   地点信息: [],
@@ -151,17 +166,17 @@ const buildDefaultWorldInfo = (nowIso: string) => ({
 });
 
 const buildDefaultIdentity = () => ({
-  名字: '无名修士',
+  名字: '无名跑者',
   性别: '男',
   出生日期: { 年: 982, 月: 1, 日: 1 },
   种族: '人族',
-  世界: '九寰仙岛',
+  世界: '霓虹群岛',
   天资: '凡人',
-  出生: '散修',
-  灵根: '五行杂灵根',
-  天赋: [],
-  先天六司: { 根骨: 5, 灵性: 5, 悟性: 5, 气运: 5, 魅力: 5, 心性: 5 },
-  后天六司: { 根骨: 0, 灵性: 0, 悟性: 0, 气运: 0, 魅力: 0, 心性: 0 },
+  出生: '街区平民',
+  改造核心: '复合核心',
+  模块: [],
+  初始六维: { 体质: 5, 能源: 5, 算法: 5, 资源感知: 5, 魅力: 5, 心智: 5 },
+  成长六维: { 体质: 0, 能源: 0, 算法: 0, 资源感知: 0, 魅力: 0, 心智: 0 },
 });
 
 export function migrateSaveDataToLatest(raw: SaveData): { migrated: SaveDataV3; report: SaveMigrationReport } {
@@ -194,11 +209,11 @@ export function migrateSaveDataToLatest(raw: SaveData): { migrated: SaveDataV3; 
   const legacyStatusObj = isPlainObject(legacyStatusLike) ? legacyStatusLike : ({} as any);
 
   const flatAttributes = {
-    境界: (legacyStatusObj as any).境界 ?? null,
+    阶位: (legacyStatusObj as any).阶位 ?? null,
     声望: (legacyStatusObj as any).声望 ?? 0,
-    气血: (legacyStatusObj as any).气血 ?? { 当前: 100, 上限: 100 },
-    灵气: (legacyStatusObj as any).灵气 ?? { 当前: 50, 上限: 50 },
-    神识: (legacyStatusObj as any).神识 ?? { 当前: 30, 上限: 30 },
+    生命值: (legacyStatusObj as any).生命值 ?? { 当前: 100, 上限: 100 },
+    电量: (legacyStatusObj as any).电量 ?? { 当前: 50, 上限: 50 },
+    带宽: (legacyStatusObj as any).带宽 ?? { 当前: 30, 上限: 30 },
     寿命: (legacyStatusObj as any).寿命 ?? { 当前: 18, 上限: 80 },
   };
 
@@ -214,33 +229,33 @@ export function migrateSaveDataToLatest(raw: SaveData): { migrated: SaveDataV3; 
     source.位置 ??
     (legacyStatusObj as any).位置 ??
     (source.状态位置 as any) ??
-    { 描述: '九寰仙岛·无名之地', x: 5000, y: 5000 };
+    { 描述: '霓虹群岛·无名节点', x: 5000, y: 5000 };
 
   const flatTime = coerceTime(source.元数据?.时间 ?? source.时间 ?? source.游戏时间);
 
-  const flatInventory = source.背包 ?? { 灵石: { 下品: 0, 中品: 0, 上品: 0, 极品: 0 }, 物品: {} };
+  const flatInventory = source.背包 ?? { 信用点: { 低额: 0, 中额: 0, 高额: 0, 最高额: 0 }, 物品: {} };
   const flatEquipment =
     source.装备 ?? source.装备栏 ?? { 装备1: null, 装备2: null, 装备3: null, 装备4: null, 装备5: null, 装备6: null };
 
-  const flatTechniqueSystem =
-    source.功法 ??
+  const flatProgramSystem =
+    source.程序 ??
     {
-      当前功法ID: null,
-      功法进度: {},
-      功法套装: { 主修: null, 辅修: [] },
+      当前程序ID: null,
+      程序进度: {},
+      程序套装: { 主槽: null, 副槽: [] },
     };
 
-  const flatCultivation =
-    source.修炼 ?? (source.修炼功法 !== undefined ? { 修炼功法: source.修炼功法 } : { 修炼功法: null });
+  const flatTraining =
+    source.训练 ?? (source.训练程序 !== undefined ? { 训练程序: source.训练程序 } : { 训练程序: null });
 
-  const flatDao = source.大道 ?? source.三千大道 ?? { 大道列表: {} };
+  const flatProtocol = source.流派 ?? source.专精 ?? { 流派列表: {} };
   const flatSkills =
     source.技能 ??
     (source.掌握技能
       ? { 掌握技能: source.掌握技能, 装备栏: [], 冷却: {} }
       : { 掌握技能: [], 装备栏: [], 冷却: {} });
 
-  const flatSect = source.宗门 ?? source.宗门系统 ?? undefined;
+  const flatSect = source.组织 ?? source.组织系统 ?? undefined;
   const flatRelationships = source.关系 ?? source.人物关系 ?? {};
   const flatMemory =
     source.记忆 ?? { 短期记忆: [], 中期记忆: [], 长期记忆: [], 隐式中期记忆: [] };
@@ -292,14 +307,14 @@ export function migrateSaveDataToLatest(raw: SaveData): { migrated: SaveDataV3; 
       身体: source.身体 ?? (source.身体部位开发 ? { 部位开发: source.身体部位开发 } : undefined),
       背包: flatInventory,
       装备: flatEquipment,
-      功法: flatTechniqueSystem,
-      修炼: flatCultivation,
-      大道: flatDao,
+      程序: flatProgramSystem,
+      训练: flatTraining,
+      流派: flatProtocol,
       技能: flatSkills,
     },
     社交: {
       关系: flatRelationships,
-      宗门: flatSect ?? null,
+      组织: flatSect ?? null,
       事件: flatEvent,
       记忆: flatMemory,
     },
@@ -330,4 +345,226 @@ export function migrateSaveDataToLatest(raw: SaveData): { migrated: SaveDataV3; 
   if (!migrated.角色?.身份) report.warnings.push('迁移后仍缺少 角色.身份（将导致部分界面无法展示）');
 
   return { migrated: migrated as SaveDataV3, report };
+}
+
+const mapV3StatsToV4 = (attributes: any) => {
+  const realm = attributes?.阶位 ?? {};
+  return {
+    等级: {
+      称号: String(realm?.名称 ?? '街头新人'),
+      阶段: realm?.阶段 ?? '',
+      进度: Number(realm?.当前进度 ?? 0),
+      晋升需求: realm?.下一级所需 ?? 100,
+      晋升说明: realm?.升级描述 ?? '',
+    },
+    热度: Number(attributes?.声望 ?? 0),
+  };
+};
+
+const mapV3ResourcesToV4 = (attributes: any) => ({
+  生命值: attributes?.生命值 ?? { 当前: 100, 上限: 100 },
+  电量: attributes?.电量 ?? { 当前: 50, 上限: 50 },
+  带宽: attributes?.带宽 ?? { 当前: 30, 上限: 30 },
+  生理耐久: attributes?.寿命 ?? { 当前: 18, 上限: 80 },
+});
+
+const mapV3IdentityToV4 = (identity: any, time: GameTime) => ({
+  姓名: String(identity?.名字 ?? '无名者'),
+  性别: (identity?.性别 ?? '其他') as '男' | '女' | '其他',
+  年龄: Number(identity?.年龄 ?? 18),
+  出生日期: coerceTime(identity?.出生日期 ?? time),
+  所属世界: String(identity?.世界 ?? '未知'),
+  族群: String(identity?.种族 ?? '未知'),
+  背景: String(identity?.出生 ?? '未知'),
+  天赋: Array.isArray(identity?.模块) ? identity.模块 : [],
+  基础素质: {
+    体格: Number(identity?.初始六维?.体质 ?? 5),
+    反应: Number(identity?.初始六维?.能源 ?? 5),
+    智识: Number(identity?.初始六维?.算法 ?? 5),
+    幸运: Number(identity?.初始六维?.资源感知 ?? 5),
+    魅力: Number(identity?.初始六维?.魅力 ?? 5),
+    意志: Number(identity?.初始六维?.心智 ?? 5),
+  },
+  改造素质: {
+    体格: Number(identity?.成长六维?.体质 ?? 0),
+    反应: Number(identity?.成长六维?.能源 ?? 0),
+    智识: Number(identity?.成长六维?.算法 ?? 0),
+    幸运: Number(identity?.成长六维?.资源感知 ?? 0),
+    魅力: Number(identity?.成长六维?.魅力 ?? 0),
+    意志: Number(identity?.成长六维?.心智 ?? 0),
+  },
+});
+
+const mapV3CreditsToV4 = (inventory: any) => {
+  const credits = inventory?.信用点 ?? { 低额: 0, 中额: 0, 高额: 0, 最高额: 0 };
+  const base = Number(credits?.低额 ?? 0);
+  return Number.isFinite(base) ? base : 0;
+};
+
+const mapV3WorldInfoToV4 = (worldInfo: any) => ({
+  ...worldInfo,
+  区域信息: worldInfo?.大陆信息 ?? [],
+  公司势力: worldInfo?.势力信息 ?? [],
+  节点信息: worldInfo?.地点信息 ?? [],
+});
+
+export function migrateSaveDataToV4(raw: SaveData): { migrated: SaveDataV4; report: SaveMigrationReport } {
+  const sourceRaw = deepClone(raw ?? ({} as any)) as any;
+  const source = stripAIFieldsDeep(sourceRaw) as any;
+
+  const report: SaveMigrationReport = {
+    legacyKeysFound: [],
+    removedLegacyKeys: [],
+    warnings: [],
+  };
+
+  if (isSaveDataV4(source)) {
+    return { migrated: source, report };
+  }
+
+  const v3 = isSaveDataV3(source) ? source : migrateSaveDataToLatest(source as any).migrated;
+  const time = coerceTime((v3 as any)?.元数据?.时间 ?? null);
+
+  const migrated: SaveDataV4 = {
+    元数据: {
+      ...(v3 as any)?.元数据,
+      时间: time,
+      版本: 'v4',
+    },
+    角色: {
+      档案: mapV3IdentityToV4((v3 as any)?.角色?.身份 ?? {}, time),
+      能力: mapV3StatsToV4((v3 as any)?.角色?.属性 ?? {}),
+      资源: mapV3ResourcesToV4((v3 as any)?.角色?.属性 ?? {}),
+      位置: {
+        ...(v3 as any)?.角色?.位置,
+        信号强度: (v3 as any)?.角色?.位置?.信号强度,
+      },
+      状态效果: (v3 as any)?.角色?.效果 ?? [],
+      背包: {
+        信用点: mapV3CreditsToV4((v3 as any)?.角色?.背包 ?? {}),
+        物品: (v3 as any)?.角色?.背包?.物品 ?? {},
+      },
+      装备: (v3 as any)?.角色?.装备 ?? {},
+      技能树: (v3 as any)?.角色?.程序 ?? {},
+      训练: (v3 as any)?.角色?.训练 ?? {},
+      专精树: (v3 as any)?.角色?.流派 ?? {},
+      技能: (v3 as any)?.角色?.技能 ?? {},
+      身体: (v3 as any)?.角色?.身体,
+    },
+    社交: {
+      关系: (v3 as any)?.社交?.关系 ?? {},
+      组织: (v3 as any)?.社交?.组织 ?? undefined,
+      记忆: (v3 as any)?.社交?.记忆 ?? undefined,
+      事件: (v3 as any)?.社交?.事件 ?? undefined,
+    },
+    世界: {
+      信息: mapV3WorldInfoToV4((v3 as any)?.世界?.信息 ?? {}),
+      状态: (v3 as any)?.世界?.状态 ?? {},
+    },
+    系统: {
+      配置: (v3 as any)?.系统?.配置 ?? {},
+      历史: (v3 as any)?.系统?.历史 ?? {},
+      联机: (v3 as any)?.系统?.联机 ?? undefined,
+      设置: (v3 as any)?.系统?.设置 ?? undefined,
+    },
+  };
+
+  return { migrated, report };
+}
+
+export function convertV4ToV3Compat(source: SaveDataV4): SaveDataV3 {
+  const time = coerceTime(source?.元数据?.时间 ?? null);
+  const archive = source?.角色?.档案 ?? ({} as any);
+  const ability = source?.角色?.能力 ?? ({} as any);
+  const resources = source?.角色?.资源 ?? ({} as any);
+
+  const identity = {
+    名字: String(archive.姓名 ?? '无名者'),
+    性别: archive.性别 ?? '其他',
+    年龄: Number(archive.年龄 ?? 18),
+    出生日期: coerceTime(archive.出生日期 ?? time),
+    世界: String(archive.所属世界 ?? '未知'),
+    种族: String(archive.族群 ?? '未知'),
+    出生: String(archive.背景 ?? '未知'),
+    模块: Array.isArray(archive.天赋) ? archive.天赋 : [],
+    初始六维: {
+      体质: Number(archive?.基础素质?.体格 ?? 5),
+      能源: Number(archive?.基础素质?.反应 ?? 5),
+      算法: Number(archive?.基础素质?.智识 ?? 5),
+      资源感知: Number(archive?.基础素质?.幸运 ?? 5),
+      魅力: Number(archive?.基础素质?.魅力 ?? 5),
+      心智: Number(archive?.基础素质?.意志 ?? 5),
+    },
+    成长六维: {
+      体质: Number(archive?.改造素质?.体格 ?? 0),
+      能源: Number(archive?.改造素质?.反应 ?? 0),
+      算法: Number(archive?.改造素质?.智识 ?? 0),
+      资源感知: Number(archive?.改造素质?.幸运 ?? 0),
+      魅力: Number(archive?.改造素质?.魅力 ?? 0),
+      心智: Number(archive?.改造素质?.意志 ?? 0),
+    },
+  } as any;
+
+  const realm = ability?.等级 ?? {};
+  const attributes = {
+    阶位: {
+      名称: String(realm?.称号 ?? '街头新人'),
+      阶段: realm?.阶段 ?? '',
+      当前进度: Number(realm?.进度 ?? 0),
+      下一级所需: realm?.晋升需求 ?? 100,
+      升级描述: realm?.晋升说明 ?? '',
+    },
+    声望: Number(ability?.热度 ?? 0),
+    生命值: resources?.生命值 ?? { 当前: 100, 上限: 100 },
+    电量: resources?.电量 ?? { 当前: 50, 上限: 50 },
+    带宽: resources?.带宽 ?? { 当前: 30, 上限: 30 },
+    寿命: resources?.生理耐久 ?? { 当前: 18, 上限: 80 },
+  } as any;
+
+  const creditValue = source?.角色?.背包?.信用点;
+  const lowerCredits = typeof creditValue === 'number' ? creditValue : Number((creditValue as any)?.低额 ?? 0);
+
+  return {
+    元数据: { ...(source as any)?.元数据, 时间: time },
+    角色: {
+      身份: identity,
+      属性: attributes,
+      位置: {
+        ...(source?.角色?.位置 ?? {}),
+        信号强度: source?.角色?.位置?.信号强度,
+      },
+      效果: source?.角色?.状态效果 ?? [],
+      身体: source?.角色?.身体,
+      背包: {
+        信用点: { 低额: lowerCredits, 中额: 0, 高额: 0, 最高额: 0 },
+        物品: source?.角色?.背包?.物品 ?? {},
+      },
+      装备: source?.角色?.装备 ?? {},
+      程序: source?.角色?.技能树 ?? {},
+      训练: source?.角色?.训练 ?? {},
+      流派: source?.角色?.专精树 ?? {},
+      技能: source?.角色?.技能 ?? {},
+    },
+    社交: {
+      关系: source?.社交?.关系 ?? {},
+      组织: source?.社交?.组织 ?? undefined,
+      事件: source?.社交?.事件 ?? undefined,
+      记忆: source?.社交?.记忆 ?? undefined,
+    },
+    世界: {
+      信息: {
+        ...(source?.世界?.信息 ?? {}),
+        大陆信息: (source?.世界?.信息 as any)?.区域信息 ?? [],
+        势力信息: (source?.世界?.信息 as any)?.公司势力 ?? [],
+        地点信息: (source?.世界?.信息 as any)?.节点信息 ?? [],
+      },
+      状态: source?.世界?.状态 ?? {},
+    },
+    系统: {
+      配置: source?.系统?.配置 ?? {},
+      设置: source?.系统?.设置 ?? undefined,
+      历史: source?.系统?.历史 ?? {},
+      联机: source?.系统?.联机 ?? undefined,
+    },
+  } as SaveDataV3;
 }

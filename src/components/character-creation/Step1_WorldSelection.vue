@@ -229,7 +229,7 @@ import { parseJsonFromText } from '@/utils/jsonExtract';
 
 const emit = defineEmits(['ai-generate']);
 const store = useCharacterCreationStore();
-const activeWorld = ref<World | null>(null); // For hover details view - 仿照天赋选择
+const activeWorld = ref<World | null>(null); // For hover details view - 仿照模块选择
 const isCustomModalVisible = ref(false);
 const showMapOptions = ref(false);
 const isEditModalVisible = ref(false);
@@ -315,9 +315,9 @@ const worldsList = computed(() => {
 
 // 根据 types/index.ts 中的 World 接口定义字段
 const customWorldFields = [
-  { key: 'name', label: '世界名称', type: 'text', placeholder: '例如：九霄界' },
-  { key: 'era', label: '时代背景', type: 'text', placeholder: '例如：仙道昌隆' },
-  { key: 'description', label: '世界描述', type: 'textarea', placeholder: '描述这个世界的背景故事、修炼体系特点等...' }
+  { key: 'name', label: '世界名称', type: 'text', placeholder: '例如：霓虹矩阵城' },
+  { key: 'era', label: '时代背景', type: 'text', placeholder: '例如：赛博资本统治' },
+  { key: 'description', label: '世界描述', type: 'textarea', placeholder: '描述这个世界的背景故事、科技生态与规则体系...' }
 ] as const;
 
 function validateCustomWorld(data: any) {

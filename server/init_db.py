@@ -24,9 +24,9 @@ async def init_test_data():
     
     # 创建世界
     worlds_data = [
-        {"name": "九寰仙岛", "description": "修仙者的起始之地，灵气充沛", "order": 1},
-        {"name": "幽荒界", "description": "传说中的上古界域", "order": 2},
-        {"name": "蓬莱界", "description": "真正的仙人居所", "order": 3},
+        {"name": "霓虹城", "description": "赛博行动者的起始城区，数据流密集", "order": 1},
+        {"name": "黑域堆栈", "description": "传说中的禁区节点", "order": 2},
+        {"name": "极光穹顶", "description": "高阶组织的核心栖所", "order": 3},
     ]
     for data in worlds_data:
         await World.create(**data)
@@ -34,11 +34,11 @@ async def init_test_data():
     
     # 创建天资等级
     tiers_data = [
-        {"name": "凡品", "description": "普通资质", "multiplier": 1.0, "order": 1},
-        {"name": "良品", "description": "良好资质", "multiplier": 1.2, "order": 2},
-        {"name": "上品", "description": "优秀资质", "multiplier": 1.5, "order": 3},
-        {"name": "极品", "description": "卓越资质", "multiplier": 2.0, "order": 4},
-        {"name": "天品", "description": "天才资质", "multiplier": 3.0, "order": 5},
+        {"name": "基础级", "description": "基础模块阶位", "multiplier": 1.0, "order": 1},
+        {"name": "改良级", "description": "改良模块阶位", "multiplier": 1.2, "order": 2},
+        {"name": "精良级", "description": "精良模块阶位", "multiplier": 1.5, "order": 3},
+        {"name": "高级", "description": "高阶模块阶位", "multiplier": 2.0, "order": 4},
+        {"name": "顶级", "description": "顶级模块阶位", "multiplier": 3.0, "order": 5},
     ]
     for data in tiers_data:
         await TalentTier.create(**data)
@@ -46,33 +46,33 @@ async def init_test_data():
     
     # 创建出身
     origins_data = [
-        {"name": "平民", "description": "普通百姓出身", "effects": {}, "order": 1},
-        {"name": "世家", "description": "修仙世家出身", "effects": {"initial_resources": 1000}, "order": 2},
-        {"name": "宗门", "description": "大宗门弟子", "effects": {"initial_cultivation": 100}, "order": 3},
+        {"name": "街区平民", "description": "普通街区出身", "effects": {}, "order": 1},
+        {"name": "企业家族", "description": "企业家族出身", "effects": {"initial_resources": 1000}, "order": 2},
+        {"name": "组织成员", "description": "核心组织成员", "effects": {"initial_training": 100}, "order": 3},
     ]
     for data in origins_data:
         await Origin.create(**data)
     print("✅ 出身数据创建完成")
     
-    # 创建灵根
+    # 创建改造
     spirit_roots_data = [
-        {"name": "金灵根", "description": "纯金属性灵根", "elements": {"金": 100}, "order": 1},
-        {"name": "木灵根", "description": "纯木属性灵根", "elements": {"木": 100}, "order": 2},
-        {"name": "水灵根", "description": "纯水属性灵根", "elements": {"水": 100}, "order": 3},
-        {"name": "火灵根", "description": "纯火属性灵根", "elements": {"火": 100}, "order": 4},
-        {"name": "土灵根", "description": "纯土属性灵根", "elements": {"土": 100}, "order": 5},
-        {"name": "五行灵根", "description": "五行俱全的灵根", "elements": {"金": 20, "木": 20, "水": 20, "火": 20, "土": 20}, "order": 6},
+        {"name": "合金核心", "description": "高强度合金改造核心", "elements": {"合金": 100}, "order": 1},
+        {"name": "生物核心", "description": "生体兼容改造核心", "elements": {"生物": 100}, "order": 2},
+        {"name": "液冷核心", "description": "液冷稳定改造核心", "elements": {"液冷": 100}, "order": 3},
+        {"name": "等离子核心", "description": "高能输出改造核心", "elements": {"等离子": 100}, "order": 4},
+        {"name": "地质核心", "description": "地质防护改造核心", "elements": {"地质": 100}, "order": 5},
+        {"name": "复合核心", "description": "多模块协同改造核心", "elements": {"合金": 20, "生物": 20, "液冷": 20, "等离子": 20, "地质": 20}, "order": 6},
     ]
     for data in spirit_roots_data:
         await SpiritRoot.create(**data)
-    print("✅ 灵根数据创建完成")
+    print("✅ 改造核心数据创建完成")
     
     # 创建天赋
-    tier = await TalentTier.filter(name="上品").first()
+    tier = await TalentTier.filter(name="精良级").first()
     talents_data = [
-        {"name": "悟性超凡", "description": "修炼速度提升30%", "talent_cost": 2, "rarity": 3, "tier_id": tier.id},
-        {"name": "天生神力", "description": "力量属性提升20点", "talent_cost": 1, "rarity": 2, "tier_id": tier.id},
-        {"name": "灵气亲和", "description": "吸收灵气速度提升50%", "talent_cost": 3, "rarity": 4, "tier_id": tier.id},
+        {"name": "算法直觉", "description": "训练速度提升30%", "talent_cost": 2, "rarity": 3, "tier_id": tier.id},
+        {"name": "动力强化", "description": "力量属性提升20点", "talent_cost": 1, "rarity": 2, "tier_id": tier.id},
+        {"name": "能源亲和", "description": "能量吸收速度提升50%", "talent_cost": 3, "rarity": 4, "tier_id": tier.id},
     ]
     for data in talents_data:
         await Talent.create(**data)

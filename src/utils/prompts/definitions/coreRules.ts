@@ -24,19 +24,19 @@ export const JSON_OUTPUT_RULES = `
 - action_options: 行动选项（仅当系统启用时输出）
 
 ## 示例
-{"text":"【山风呼啸】\\n你站在悬崖边，俯瞰云海翻涌...","mid_term_memory":"玩家到达悬崖，观察周围环境","tavern_commands":[{"action":"set","key":"角色.位置.描述","value":"东洲·青云山·悬崖"}],"action_options":["继续前行","原路返回"]}
+{"text":"【霓虹雨幕】\\n你站在天桥边，俯瞰车流与光幕翻涌...","mid_term_memory":"玩家到达天桥，观察周围环境","tavern_commands":[{"action":"set","key":"角色.位置.描述","value":"下城区·高架天桥·观景点"}],"action_options":["继续前行","返回安全区"]}
 `.trim()
 
 export const RESPONSE_FORMAT_RULES = `
 # 数据同步
 text写什么，commands就更新什么：
-场景变化→set位置 | 时间流逝→add时间 | 世界事件→push社交.事件.事件记录(可选) | NPC互动→push记忆+add好感 | 战斗→add气血(负) | 技能→add灵气(负) | 修炼→add进度 | 物品→set/delete背包
+场景变化→set位置 | 时间流逝→add时间 | 世界事件→push社交.事件.事件记录(可选) | NPC互动→push记忆+add好感 | 战斗→add生命值(负) | 技能/设备→add电量(负) | 训练/改造→add进度 | 物品→set/delete背包
 `.trim()
 
 export const DATA_STRUCTURE_STRICTNESS = `
 # 数据结构
 只读：角色.身份/装备/技能.掌握技能
-境界：小突破add进度，大突破set整体
+等级/阶段：小进展add进度，大晋升set整体
 NPC：必须一次性创建完整对象
 `.trim()
 

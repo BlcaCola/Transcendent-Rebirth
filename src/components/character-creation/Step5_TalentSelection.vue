@@ -1,6 +1,6 @@
 <template>
   <div class="talent-selection-container">
-    <div v-if="store.isLoading" class="loading-state">{{ $t('于时光长河中搜寻天赋...') }}</div>
+    <div v-if="store.isLoading" class="loading-state">{{ $t('于城市数据流中搜寻模块...') }}</div>
     <div v-else-if="store.error" class="error-state">{{ $t('致命错误') }}：{{ store.error }}</div>
 
     <div v-else class="talent-layout">
@@ -13,7 +13,7 @@
             @click="isCustomModalVisible = true"
             class="action-item shimmer-on-hover"
           >
-            <span class="action-name">{{ $t('自定义天赋') }}</span>
+            <span class="action-name">{{ $t('自定义模块') }}</span>
           </button>
           <button @click="handleAIGenerate" class="action-item shimmer-on-hover">
             <span class="action-name">{{ $t('AI帮你创建') }}</span>
@@ -51,16 +51,16 @@
         <div v-if="activeTalent" class="talent-details">
           <h2>{{ activeTalent.name }}</h2>
           <div class="description-scroll">
-            <p>{{ activeTalent.description || $t('此天赋之玄妙，需自行领悟。') }}</p>
+            <p>{{ activeTalent.description || $t('此模块的细节仍待解码。') }}</p>
           </div>
         </div>
-        <div v-else class="placeholder">{{ $t('请选择天赋。') }}</div>
+        <div v-else class="placeholder">{{ $t('请选择模块。') }}</div>
       </div>
     </div>
 
     <CustomCreationModal
       :visible="isCustomModalVisible"
-      :title="$t('自定义天赋')"
+      :title="$t('自定义模块')"
       :fields="customTalentFields"
       :validationFn="validateCustomTalent"
       @close="isCustomModalVisible = false"
@@ -70,7 +70,7 @@
     <!-- 编辑模态框 -->
     <CustomCreationModal
       :visible="isEditModalVisible"
-      :title="$t('编辑天赋')"
+      :title="$t('编辑模块')"
       :fields="customTalentFields"
       :validationFn="validateCustomTalent"
       :initialData="editInitialData"
@@ -109,39 +109,39 @@ const editingTalent = ref<Talent | null>(null)
 
 const filteredTalents = computed(() => {
   const allTalents = store.creationData.talents;
-  console.log("【天赋选择】所有天赋数据:", allTalents.length, "个");
-  console.log("【天赋选择】当前模式:", store.isLocalCreation ? '本地' : '联机');
+  console.log("【模块选择】所有模块数据:", allTalents.length, "个");
+  console.log("【模块选择】当前模式:", store.isLocalCreation ? '本地' : '联机');
 
   if (store.isLocalCreation) {
     // 单机模式显示本地数据和云端同步的数据
     const availableTalents = allTalents.filter(talent =>
       talent.source === 'local' || talent.source === 'cloud'
     );
-    console.log("【天赋选择】穿越异世界可用天赋数量:", availableTalents.length);
+    console.log("【模块选择】可用模块数量:", availableTalents.length);
     return availableTalents;
   } else {
     // 联机模式显示所有数据，包括本地数据作为后备
     const availableTalents = allTalents.length > 0 ? allTalents : [];
-    console.log("【天赋选择】联机模式天赋数量:", availableTalents.length);
+    console.log("【模块选择】联机模式模块数量:", availableTalents.length);
 
     if (availableTalents.length === 0) {
-      console.warn("【天赋选择】警告：联机模式下没有找到任何天赋数据！");
+      console.warn("【模块选择】警告：联机模式下没有找到任何模块数据！");
     }
 
     return availableTalents;
   }
 });
 
-// 自定义天赋字段 - 支持简单描述和结构化格式
+// 自定义模块字段 - 支持简单描述和结构化格式
 // 根据 types/index.ts 中的 Talent 接口定义字段
 const customTalentFields: ModalField[] = [
-  { key: 'name', label: '天赋名称', type: 'text', placeholder: '例如：道心天成' },
-  { key: 'description', label: '天赋描述', type: 'textarea', placeholder: '描述此天赋的本质...' },
+  { key: 'name', label: '模块名称', type: 'text', placeholder: '例如：夜城神经栈' },
+  { key: 'description', label: '模块说明', type: 'textarea', placeholder: '描述此模块的作用...' },
   { key: 'talent_cost', label: '技能点消耗', type: 'number', placeholder: '例如：3' },
   { key: 'rarity', label: '稀有度', type: 'number', placeholder: '1-10，数值越高越稀有' },
   {
     key: 'effects',
-    label: '天赋效果',
+    label: '模块效果',
     type: 'dynamic-list',
     columns: [
       {
@@ -152,16 +152,16 @@ const customTalentFields: ModalField[] = [
           { value: '属性加成', label: '属性加成' },
           { value: '技能解锁', label: '技能解锁' },
           { value: '特殊能力', label: '特殊能力' },
-          { value: '修炼加成', label: '修炼加成' }
+          { value: '训练加成', label: '训练加成' }
         ]
       },
-      { key: '目标', placeholder: '目标（如：根骨、悟性）' },
+      { key: '目标', placeholder: '目标（如：体质、算法）' },
       { key: '数值', placeholder: '数值（如：+2、+10%）' }
     ]
   }
 ]
 
-// 自定义天赋数据类型 - 与标准数据格式保持一致
+// 自定义模块数据类型 - 与标准数据格式保持一致
 type CustomTalentData = {
   name: string;
   description: string;
@@ -178,8 +178,8 @@ function validateCustomTalent(data: Partial<CustomTalentData>) {
     const errors: Record<string, string> = {};
 
     // 必填字段验证
-    if (!data.name?.trim()) errors.name = '天赋名称不可为空';
-    if (!data.description?.trim()) errors.description = '天赋描述不可为空';
+    if (!data.name?.trim()) errors.name = '模块名称不可为空';
+    if (!data.description?.trim()) errors.description = '模块说明不可为空';
 
     // 数值字段验证
     const talentCost = Number(data.talent_cost);
@@ -201,7 +201,7 @@ function validateCustomTalent(data: Partial<CustomTalentData>) {
 }
 
 async function handleCustomSubmit(data: CustomTalentData) {
-  // 处理天赋效果数组
+  // 处理模块效果数组
   const effects = Array.isArray(data.effects)
     ? data.effects
         .filter(effect => effect.类型 && effect.数值)
@@ -212,7 +212,7 @@ async function handleCustomSubmit(data: CustomTalentData) {
         }))
     : [];
 
-  // 创建完整的天赋对象
+  // 创建完整的模块对象
   const newTalent: Talent = {
     id: Date.now(),
     name: data.name,
@@ -226,10 +226,10 @@ async function handleCustomSubmit(data: CustomTalentData) {
   try {
     store.addTalent(newTalent);
     isCustomModalVisible.value = false;
-    toast.success(`自定义天赋 "${newTalent.name}" 已保存！`);
+    toast.success(`自定义模块 "${newTalent.name}" 已保存！`);
   } catch (e) {
-    console.error('保存自定义天赋失败:', e);
-    toast.error('保存自定义天赋失败！');
+    console.error('保存自定义模块失败:', e);
+    toast.error('保存自定义模块失败！');
   }
 }
 
@@ -263,43 +263,43 @@ async function handleAIPromptSubmit(userPrompt: string) {
       return;
     }
 
-    console.log('【AI推演-天赋】完整响应:', aiResponse);
+    console.log('【AI推演-模块】完整响应:', aiResponse);
 
     // 解析AI返回的JSON
     let parsedTalent: any;
     try {
       parsedTalent = parseJsonFromText(aiResponse);
     } catch (parseError) {
-      console.error('【AI推演-天赋】JSON解析失败:', parseError);
+      console.error('【AI推演-模块】JSON解析失败:', parseError);
       toast.error('AI推演结果格式错误，无法解析', { id: toastId });
       return;
     }
 
     // 验证必需字段
     if (!parsedTalent.name && !parsedTalent.名称) {
-      toast.error('AI推演结果缺少天赋名称', { id: toastId });
+      toast.error('AI推演结果缺少模块名称', { id: toastId });
       return;
     }
 
-    // 创建天赋对象
+    // 创建模块对象
     const newTalent: Talent = {
       id: Date.now(),
-      name: parsedTalent.name || parsedTalent.名称 || '未命名天赋',
+      name: parsedTalent.name || parsedTalent.名称 || '未命名模块',
       description: parsedTalent.description || parsedTalent.描述 || parsedTalent.说明 || '',
       talent_cost: parsedTalent.talent_cost || parsedTalent.点数消耗 || 1,
       rarity: parsedTalent.rarity || parsedTalent.稀有度 || 1,
       source: 'local'
     };
 
-    // 保存并选择天赋
+    // 保存并选择模块
     store.addTalent(newTalent);
     handleToggleTalent(newTalent);
     isAIPromptModalVisible.value = false;
 
-    toast.success(`AI推演完成！天赋 "${newTalent.name}" 已生成`, { id: toastId });
+    toast.success(`AI推演完成！模块 "${newTalent.name}" 已生成`, { id: toastId });
 
   } catch (e: any) {
-    console.error('【AI推演-天赋】失败:', e);
+    console.error('【AI推演-模块】失败:', e);
     toast.error(`AI推演失败: ${e.message}`, { id: toastId });
   }
 }
@@ -314,16 +314,16 @@ function openEditModal(talent: Talent) {
 async function handleDeleteTalent(id: number) {
   try {
     await store.removeTalent(id);
-    console.log(`【天赋选择】成功删除天赋 ID: ${id}`);
+    console.log(`【模块选择】成功删除模块 ID: ${id}`);
   } catch (error) {
-    console.error(`【天赋选择】删除天赋失败 ID: ${id}`, error);
+    console.error(`【模块选择】删除模块失败 ID: ${id}`, error);
   }
 }
 
 async function handleEditSubmit(data: CustomTalentData) {
   if (!editingTalent.value) return;
 
-  // 处理天赋效果数组
+  // 处理模块效果数组
   const effects = Array.isArray(data.effects)
     ? data.effects
         .filter(effect => effect.类型 && effect.数值)
@@ -348,13 +348,13 @@ async function handleEditSubmit(data: CustomTalentData) {
     if (success) {
       isEditModalVisible.value = false;
       editingTalent.value = null;
-      toast.success(`天赋 "${updateData.name}" 已更新！`);
+      toast.success(`模块 "${updateData.name}" 已更新！`);
     } else {
-      toast.error('更新天赋失败！');
+      toast.error('更新模块失败！');
     }
   } catch (e) {
-    console.error('更新天赋失败:', e);
-    toast.error('更新天赋失败！');
+    console.error('更新模块失败:', e);
+    toast.error('更新模块失败！');
   }
 }
 

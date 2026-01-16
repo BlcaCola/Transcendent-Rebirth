@@ -5,7 +5,7 @@
       <path d="M3 20h18L12 4z" :fill="color" opacity="0.6" />
       <path d="M5 16l4-8 3 6 4-4 3 6H5z" :fill="color" />
     </g>
-    <!-- 宗门势力 -->
+    <!-- 组织势力 -->
     <g v-else-if="type === 'sect_power'">
       <rect x="2" y="8" width="20" height="12" :fill="color" />
       <path d="M2 8L12 2l10 6" :fill="color" opacity="0.7" />

@@ -65,7 +65,7 @@
             <div class="stat-item" v-if="part.content.remainingHp">
               <span class="stat-icon">❤️</span>
               <div class="stat-info">
-                <span class="stat-label">剩余气血</span>
+                <span class="stat-label">剩余生命值</span>
                 <span class="stat-value">{{ part.content.remainingHp }}</span>
               </div>
             </div>
@@ -102,9 +102,9 @@
               <strong>{{ $t('最终判定值') }}</strong> = {{ $t('基础值') }} + {{ $t('骰子加成') }} + {{ $t('环境修正') }} + {{ $t('状态修正') }}
             </div>
             <ol>
-              <li><strong>{{ $t('基础值') }}</strong>：{{ $t('先天属性加权 + 境界加成 + 技艺加成') }}</li>
-              <li><strong>{{ $t('骰子加成') }}</strong>：{{ $t('(原始骰子 × 气运系数 - 50) ÷ 5') }} <span class="note">({{ $t('受【气运】影响，点数<50为负') }})</span></li>
-              <li><strong>{{ $t('环境修正') }}</strong>：{{ $t('灵气浓度影响（修炼/炼丹/战斗），探索社交不受影响') }}</li>
+              <li><strong>{{ $t('基础值') }}</strong>：{{ $t('先天属性加权 + 等级加成 + 技艺加成') }}</li>
+              <li><strong>{{ $t('骰子加成') }}</strong>：{{ $t('(原始骰子 × 资源感知系数 - 50) ÷ 5') }} <span class="note">({{ $t('受【资源感知】影响，点数<50为负') }})</span></li>
+              <li><strong>{{ $t('环境修正') }}</strong>：{{ $t('信号强度影响（训练/制造/战斗），探索社交不受影响') }}</li>
               <li><strong>{{ $t('状态修正') }}</strong>：{{ $t('生命状态（重伤/虚弱）及 Buff/Debuff 影响') }}</li>
             </ol>
           </div>
@@ -112,7 +112,7 @@
           <div class="help-section">
             <h4>🎯 {{ $t('判定结果') }}</h4>
             <div class="formula-note">
-              <strong>{{ $t('判定规则') }}</strong>: {{ $t('判定值与难度对比，完全基于属性、境界和加成') }}
+              <strong>{{ $t('判定规则') }}</strong>: {{ $t('判定值与难度对比，完全基于属性、等级和加成') }}
             </div>
             <div class="result-list">
               <div class="result-item perfect">
@@ -143,71 +143,71 @@
             <div class="judgement-types">
               <div class="type-item">
                 <span class="type-name">{{ $t('战斗判定') }}</span>
-                <span class="type-attrs">{{ $t('根骨50% + 灵性30% + 气运20%') }}</span>
+                <span class="type-attrs">{{ $t('体质50% + 能源30% + 资源感知20%') }}</span>
               </div>
               <div class="type-item">
-                <span class="type-name">{{ $t('修炼判定') }}</span>
-                <span class="type-attrs">{{ $t('悟性50% + 灵性30% + 心性20%') }}</span>
+                <span class="type-name">{{ $t('训练判定') }}</span>
+                <span class="type-attrs">{{ $t('算法50% + 能源30% + 心智20%') }}</span>
               </div>
               <div class="type-item">
                 <span class="type-name">{{ $t('技艺判定') }}</span>
-                <span class="type-attrs">{{ $t('悟性50% + 根骨30% + 灵性20%') }}</span>
+                <span class="type-attrs">{{ $t('算法50% + 体质30% + 能源20%') }}</span>
               </div>
               <div class="type-item">
                 <span class="type-name">{{ $t('社交判定') }}</span>
-                <span class="type-attrs">{{ $t('魅力50% + 悟性30% + 心性20%') }}</span>
+                <span class="type-attrs">{{ $t('魅力50% + 算法30% + 心智20%') }}</span>
               </div>
               <div class="type-item">
                 <span class="type-name">{{ $t('探索判定') }}</span>
-                <span class="type-attrs">{{ $t('气运50% + 灵性30% + 悟性20%') }}</span>
+                <span class="type-attrs">{{ $t('资源感知50% + 能源30% + 算法20%') }}</span>
               </div>
             </div>
           </div>
 
           <div class="help-section">
-            <h4>📖 {{ $t('六司属性说明') }}</h4>
+            <h4>📖 {{ $t('六维属性说明') }}</h4>
             <div class="attributes-desc">
               <div class="attr-card">
                 <div class="attr-header">
                   <span class="attr-icon">💪</span>
-                  <span class="attr-name">{{ $t('根骨') }}</span>
+                  <span class="attr-name">{{ $t('体质') }}</span>
                 </div>
-                <p>{{ $t('决定气血上限、恢复速度、寿命上限。影响炼体修行、抗打击能力。') }}</p>
+                <p>{{ $t('决定生命值上限、恢复速度、寿命上限。影响体能训练与抗打击能力。') }}</p>
               </div>
               <div class="attr-card">
                 <div class="attr-header">
                   <span class="attr-icon">✨</span>
-                  <span class="attr-name">{{ $t('灵性') }}</span>
+                  <span class="attr-name">{{ $t('能源') }}</span>
                 </div>
-                <p>{{ $t('决定灵气上限、吸收效率。影响修炼速度、法术威力。') }}</p>
+                <p>{{ $t('决定电量上限、充能效率。影响训练速度、模块威力。') }}</p>
               </div>
               <div class="attr-card">
                 <div class="attr-header">
                   <span class="attr-icon">🧠</span>
-                  <span class="attr-name">{{ $t('悟性') }}</span>
+                  <span class="attr-name">{{ $t('算法') }}</span>
                 </div>
-                <p>{{ $t('决定神识上限、学习效率。影响功法领悟、技能掌握速度。') }}</p>
+                <p>{{ $t('决定带宽上限、学习效率。影响模块领悟、技能掌握速度。') }}</p>
               </div>
               <div class="attr-card">
                 <div class="attr-header">
                   <span class="attr-icon">🍀</span>
-                  <span class="attr-name">{{ $t('气运') }}</span>
+                  <span class="attr-name">{{ $t('资源感知') }}</span>
                 </div>
-                <p>{{ $t('决定各种概率、物品掉落品质。影响天材地宝获取、贵人相助。') }}</p>
+                <p>{{ $t('决定各种概率、物品掉落品质。影响资源获取与关键人脉。') }}</p>
               </div>
               <div class="attr-card">
                 <div class="attr-header">
                   <span class="attr-icon">🌺</span>
                   <span class="attr-name">{{ $t('魅力') }}</span>
                 </div>
-                <p>{{ $t('决定初始好感度、社交加成。影响NPC互动、门派声望获取。') }}</p>
+                <p>{{ $t('决定初始好感度、社交加成。影响NPC互动、组织声望获取。') }}</p>
               </div>
               <div class="attr-card">
                 <div class="attr-header">
                   <span class="attr-icon">💎</span>
-                  <span class="attr-name">{{ $t('心性') }}</span>
+                  <span class="attr-name">{{ $t('心智') }}</span>
                 </div>
-                <p>{{ $t('决定心魔抗性、意志力。影响走火入魔抵抗、关键抉择。') }}</p>
+                <p>{{ $t('决定精神抗性、意志力。影响过载失控抵抗、关键抉择。') }}</p>
               </div>
             </div>
           </div>
@@ -215,13 +215,13 @@
           <div class="help-section">
             <h4>💡 {{ $t('提升判定成功率') }}</h4>
             <ul class="tips-list">
-              <li>{{ $t('先天六司：天赋决定上限，无法改变但影响最大') }}</li>
-              <li>{{ $t('提升境界：境界越高，判定基础加成越大（炼气+5，筑基+12...）') }}</li>
-              <li>{{ $t('修炼后天：后天六司可提升，但权重仅20%') }}</li>
-              <li>{{ $t('学习功法：高品质功法和技能熟练度提供显著加成') }}</li>
-              <li>{{ $t('装备法器：合适的装备能大幅提升判定值') }}</li>
+              <li>{{ $t('初始六维：天赋决定上限，无法改变但影响最大') }}</li>
+              <li>{{ $t('提升等级：等级越高，判定基础加成越大（N1+5，N2+12...）') }}</li>
+              <li>{{ $t('提升成长：成长六维可提升，但权重仅20%') }}</li>
+              <li>{{ $t('学习模块：高品质模块和技能熟练度提供显著加成') }}</li>
+              <li>{{ $t('装备装置：合适的装备能大幅提升判定值') }}</li>
               <li>{{ $t('状态效果：buff增强判定，注意避免debuff') }}</li>
-              <li>{{ $t('境界压制：高境界对低境界有明显优势，但不是绝对') }}</li>
+              <li>{{ $t('等级压制：高等级对低等级有明显优势，但不是绝对') }}</li>
             </ul>
           </div>
         </div>
@@ -416,7 +416,7 @@ const parsedText = computed(() => {
     if (markedContent.trim()) {
       if (nextMarker.type === 'judgement') {
         // 增强的判定解析
-        // 支持格式: "修炼判定:完美,骰点:45,灵性:8,加成:12,最终值:65,难度:50"
+        // 支持格式: "训练判定:完美,骰点:45,能源:8,加成:12,最终值:65,难度:50"
         const contentParts = markedContent.split(',').map(p => p.trim())
 
         if (contentParts.length >= 1) {
@@ -448,10 +448,10 @@ const parsedText = computed(() => {
                 judgement.finalValue = value
               } else if (key.includes('造成伤害')) {
                 judgement.damage = value
-              } else if (key.includes('剩余气血')) {
+              } else if (key.includes('剩余生命值')) {
                 judgement.remainingHp = value
               } else {
-                // 通用字段处理：自动识别所有加成字段（先天、后天、境界、装备、功法、状态、天赋、大道、阵法、法宝等）
+                // 通用字段处理：自动识别所有加成字段（先天、后天、等级、装备、模块、状态、天赋、流派、阵法、装备等）
                 judgement.details?.push(`${key}:${value}`)
               }
             }
@@ -461,7 +461,7 @@ const parsedText = computed(() => {
               content: judgement
             })
           } else if (titleResult.length === 1) {
-            // 处理简单系统提示格式，如"系统提示：星屑吊坠效果触发，悟性+2，灵性+2，凝神静气效果生效。"
+            // 处理简单系统提示格式，如"系统提示：星屑吊坠效果触发，算法+2，能源+2，稳态模块效果生效。"
             const judgement: JudgementData = {
               title: '系统提示',
               result: markedContent.trim(),
@@ -484,7 +484,7 @@ const parsedText = computed(() => {
               } else if (key.includes('最终值') || key.includes('总值')) {
                 judgement.finalValue = value
               } else if (key.match(/^[^\d\s]+$/)) {
-                // 属性名(如"灵性"、"悟性"等)
+                // 属性名(如"能源"、"算法"等)
                 if (!judgement.attribute) {
                   judgement.attribute = `${key}:${value}`
                 } else {

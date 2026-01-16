@@ -111,41 +111,41 @@
 
       <!-- Spirit Root -->
       <div class="preview-item">
-        <h3>{{ $t('灵根') }}</h3>
-        <h4>{{ store.selectedSpiritRoot?.name || $t('随机灵根') }}</h4>
+        <h3>{{ $t('改造核心') }}</h3>
+        <h4>{{ store.selectedSpiritRoot?.name || $t('随机改造') }}</h4>
         <p class="item-description">{{ store.selectedSpiritRoot?.description || $t('暂无描述') }}</p>
       </div>
 
       <!-- Talents -->
       <div class="preview-item talents-item">
-        <h3>{{ $t('天赋') }}</h3>
+        <h3>{{ $t('模块') }}</h3>
         <ul v-if="store.selectedTalents.length">
           <li v-for="talent in store.selectedTalents" :key="talent.id">
             <strong>{{ talent.name }}</strong>
             <p class="item-description">{{ talent.description }}</p>
           </li>
         </ul>
-        <p v-else>{{ $t('未选择任何天赋') }}</p>
+        <p v-else>{{ $t('未选择任何模块') }}</p>
       </div>
 
       <!-- Attributes -->
       <div v-if="props.isLocalCreation" class="preview-item attributes-item">
-        <h3>{{ $t('先天六司') }}</h3>
+        <h3>{{ $t('初始六维') }}</h3>
         <ul>
-          <li>{{ $t('根骨') }}: {{ store.attributes.root_bone }}</li>
-          <li>{{ $t('灵性') }}: {{ store.attributes.spirituality }}</li>
-          <li>{{ $t('悟性') }}: {{ store.attributes.comprehension }}</li>
-          <li>{{ $t('气运') }}: {{ store.attributes.fortune }}</li>
+          <li>{{ $t('体质') }}: {{ store.attributes.root_bone }}</li>
+          <li>{{ $t('能源') }}: {{ store.attributes.spirituality }}</li>
+          <li>{{ $t('算法') }}: {{ store.attributes.comprehension }}</li>
+          <li>{{ $t('资源感知') }}: {{ store.attributes.fortune }}</li>
           <li>{{ $t('魅力') }}: {{ store.attributes.charm }}</li>
-          <li>{{ $t('心性') }}: {{ store.attributes.temperament }}</li>
+          <li>{{ $t('心智') }}: {{ store.attributes.temperament }}</li>
         </ul>
       </div>
 
       <!-- Cloud Mode Placeholder -->
       <div v-else class="preview-item cloud-info-item">
-        <h3>{{ $t('命格天定') }}</h3>
+        <h3>{{ $t('系统分配') }}</h3>
         <p class="cloud-info-text">
-          {{ $t('联机模式下，角色的初始命格将由所选世界的天道法则在云端生成，以确保公平与平衡。') }}
+          {{ $t('联机模式下，角色的初始档案将由所选世界的系统规则在云端生成，以确保公平与平衡。') }}
         </p>
       </div>
     </div>

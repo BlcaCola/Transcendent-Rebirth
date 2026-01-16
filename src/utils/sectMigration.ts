@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash';
 import type { SaveData, SectSystemV2, WorldFaction } from '@/types/game';
-import { validateAndFixSectDataList } from '@/utils/worldGeneration/sectDataValidator';
+import { validateAndFixFactionDataList } from '@/utils/worldGeneration/sectDataValidator';
 
 export const SECT_SYSTEM_VERSION = 2;
 
@@ -17,14 +17,14 @@ const collectMembersBySect = (saveData: SaveData): Record<string, string[]> => {
 
   Object.entries(relationships).forEach(([key, npc]) => {
     if (!npc || typeof npc !== 'object') return;
-    const sectName = (npc as any).势力归属 || (npc as any).宗门 || (npc as any).势力;
-    if (!sectName) return;
+    const orgName = (npc as any).势力归属 || (npc as any).组织 || (npc as any).势力;
+    if (!orgName) return;
     const memberName = (npc as any).名字 || key;
-    if (!membersBySect[sectName]) {
-      membersBySect[sectName] = [];
+    if (!membersBySect[orgName]) {
+      membersBySect[orgName] = [];
     }
-    if (!membersBySect[sectName].includes(memberName)) {
-      membersBySect[sectName].push(memberName);
+    if (!membersBySect[orgName].includes(memberName)) {
+      membersBySect[orgName].push(memberName);
     }
   });
 
@@ -43,18 +43,18 @@ export const detectSectMigration = (saveData: SaveData | null): SectMigrationChe
     return check;
   }
 
-  const sectSystem = ((saveData as any).社交?.宗门 ?? null) as (SectSystemV2 & { 成员信息?: any }) | null;
+  const sectSystem = ((saveData as any).社交?.组织 ?? null) as (SectSystemV2 & { 成员信息?: any }) | null;
 
-  // V3 存档中 宗门: null 是合法状态（玩家未加入任何宗门），不需要迁移
-  // 空对象 {} 也视为"未加入宗门"状态，不需要迁移
+  // V3 存档中 组织: null 是合法状态（玩家未加入任何组织），不需要迁移
+  // 空对象 {} 也视为"未加入组织"状态，不需要迁移
   const isEmptyObject = sectSystem !== null && typeof sectSystem === 'object' && Object.keys(sectSystem).length === 0;
 
   // 只有当存在旧版字段或版本不匹配时才需要迁移
-  const hasLegacySectFields = !!(sectSystem as any)?.成员信息?.宗门名称;
+  const hasLegacySectFields = !!(sectSystem as any)?.成员信息?.组织名称;
   // 空对象不算版本不匹配
   const hasVersionMismatch = sectSystem !== null && !isEmptyObject && sectSystem.版本 !== SECT_SYSTEM_VERSION;
 
-  // 如果宗门系统为空（null或空对象）且没有旧版字段，说明是新建的 V3 存档，不需要迁移
+  // 如果组织系统为空（null或空对象）且没有旧版字段，说明是新建的 V3 存档，不需要迁移
   if ((!sectSystem || isEmptyObject) && !hasLegacySectFields) {
     return check;
   }
@@ -63,12 +63,12 @@ export const detectSectMigration = (saveData: SaveData | null): SectMigrationChe
   check.fromVersion = fromVersion;
 
   // 只检测真正需要迁移的情况
-  if (hasLegacySectFields && !sectSystem?.当前宗门) {
-    check.reasons.push('玩家宗门信息未同步到宗门系统');
+  if (hasLegacySectFields && !sectSystem?.当前组织) {
+    check.reasons.push('玩家组织信息未同步到组织系统');
   }
 
   if (hasVersionMismatch) {
-    check.reasons.push('宗门系统版本不匹配');
+    check.reasons.push('组织系统版本不匹配');
   }
 
   check.needed = check.reasons.length > 0;
@@ -80,7 +80,7 @@ const buildSectSystem = (
   factions: WorldFaction[],
   fromVersion: number
 ): SectSystemV2 => {
-  const existing = (((saveData as any).社交?.宗门 ?? {}) as Partial<SectSystemV2>) as any;
+  const existing = (((saveData as any).社交?.组织 ?? {}) as Partial<SectSystemV2>) as any;
   const sectMap: Record<string, WorldFaction> = {};
 
   factions.forEach((sect) => {
@@ -89,25 +89,25 @@ const buildSectSystem = (
     }
   });
 
-  const playerSectName = (existing as any)?.成员信息?.宗门名称 ?? null;
+  const playerSectName = (existing as any)?.成员信息?.组织名称 ?? null;
   const membersBySect = collectMembersBySect(saveData);
 
   return {
     ...existing,
     版本: SECT_SYSTEM_VERSION,
-    当前宗门: existing.当前宗门 ?? playerSectName ?? null,
-    宗门档案: {
+    当前组织: existing.当前组织 ?? playerSectName ?? null,
+    组织档案: {
       ...sectMap,
-      ...(existing.宗门档案 || {})
+      ...(existing.组织档案 || {})
     },
-    宗门成员: existing.宗门成员 ?? membersBySect,
-    宗门藏经阁: existing.宗门藏经阁 ?? {},
-    宗门贡献商店: existing.宗门贡献商店 ?? {},
+    组织成员: existing.组织成员 ?? membersBySect,
+    组织资料库: existing.组织资料库 ?? {},
+    组织权限商店: existing.组织权限商店 ?? {},
     迁移记录: {
       来源版本: fromVersion,
       目标版本: SECT_SYSTEM_VERSION,
       时间: new Date().toISOString(),
-      说明: '由旧版宗门字段迁移生成'
+      说明: '由旧版组织字段迁移生成'
     }
   };
 };
@@ -116,19 +116,19 @@ export const migrateSectSaveData = (saveData: SaveData): SaveData => {
   const next = cloneDeep(saveData);
   const worldInfo = (next as any).世界?.信息 ?? null;
   const rawFactions = Array.isArray(worldInfo?.势力信息) ? worldInfo.势力信息 : [];
-  const fixedFactions = validateAndFixSectDataList(cloneDeep(rawFactions));
+  const fixedFactions = validateAndFixFactionDataList(cloneDeep(rawFactions));
 
   if (worldInfo?.势力信息) {
     worldInfo.势力信息 = fixedFactions;
   }
 
-  const currentSectSystem = ((next as any).社交?.宗门 ?? null) as SectSystemV2 | null;
+  const currentSectSystem = ((next as any).社交?.组织 ?? null) as SectSystemV2 | null;
   const fromVersion = typeof currentSectSystem?.版本 === 'number' ? currentSectSystem.版本 : 0;
 
   if (!(next as any).社交 || typeof (next as any).社交 !== 'object') {
     (next as any).社交 = {};
   }
-  (next as any).社交.宗门 = buildSectSystem(next, fixedFactions, fromVersion);
+  (next as any).社交.组织 = buildSectSystem(next, fixedFactions, fromVersion);
 
   return next;
 };

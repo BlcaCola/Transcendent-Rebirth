@@ -1,6 +1,6 @@
 /**
  * 物品品质系统定义
- * 品质等级：神、仙、天、地、玄、黄、凡
+ * 品质等级：禁忌、特级、军规、改装、民用
  * 品级：0 残缺；1-3 下品；4-6 中品；7-9 上品；10 极品
  */
 
@@ -16,15 +16,13 @@ export interface GradeInfo {
 }
 
 export interface ItemQualitySystem {
-  // 品质等级（神、仙、天、地、玄、黄、凡）
+  // 品质等级（禁忌、特级、军规、改装、民用）
   qualities: {
-    神: QualityInfo;
-    仙: QualityInfo;
-    天: QualityInfo;
-    地: QualityInfo;
-    玄: QualityInfo;
-    黄: QualityInfo;
-    凡: QualityInfo;
+    禁忌: QualityInfo;
+    特级: QualityInfo;
+    军规: QualityInfo;
+    改装: QualityInfo;
+    民用: QualityInfo;
   };
 
   // 品级（0 残缺；1-3 下品；4-6 中品；7-9 上品；10 极品）
@@ -45,13 +43,11 @@ export interface ItemQualitySystem {
 
 export const ITEM_QUALITY_SYSTEM: ItemQualitySystem = {
   qualities: {
-    神: { color: '#9932CC', rarity: '亘古未有，蕴含大道法则，三界之内绝无仅有之神物。' },
-    仙: { color: '#FFD700', rarity: '源自顶级仙家圣地，汇聚天地灵气，是修士梦寐以求的瑰宝。' },
-    天: { color: '#FF69B4', rarity: '由超级宗门或顶尖势力倾力打造，威能赫赫，足以镇压一方气运。' },
-    地: { color: '#00CED1', rarity: '产自大型地级宗门，材质与工艺俱佳，是修真界的中坚力量。' },
-    玄: { color: '#9370DB', rarity: '出自玄门修士之手，蕴含奇特功效，是行走江湖的必备秘宝。' },
-    黄: { color: '#DAA520', rarity: '修真界广泛流通的珍品，虽不顶尖，但已具备不凡效力。' },
-    凡: { color: '#808080', rarity: '世俗凡人所用之物，未入修行门槛，仅具基本功能。' },
+    禁忌: { color: '#9932CC', rarity: '禁忌级黑箱技术，极端稀有且伴随高风险。' },
+    特级: { color: '#FF69B4', rarity: '特级定制与小批量武装，性能强悍，极难获取。' },
+    军规: { color: '#00CED1', rarity: '军规标准制造，稳定可靠，具备高强度作战性能。' },
+    改装: { color: '#DAA520', rarity: '基于民用改装，性能增强，仍可在黑市流通。' },
+    民用: { color: '#808080', rarity: '城邦民用量产装备，稳定耐用，基础功能齐全。' },
   },
 
   grades: {
@@ -106,13 +102,11 @@ export function generateQualitySystemPrompt(): string {
 此世界的物品分为两个维度：品质等级 与 品级
 
 ### 品质等级 (从低到高):
-- 凡品: ${ITEM_QUALITY_SYSTEM.qualities.凡.rarity}
-- 黄品: ${ITEM_QUALITY_SYSTEM.qualities.黄.rarity}
-- 玄品: ${ITEM_QUALITY_SYSTEM.qualities.玄.rarity}
-- 地品: ${ITEM_QUALITY_SYSTEM.qualities.地.rarity}
-- 天品: ${ITEM_QUALITY_SYSTEM.qualities.天.rarity}
-- 仙品: ${ITEM_QUALITY_SYSTEM.qualities.仙.rarity}
-- 神品: ${ITEM_QUALITY_SYSTEM.qualities.神.rarity}
+- 民用: ${ITEM_QUALITY_SYSTEM.qualities.民用.rarity}
+- 改装: ${ITEM_QUALITY_SYSTEM.qualities.改装.rarity}
+- 军规: ${ITEM_QUALITY_SYSTEM.qualities.军规.rarity}
+- 特级: ${ITEM_QUALITY_SYSTEM.qualities.特级.rarity}
+- 禁忌: ${ITEM_QUALITY_SYSTEM.qualities.禁忌.rarity}
 
 ### 品级 (物品完美程度):
 - 残缺 (0): 破损不堪，效果大减
@@ -126,25 +120,25 @@ export function generateQualitySystemPrompt(): string {
 
 格式1 - 简洁版（推荐）: [物品名]
 示例：
-- "引气丹" (凡品下品的引气丹)
-- "聚灵丹" (凡品中品的聚灵丹)
-- "铁剑" (凡品下品的铁剑)
-- "玄铁剑" (玄品中品的玄铁剑)
+- "应急止血喷雾" (民用下品)
+- "能量注射剂" (改装中品)
+- "便携合成炉" (军规下品)
+- "反应护盾模块" (特级中品)
 
 格式2 - 完整版（特殊情况）: [品质][品级][物品名]
 示例：
-- "凡品下品引气丹"
-- "玄品中品聚灵丹"
-- "天品上品破虚剑"
-- "仙品极品九转金丹"
+- "民用下品应急止血喷雾"
+- "改装中品能量注射剂"
+- "军规上品反应护盾模块"
+- "禁忌极品超核电池"
 
 命名建议：
 - 日常物品使用简洁版命名
 - 高品质或特殊物品可使用完整版
-- 避免使用 "凡下" 这种连写格式
-- 如需标注品级，使用 "凡品下品" 的分离格式
+- 避免使用 "民下" 这种连写格式
+- 如需标注品级，使用 "民用下品" 的分离格式
 
-重要提示：初始角色通常只有凡品或黄品的下品物品，高品质物品极其稀少。
+重要提示：初始角色通常只有民用或改装的下品物品，高品质物品极其稀少。
 `;
 }
 

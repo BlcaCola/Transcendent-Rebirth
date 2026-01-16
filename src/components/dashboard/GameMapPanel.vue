@@ -54,7 +54,7 @@
           <strong>安全等级：</strong>{{ selectedLocation.danger_level }}
         </div>
         <div v-if="selectedLocation.suitable_for" class="location-detail">
-          <strong>适合境界：</strong>{{ selectedLocation.suitable_for }}
+          <strong>适合等级：</strong>{{ selectedLocation.suitable_for }}
         </div>
         <div v-if="selectedLocation.controlled_by" class="location-detail">
           <strong>控制势力：</strong>{{ selectedLocation.controlled_by }}
@@ -77,9 +77,9 @@
         </div>
 
         <div v-if="selectedLocation.leadership || selectedLocation.领导层" class="location-detail">
-          <strong>掌门：</strong>{{ (selectedLocation.leadership?.宗主 || selectedLocation.领导层?.宗主) }}
-          <span v-if="selectedLocation.leadership?.宗主修为 || selectedLocation.领导层?.宗主修为">
-            （{{ selectedLocation.leadership?.宗主修为 || selectedLocation.领导层?.宗主修为 }}）
+          <strong>负责人：</strong>{{ (selectedLocation.leadership?.负责人 || selectedLocation.leadership?.leader || selectedLocation.领导层?.负责人) }}
+          <span v-if="selectedLocation.leadership?.负责人阶位 || selectedLocation.leadership?.leader_rank || selectedLocation.领导层?.负责人阶位">
+            （等级：{{ selectedLocation.leadership?.负责人阶位 || selectedLocation.leadership?.leader_rank || selectedLocation.领导层?.负责人阶位 }}）
           </span>
         </div>
 
@@ -108,7 +108,7 @@
       </div>
       <div class="popup-content">
         <p class="location-type">大陆</p>
-        <p class="location-desc">{{ selectedContinent.description || '广袤的修仙大陆，蕴含无尽机缘与危险。' }}</p>
+        <p class="location-desc">{{ selectedContinent.description || '广袤的霓虹大陆，蕴含无尽机遇与危险。' }}</p>
 
         <div v-if="selectedContinent.气候" class="location-detail">
           <strong>气候：</strong>{{ selectedContinent.气候 }}
@@ -142,40 +142,40 @@
         </button>
       </div>
       <div v-if="!legendCollapsed" class="legend-items">
-        <!-- 名山大川 -->
+        <!-- 自然地标 -->
         <div class="legend-item">
           <Mountain :size="16" class="legend-icon mountain" />
-          <span>名山大川</span>
+          <span>自然地标</span>
         </div>
-        <!-- 宗门势力 -->
+        <!-- 组织势力 -->
         <div class="legend-item">
           <Building2 :size="16" class="legend-icon faction" />
-          <span>宗门势力</span>
+          <span>组织势力</span>
         </div>
-        <!-- 城镇坊市 -->
+        <!-- 城市街区 -->
         <div class="legend-item">
           <Store :size="16" class="legend-icon town" />
-          <span>城镇坊市</span>
+          <span>城市街区</span>
         </div>
-        <!-- 洞天福地 -->
+        <!-- 核心设施 -->
         <div class="legend-item">
           <Sparkles :size="16" class="legend-icon blessed" />
-          <span>洞天福地</span>
+          <span>核心设施</span>
         </div>
-        <!-- 奇珍异地 -->
+        <!-- 资源区 -->
         <div class="legend-item">
           <Gem :size="16" class="legend-icon treasure" />
-          <span>奇珍异地</span>
+          <span>资源区</span>
         </div>
-        <!-- 凶险之地 -->
+        <!-- 危险区 -->
         <div class="legend-item">
           <AlertTriangle :size="16" class="legend-icon danger" />
-          <span>凶险之地</span>
+          <span>危险区</span>
         </div>
-        <!-- 其他特殊 -->
+        <!-- 特殊区域 -->
         <div class="legend-item">
           <Zap :size="16" class="legend-icon special" />
-          <span>其他特殊</span>
+          <span>特殊区域</span>
         </div>
         <!-- 玩家位置 -->
         <div class="legend-item">
@@ -214,7 +214,7 @@ const popupPosition = ref({ x: 0, y: 0 });
 const isInitializing = ref(false);
 const legendCollapsed = ref(false);
 
-const worldName = computed(() => gameStateStore.worldInfo?.世界名称 || '修仙界');
+const worldName = computed(() => gameStateStore.worldInfo?.世界名称 || '霓虹界');
 const worldBackground = computed(() => gameStateStore.worldInfo?.世界背景 || '');
 const mapRenderConfig = computed(() => {
   const mapConfig = (gameStateStore.worldInfo as any)?.['地图配置'];
@@ -240,23 +240,15 @@ const hasMapContent = computed(() => {
   return hasLocations || hasFactions;
 });
 
-// 地点类型中文名称映射（支持英文和中文类型）
+// 地点类型中文名称映射
 const locationTypeNames: Record<string, string> = {
-  // 英文类型（兼容旧数据）
-  natural_landmark: '名山大川',
-  sect_power: '宗门势力',
-  city_town: '城镇坊市',
-  blessed_land: '洞天福地',
-  treasure_land: '奇珍异地',
-  dangerous_area: '凶险之地',
-  special_other: '其他特殊',
-  // 中文类型（新数据）
-  '名山大川': '名山大川',
-  '城镇坊市': '城镇坊市',
-  '洞天福地': '洞天福地',
-  '奇珍异地': '奇珍异地',
-  '凶险之地': '凶险之地',
-  '其他特殊': '其他特殊',
+  natural_landmark: '自然地标',
+  sect_power: '组织势力',
+  city_town: '城市街区',
+  blessed_land: '核心设施',
+  treasure_land: '资源区',
+  dangerous_area: '危险区',
+  special_other: '特殊区域',
 };
 
 const getLocationTypeName = (type: string): string => {
@@ -267,13 +259,8 @@ const getLocationTypeName = (type: string): string => {
  * 判断是否为势力地点
  */
 const isFactionLocation = (location: any): boolean => {
-  return location.类型 === '修仙宗门' ||
-         location.类型 === '魔道宗门' ||
-         location.类型 === '修仙世家' ||
-         location.类型 === '散修联盟' ||
-         location.类型 === '商会' ||
-         location.类型 === '妖族势力' ||
-         location.type === 'sect_power' ||
+    return location.类型 === '组织势力' ||
+      location.type === 'sect_power' ||
          !!location.leadership ||
          !!location.领导层 ||
          !!location.memberCount ||
@@ -391,7 +378,7 @@ watch(
   () => gameStateStore.location,
   (newPos) => {
     if (newPos && mapManager.value) {
-      const playerName = gameStateStore.character?.名字 || '道友';
+      const playerName = gameStateStore.character?.名字 || '游民';
       mapManager.value.updatePlayerPosition(newPos as GameCoordinates, playerName);
     }
   },
@@ -481,7 +468,7 @@ const initializeMap = async () => {
     const generator = new EnhancedWorldGenerator({
       worldName: worldInfo.世界名称,
       worldBackground: worldInfo.世界背景,
-      worldEra: worldInfo.世界纪元 || '修真盛世',
+      worldEra: worldInfo.世界纪元 || '霓虹纪元',
       factionCount: factionCount,
       locationCount: locationCount,
       secretRealmsCount: secretRealmsCount,
@@ -606,7 +593,7 @@ const loadMapData = async (options?: { silent?: boolean; reset?: boolean }) => {
     // 更新玩家位置
     const playerPos = gameStateStore.location;
     if (playerPos) {
-      const playerName = gameStateStore.character?.名字 || '道友';
+      const playerName = gameStateStore.character?.名字 || '游民';
       mapManager.value?.updatePlayerPosition(playerPos as GameCoordinates, playerName);
       console.log('[地图] 已更新玩家位置');
     }

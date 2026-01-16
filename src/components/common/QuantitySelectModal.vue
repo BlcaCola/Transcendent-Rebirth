@@ -8,7 +8,7 @@
           <X :size="16" />
         </button>
       </div>
-      
+
       <div class="modal-body">
         <div class="item-info">
           <div class="item-icon">{{ getItemIcon(item?.类型) }}</div>
@@ -19,27 +19,27 @@
             <div v-if="description" class="item-description">{{ description }}</div>
           </div>
         </div>
-        
+
         <div class="quantity-selector">
           <label for="quantity">{{ actionLabel || '选择数量' }}：</label>
           <div class="quantity-controls">
-            <button 
-              class="quantity-btn" 
+            <button
+              class="quantity-btn"
               @click="decreaseQuantity"
               :disabled="selectedQuantity <= 1"
             >
               -
             </button>
-            <input 
+            <input
               id="quantity"
-              v-model.number="selectedQuantity" 
-              type="number" 
-              :min="1" 
+              v-model.number="selectedQuantity"
+              type="number"
+              :min="1"
               :max="item?.数量 || 1"
               class="quantity-input"
             />
-            <button 
-              class="quantity-btn" 
+            <button
+              class="quantity-btn"
               @click="increaseQuantity"
               :disabled="selectedQuantity >= (item?.数量 || 1)"
             >
@@ -47,10 +47,10 @@
             </button>
           </div>
         </div>
-        
+
         <div class="quantity-shortcuts">
-          <button 
-            v-for="preset in presetQuantities" 
+          <button
+            v-for="preset in presetQuantities"
             :key="preset.value"
             class="preset-btn"
             @click="setQuantity(preset.value)"
@@ -60,13 +60,13 @@
           </button>
         </div>
       </div>
-      
+
       <div class="modal-footer">
         <button class="cancel-btn" @click="$emit('close')">取消</button>
-        <button 
-          class="confirm-btn" 
+        <button
+          class="confirm-btn"
           :class="actionType === 'discard' ? 'discard-confirm' : ''"
-          @click="handleConfirm" 
+          @click="handleConfirm"
           :disabled="selectedQuantity <= 0"
         >
           {{ confirmText || '确定' }}
@@ -117,7 +117,7 @@ const presetQuantities = computed(() => {
     { label: '10个', value: 10 },
     { label: '全部', value: maxQuantity }
   ];
-  
+
   return presets.filter(preset => preset.value <= maxQuantity);
 });
 
@@ -157,7 +157,7 @@ function handleOverlayClick() {
 function getItemIcon(type?: string): string {
   const iconMap: Record<string, string> = {
     '装备': '⚔️',
-    '功法': '📜',
+    '模块': '📜',
     '丹药': '💊',
     '材料': '💎',
     '其他': '📦'

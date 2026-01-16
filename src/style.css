@@ -22,7 +22,7 @@
   --color-primary-active: #0f2f6a;
   /* Lighten variant used by some components */
   --color-primary-light: rgba(30, 74, 154, 0.15);
-  --color-accent: #2e8b57; /* 翠玉绿 - 修仙风格 */
+  --color-accent: #2e8b57; /* 翠玉绿 - 赛博风格 */
   --color-accent-hover: #267349;
   --color-accent-light: rgba(46, 139, 87, 0.18);
   --color-text: #1a1a1a;
@@ -52,9 +52,9 @@
   --scrollbar-thumb-hover-color: rgba(0, 0, 0, 0.5);
 
   /* Vital colors (light theme) */
-  --vital-health: #ff2929;   /* 气血/健康（与 --color-error 保持一致） */
-  --vital-lingqi: #3b82f6;   /* 灵气(统一蓝) */
-  --vital-spirit: #ffeb00;   /* 神识(金色) */
+  --vital-health: #ff2929;   /* 生命值/健康（与 --color-error 保持一致） */
+  --vital-lingqi: #3b82f6;   /* 电量(统一蓝) */
+  --vital-spirit: #ffeb00;   /* 带宽(金色) */
   --vital-lifespan: #c253ff; /* 寿元(紫色) */
 
   /* Derived RGB triplets for rgba() usage (light) */
@@ -119,9 +119,9 @@
   --scrollbar-thumb-hover-color: rgba(255, 255, 255, 0.5);
 
   /* Vital colors (dark theme) */
-  --vital-health: #ff2f49;   /* 气血/健康（暗色，与 --color-error 保持一致） */
-  --vital-lingqi: #3b82f6;   /* 灵气(统一蓝) */
-  --vital-spirit: #ffeb00;   /* 神识(金色) */
+  --vital-health: #ff2f49;   /* 生命值/健康（暗色，与 --color-error 保持一致） */
+  --vital-lingqi: #3b82f6;   /* 电量(统一蓝) */
+  --vital-spirit: #ffeb00;   /* 带宽(金色) */
   --vital-lifespan: #c253ff; /* 寿元(紫色) */
 
   /* Derived RGB triplets for rgba() usage (dark) */
@@ -146,7 +146,7 @@ body {
   /* 透明背景以显示视频背景（VideoBackground组件使用z-index:-10） */
   background-color: transparent;
   color: var(--color-text);
-  /* 遵道友法旨，去除所有文字阴影，返璞归真。 */
+  /* 按系统规范，去除所有文字阴影，保持清晰。 */
   text-shadow: none;
   /* 确保在iframe中也能正确填充 */
   width: 100%;
@@ -387,7 +387,7 @@ body {
   animation: pulse-glow 2.5s ease-in-out infinite;
 }
 
-/* --- 新增样式：道途选择界面 --- */
+/* --- 新增样式：路径选择界面 --- */
 .mode-selection-container {
   position: relative;
   width: 100%;

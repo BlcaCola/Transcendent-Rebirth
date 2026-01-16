@@ -3,7 +3,7 @@
     <!-- 玩家信息栏 -->
     <div class="player-info-bar">
       <div class="info-item">
-        <span class="info-label">所属宗门</span>
+        <span class="info-label">所属组织</span>
         <span class="info-value sect-name">{{ playerSectName }}</span>
       </div>
       <div class="info-item">
@@ -31,11 +31,11 @@
     <div class="member-list">
       <div v-if="filteredMembers.length === 0" class="empty-state">
         <Users :size="48" class="empty-icon" />
-        <p class="empty-text">暂无同门信息</p>
-        <p class="empty-hint">同门信息由AI根据剧情生成</p>
-        <button class="ask-btn" @click="sendPrompt('请告诉我宗门有哪些师兄弟姐妹')">
+        <p class="empty-text">暂无组织成员信息</p>
+        <p class="empty-hint">组织成员信息由AI根据剧情生成</p>
+        <button class="ask-btn" @click="sendPrompt('请告诉我组织有哪些成员')">
           <MessageCircle :size="14" />
-          <span>询问同门信息</span>
+          <span>询问成员信息</span>
         </button>
       </div>
 
@@ -85,21 +85,21 @@
         <span>快捷对话</span>
       </h4>
       <div class="action-buttons">
-        <button class="action-btn" @click="sendPrompt('我想找同门切磋修炼')">
+        <button class="action-btn" @click="sendPrompt('我想找组织成员切磋训练')">
           <Swords :size="14" />
           <span>邀请切磋</span>
         </button>
-        <button class="action-btn" @click="sendPrompt('我想请教师兄修炼心得')">
+        <button class="action-btn" @click="sendPrompt('我想请教组织成员训练心得')">
           <BookOpen :size="14" />
-          <span>请教修炼</span>
+          <span>请教训练</span>
         </button>
-        <button class="action-btn" @click="sendPrompt('我想和同门一起探险')">
+        <button class="action-btn" @click="sendPrompt('我想和组织成员一起探险')">
           <Compass :size="14" />
           <span>组队探险</span>
         </button>
-        <button class="action-btn" @click="sendPrompt('我想了解宗门最近有什么消息')">
+        <button class="action-btn" @click="sendPrompt('我想了解组织最近有什么消息')">
           <Bell :size="14" />
-          <span>宗门消息</span>
+          <span>组织消息</span>
         </button>
       </div>
     </div>
@@ -107,7 +107,7 @@
     <!-- 提示信息 -->
     <div class="members-notice">
       <Info :size="14" />
-      <span>同门关系会影响游戏发展，可在对话中与同门互动</span>
+      <span>组织关系会影响游戏发展，可在对话中与成员互动</span>
     </div>
   </div>
 </template>
@@ -128,33 +128,33 @@ const activeTab = ref<string>('all');
 // 成员分类
 const memberTabs = [
   { key: 'all', label: '全部', icon: Users },
-  { key: '长老', label: '长老', icon: Crown },
-  { key: '真传', label: '真传', icon: UserCircle },
-  { key: '同辈', label: '同辈', icon: User }
+  { key: '干部', label: '干部', icon: Crown },
+  { key: '精英', label: '精英', icon: UserCircle },
+  { key: '成员', label: '成员', icon: User }
 ];
 
-// 玩家宗门信息
+// 玩家组织信息
 const playerSectInfo = computed(() => gameStateStore.sectMemberInfo);
-const playerSectName = computed(() => playerSectInfo.value?.宗门名称 || '未加入宗门');
-const playerPosition = computed(() => playerSectInfo.value?.职位 || '散修');
+const playerSectName = computed(() => playerSectInfo.value?.组织名称 || '未加入组织');
+const playerPosition = computed(() => playerSectInfo.value?.职位 || '游民');
 
-// 从人物关系中获取同门
+// 从人物关系中获取同组织成员
 const sectMembers = computed(() => {
   const relations = gameStateStore.relationships || {};
 
-  // 筛选同门NPC
+  // 筛选同组织NPC
   return Object.entries(relations)
     .filter(([_, npc]: [string, any]) => {
-      // 检查是否属于同一宗门
-      const npcSect = npc.势力归属 || npc.宗门;
+      // 检查是否属于同一组织
+      const npcSect = npc.势力归属 || npc.组织;
       return npcSect === playerSectName.value;
     })
     .map(([name, npc]: [string, any]) => ({
       id: name,
       name: npc.名字 || name,
       gender: npc.性别 || '男',
-      position: npc.职位 || '弟子',
-      realm: formatRealm(npc.境界),
+      position: npc.职位 || '成员',
+      realm: formatTier(npc.阶位),
       relation: getRelationText(npc.好感度),
       favorability: npc.好感度 || 50,
       isSelf: false,
@@ -174,12 +174,12 @@ function getMemberCount(tabKey: string): number {
   return sectMembers.value.filter(m => m.category === tabKey).length;
 }
 
-// 格式化境界
-function formatRealm(realm: any): string {
-  if (!realm) return '未知';
-  if (typeof realm === 'string') return realm;
-  if (typeof realm === 'object') {
-    return `${realm.名称 || ''}${realm.阶段 || ''}`;
+// 格式化阶位
+function formatTier(tier: any): string {
+  if (!tier) return '未知';
+  if (typeof tier === 'string') return tier;
+  if (typeof tier === 'object') {
+    return `${tier.名称 || ''}${tier.阶段 || ''}`;
   }
   return '未知';
 }
@@ -197,17 +197,17 @@ function getRelationText(favorability: number | undefined): string {
 
 // 获取成员分类
 function getCategory(position: string | undefined): string {
-  if (!position) return '同辈';
-  if (position.includes('长老') || position.includes('太上')) return '长老';
-  if (position.includes('真传') || position.includes('核心')) return '真传';
-  return '同辈';
+  if (!position) return '成员';
+  if (position.includes('干部') || position.includes('元老')) return '干部';
+  if (position.includes('精英') || position.includes('核心')) return '精英';
+  return '成员';
 }
 
 // 职位样式
 function getPositionClass(position: string): string {
-  if (position.includes('长老')) return 'position-elder';
-  if (position.includes('真传')) return 'position-true';
-  if (position.includes('内门')) return 'position-inner';
+  if (position.includes('干部') || position.includes('元老')) return 'position-elder';
+  if (position.includes('精英') || position.includes('核心')) return 'position-true';
+  if (position.includes('内部')) return 'position-inner';
   return 'position-outer';
 }
 

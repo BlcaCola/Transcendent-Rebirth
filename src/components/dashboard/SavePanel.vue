@@ -17,11 +17,11 @@
         </div>
         <div class="current-save-card">
           <div class="save-preview">
-            <div class="preview-avatar">{{ currentSave.角色名字?.[0] || '道' }}</div>
+            <div class="preview-avatar">{{ currentSave.角色名字?.[0] || 'N' }}</div>
             <div class="preview-info">
-              <div class="character-name">{{ currentSave.角色名字 || '无名道友' }}</div>
+              <div class="character-name">{{ currentSave.角色名字 || '无名行者' }}</div>
               <div class="character-details">
-                <span class="detail-item">{{ currentSave.境界 || '凡人' }}</span>
+                <span class="detail-item">{{ currentSave.阶位 || '新手' }}</span>
                 <span class="detail-separator">·</span>
                 <span class="detail-item">{{ currentSave.位置 || '未知' }}</span>
               </div>
@@ -75,7 +75,7 @@
 
         <div v-else-if="savesList.length === 0" class="empty-state">
           <div class="empty-icon"><Save :size="32" /></div>
-          <div class="empty-text">{{ t('修仙路上尚未留存，创建存档记录道途') }}</div>
+          <div class="empty-text">{{ t('霓虹旅程尚未留存，创建存档记录进程') }}</div>
           <div class="empty-hint">{{ t('开始游戏后可以创建存档') }}</div>
         </div>
 
@@ -89,7 +89,7 @@
           >
             <div class="card-header">
               <div class="save-preview small">
-                <div class="preview-avatar small">{{ save.角色名字?.[0] || '道' }}</div>
+                <div class="preview-avatar small">{{ save.角色名字?.[0] || 'N' }}</div>
                 <div class="preview-info">
                   <div class="save-name">
                     <History v-if="save.存档名 === '上次对话'" :size="14" class="last-save-icon" />
@@ -100,7 +100,7 @@
                     />
                     {{ save.存档名 || save.id || `存档${index + 1}` }}
                   </div>
-                  <div class="character-name-small">{{ save.角色名字 || '无名道友' }}</div>
+                  <div class="character-name-small">{{ save.角色名字 || '无名行者' }}</div>
                   <!-- 显示最后保存时间 -->
                   <div class="save-time">
                     {{ formatTime(save.最后保存时间 ?? save.保存时间 ?? null) }}
@@ -161,8 +161,8 @@
             <div class="card-content">
               <div class="save-details">
                 <div class="detail-row">
-                  <span class="detail-label">境界:</span>
-                  <span class="detail-value">{{ save.境界 || '凡人' }}</span>
+                  <span class="detail-label">等级:</span>
+                  <span class="detail-value">{{ save.阶位 || '新手' }}</span>
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">位置:</span>

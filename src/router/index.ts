@@ -38,8 +38,8 @@ import MemoryCenterPanel from '../components/dashboard/MemoryCenterPanel.vue';
 import CharacterDetailsPanel from '../components/dashboard/CharacterDetailsPanel.vue';
 import InventoryPanel from '../components/dashboard/InventoryPanel.vue';
 import RelationshipNetworkPanel from '../components/dashboard/RelationshipNetworkPanel.vue';
-import SkillsPanel from '../components/dashboard/SkillsPanel.vue'; // 功法面板
-import ThousandDaoPanel from '../components/dashboard/ThousandDaoPanel.vue'; // 新的三千大道面板
+import SkillsPanel from '../components/dashboard/SkillsPanel.vue'; // 模块面板
+import ThousandDaoPanel from '../components/dashboard/ThousandDaoPanel.vue'; // 新的流派面板
 import SettingsPanel from '../components/dashboard/SettingsPanel.vue';
 import SavePanel from '../components/dashboard/SavePanel.vue';
 import GameMapPanel from '../components/dashboard/GameMapPanel.vue'; // 新的游戏地图组件（使用Pixi.js）
@@ -118,12 +118,12 @@ const routes = [
       {
         path: 'techniques',
         name: 'Techniques',
-        component: SkillsPanel, // 功法面板（合并了原cultivation功能）
+        component: SkillsPanel, // 模块面板（合并了原cultivation功能）
       },
       {
         path: 'thousand-dao',
         name: 'ThousandDao',
-        component: ThousandDaoPanel, // 三千大道面板
+        component: ThousandDaoPanel, // 流派面板
       },
       {
         path: 'settings',

@@ -1,6 +1,6 @@
 <template>
   <div class="talent-tier-selection">
-    <div v-if="store.isLoading" class="loading-state">{{ $t('感应天道，测算天资...') }}</div>
+    <div v-if="store.isLoading" class="loading-state">{{ $t('感应系统，测算天资...') }}</div>
     <div v-else-if="store.error" class="error-state">{{ $t('天机混沌') }}：{{ store.error }}</div>
 
     <div v-else class="tier-layout">
@@ -112,7 +112,7 @@ interface CustomTierData {
 
 const emit = defineEmits(['ai-generate'])
 const store = useCharacterCreationStore()
-const activeTier = ref<TalentTier | null>(null) // For hover details view - 仿照天赋选择
+const activeTier = ref<TalentTier | null>(null) // For hover details view - 仿照模块选择
 const isCustomModalVisible = ref(false)
 const isEditModalVisible = ref(false)
 const isAIPromptModalVisible = ref(false)

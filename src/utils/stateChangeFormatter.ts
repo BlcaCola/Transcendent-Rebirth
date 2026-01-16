@@ -100,9 +100,9 @@ function parseItemChange(change: StateChange): FormattedChange | null {
     }
   }
 
-  // 灵石（V3：角色.背包.灵石.下品/中品/上品/极品）
-  if (key.startsWith('角色.背包.灵石.') || key.includes('.背包.灵石.')) {
-    const stoneType = key.split('.').pop() || '灵石';
+  // 信用点（V3：角色.背包.信用点.低额/中额/高额/最高额）
+  if (key.startsWith('角色.背包.信用点.') || key.includes('.背包.信用点.')) {
+    const stoneType = key.split('.').pop() || '信用点';
     const oldNum = typeof oldValue === 'number' ? oldValue : 0;
     const newNum = typeof newValue === 'number' ? newValue : 0;
     const diff = newNum - oldNum;
@@ -128,7 +128,7 @@ function parseItemChange(change: StateChange): FormattedChange | null {
 }
 
 /**
- * 解析角色核心属性变更 (修为、气血等)
+ * 解析角色核心属性变更 (阶位、生命值等)
  * V3：角色.属性 / 角色.位置
  * @param change - 单条变更记录
  * @returns FormattedChange | null
@@ -141,30 +141,30 @@ function parsePlayerStatusChange(change: StateChange): FormattedChange | null {
     key.startsWith('角色.位置.') ||
     key.includes('.角色.属性.') ||
     key.includes('.角色.位置.') ||
-    key.includes('.气血') ||
-    key.includes('.灵气') ||
-    key.includes('.神识') ||
+    key.includes('.生命值') ||
+    key.includes('.电量') ||
+    key.includes('.带宽') ||
     key.includes('.寿命');
 
   if (!isPlayerStatus) return null;
 
   const attributeName = key.split('.').pop() || '属性';
 
-  // 境界突破
-  if (key === '角色.属性.境界.名称' || key.endsWith('.境界.名称')) {
+  // 阶位升级
+  if (key === '角色.属性.阶位.名称' || key.endsWith('.阶位.名称')) {
     return {
       icon: 'add',
       color: 'green',
-      title: '境界突破',
+      title: '阶位升级',
       description: `${oldValue || '凡人'} → ${newValue}`,
     };
   }
 
-  if (key === '角色.属性.境界.阶段' || key.endsWith('.境界.阶段')) {
+  if (key === '角色.属性.阶位.阶段' || key.endsWith('.阶位.阶段')) {
     return {
       icon: 'update',
       color: 'blue',
-      title: '境界阶段提升',
+      title: '阶位阶段提升',
       description: `${oldValue || '无'} → ${newValue}`,
     };
   }
@@ -192,10 +192,10 @@ function parsePlayerStatusChange(change: StateChange): FormattedChange | null {
   }
 
   // 🔥 修复：识别"上限"和"当前"的单独变更
-  // 路径格式: 角色.属性.气血.上限 / 角色.属性.气血.当前（以及其它属性同理）
+  // 路径格式: 角色.属性.生命值.上限 / 角色.属性.生命值.当前（以及其它属性同理）
   const pathParts = key.split('.');
   const fieldType = pathParts[pathParts.length - 1]; // "上限"/"当前"/"最大"
-  const attributeBaseName = pathParts[pathParts.length - 2] || attributeName; // "气血"/"灵气"/"神识"
+  const attributeBaseName = pathParts[pathParts.length - 2] || attributeName; // "生命值"/"电量"/"带宽"
 
   if ((fieldType === '上限' || fieldType === '最大') && typeof newValue === 'number') {
     const diff = typeof oldValue === 'number' ? newValue - oldValue : newValue;
@@ -436,7 +436,7 @@ export function formatStateChanges(log: StateChangeLog): FormattedStateChangeLog
     if (!parsedChange) {
       parsedChange = parseRelationshipChange(change);
     }
-    // ... 可以继续添加更多专用解析器（大道、技能等）
+    // ... 可以继续添加更多专用解析器（流派、技能等）
 
     // 如果所有特殊解析器都失败了，使用通用解析器
     if (!parsedChange) {

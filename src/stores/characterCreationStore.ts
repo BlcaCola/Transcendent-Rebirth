@@ -136,26 +136,26 @@ export const useCharacterCreationStore = defineStore('characterCreation', () => 
     简单: `【难度模式：简单】
 - 世界对主角较为友善，机缘频繁出现
 - 敌人实力普遍较弱，战斗容易获胜
-- 资源获取容易，修炼进度较快
-- 突破瓶颈的难度降低
+  - 资源获取容易，训练进度较快
+  - 晋升瓶颈的难度降低
 - NPC对主角态度友好，容易获得帮助`,
     普通: `【难度模式：普通】
-- 世界遵循正常修仙规则，机缘与危险并存
+  - 世界遵循正常城邦规则，机会与危险并存
 - 敌人实力与主角相当，战斗需要策略
-- 资源获取需要努力，修炼进度正常
-- 突破瓶颈需要积累和机缘
+  - 资源获取需要努力，训练进度正常
+  - 晋升瓶颈需要积累和机会
 - NPC态度中立，需要建立关系`,
     困难: `【难度模式：困难】
 - 世界充满危险，机缘稀少且竞争激烈
 - 敌人实力普遍较强，战斗需要谨慎
-- 资源稀缺，修炼进度缓慢
-- 突破瓶颈困难重重，需要特殊机缘
+  - 资源稀缺，训练进度缓慢
+  - 晋升瓶颈困难重重，需要特殊机会
 - NPC对主角态度冷淡，需要付出代价获得帮助`,
     噩梦: `【难度模式：噩梦】
 - 世界极度危险，处处是陷阱和敌人
 - 敌人实力远超主角，战斗九死一生
-- 资源极度稀缺，修炼举步维艰
-- 突破瓶颈几乎不可能，需要逆天机缘
+  - 资源极度稀缺，训练举步维艰
+  - 晋升瓶颈几乎不可能，需要极端机会
 - NPC对主角充满敌意，信任难以建立
 - 死亡风险极高，每一步都需谨慎`
   };
@@ -305,7 +305,7 @@ export const useCharacterCreationStore = defineStore('characterCreation', () => 
     }
 
     if (selectedSpiritRoot.value) {
-      console.log('[技能点计算] 灵根消耗:', selectedSpiritRoot.value.talent_cost);
+      console.log('[技能点计算] 改造核心消耗:', selectedSpiritRoot.value.talent_cost);
       points -= selectedSpiritRoot.value.talent_cost;
     }
 
@@ -316,7 +316,7 @@ export const useCharacterCreationStore = defineStore('characterCreation', () => 
     points -= talentCost;
 
     const allocatedAttributePoints = Object.values(attributes.value).reduce((sum, val) => sum + val, 0);
-    console.log('[技能点计算] 先天六司总和:', allocatedAttributePoints);
+    console.log('[技能点计算] 初始六维总和:', allocatedAttributePoints);
     points -= allocatedAttributePoints;
 
     console.log('[技能点计算] 最终剩余:', points);
@@ -547,7 +547,7 @@ export const useCharacterCreationStore = defineStore('characterCreation', () => 
   }
 
   /**
-   * 获取所有云端创世数据（世界、天资、出身、灵根、天赋）
+   * 获取所有云端创世数据（世界、天资、出身、改造核心、天赋）
    */
   async function fetchAllCloudData(): Promise<number> {
     console.log("【创世神殿】正在从云端获取完整创世数据...");
@@ -568,7 +568,7 @@ export const useCharacterCreationStore = defineStore('characterCreation', () => 
       console.log("- 世界:", cloudWorlds.length, "个");
       console.log("- 天资等级:", cloudTalentTiers.length, "个");
       console.log("- 出身:", cloudOrigins.length, "个");
-      console.log("- 灵根:", cloudSpiritRoots.length, "个");
+      console.log("- 改造核心:", cloudSpiritRoots.length, "个");
       console.log("- 天赋:", cloudTalents.length, "个");
 
       // 记录合并前各项数据的数量
@@ -641,7 +641,7 @@ export const useCharacterCreationStore = defineStore('characterCreation', () => 
       console.log("- 世界 (云端):", creationData.value.worlds.filter(w => w.source === 'cloud').length);
       console.log("- 天资 (云端):", creationData.value.talentTiers.filter(t => t.source === 'cloud').length);
       console.log("- 出身 (云端):", creationData.value.origins.filter(o => o.source === 'cloud').length);
-      console.log("- 灵根 (云端):", creationData.value.spiritRoots.filter(s => s.source === 'cloud').length);
+      console.log("- 改造核心 (云端):", creationData.value.spiritRoots.filter(s => s.source === 'cloud').length);
       console.log("- 天赋 (云端):", creationData.value.talents.filter(t => t.source === 'cloud').length);
       console.log("【创世神殿】天资数据示例", creationData.value.talentTiers.slice(0, 3).map(t => ({ name: t.name, source: t.source })));
 
@@ -872,11 +872,11 @@ export const useCharacterCreationStore = defineStore('characterCreation', () => 
       const newRootWithId = { ...spiritRoot, id: newId };
       addSpiritRoot(newRootWithId);
       existingRoot = creationData.value.spiritRoots.find(r => r.name === spiritRoot.name); // Re-find it to be safe
-      console.log(`[创世神殿] AI生成了新的灵根 "${spiritRoot.name}" 并已添加到列表中 (ID: ${newId})`);
+      console.log(`[创世神殿] AI生成了新的改造核心 "${spiritRoot.name}" 并已添加到列表中 (ID: ${newId})`);
     }
     if (existingRoot) {
         characterPayload.value.spirit_root_id = existingRoot.id;
-        console.log(`[创世神殿] 已将玩家选择的灵根更新为AI生成的结果: "${existingRoot.name}"`);
+        console.log(`[创世神殿] 已将玩家选择的改造核心更新为AI生成的结果: "${existingRoot.name}"`);
     }
   }
 

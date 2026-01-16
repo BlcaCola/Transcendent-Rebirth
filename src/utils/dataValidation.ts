@@ -35,7 +35,7 @@ export function validateAndFixSaveData(saveData: SaveData): SaveData {
   if (!anySave.角色 || typeof anySave.角色 !== 'object') anySave.角色 = {};
   if (!anySave.角色.背包 || typeof anySave.角色.背包 !== 'object') {
     anySave.角色.背包 = {
-      灵石: { 下品: 0, 中品: 0, 上品: 0, 极品: 0 },
+      信用点: { 低额: 0, 中额: 0, 高额: 0, 最高额: 0 },
       物品: {}
     };
   }
@@ -44,8 +44,8 @@ export function validateAndFixSaveData(saveData: SaveData): SaveData {
     anySave.角色.背包.物品 = {};
   }
 
-  if (!anySave.角色.背包.灵石 || typeof anySave.角色.背包.灵石 !== 'object') {
-    anySave.角色.背包.灵石 = { 下品: 0, 中品: 0, 上品: 0, 极品: 0 };
+  if (!anySave.角色.背包.信用点 || typeof anySave.角色.背包.信用点 !== 'object') {
+    anySave.角色.背包.信用点 = { 低额: 0, 中额: 0, 高额: 0, 最高额: 0 };
   }
 
   // 清理无效的物品数据
@@ -133,9 +133,9 @@ export function validateAndRepairNpcProfile(npcData: unknown): [boolean, NpcProf
     }
 
     try {
-      if (!Array.isArray(repairedNpc.天赋)) repairedNpc.天赋 = [];
+      if (!Array.isArray((repairedNpc as any).模块)) (repairedNpc as any).模块 = [];
     } catch (e) {
-      repairedNpc.天赋 = [];
+      (repairedNpc as any).模块 = [];
     }
 
     try {
@@ -144,41 +144,42 @@ export function validateAndRepairNpcProfile(npcData: unknown): [boolean, NpcProf
       repairedNpc.性格特征 = [];
     }
 
-    // 3. 结构检查与修复 (境界) - 防御性处理
+    // 3. 结构检查与修复 (阶位) - 防御性处理
     try {
-      if (typeof repairedNpc.境界 !== 'object' || repairedNpc.境界 === null) {
-        repairedNpc.境界 = {
-          名称: '凡人',
+      if (typeof (repairedNpc as any).阶位 !== 'object' || (repairedNpc as any).阶位 === null) {
+        (repairedNpc as any).阶位 = {
+          名称: '街头新人',
           阶段: '',
           当前进度: 0,
           下一级所需: 100,
-          突破描述: '引气入体，感悟天地灵气，踏上修仙第一步'
+          升级描述: '接入基础接口，完成初次系统校准'
         };
       } else {
-        if (typeof repairedNpc.境界.名称 !== 'string') repairedNpc.境界.名称 = '凡人';
-        if (typeof repairedNpc.境界.阶段 !== 'string') repairedNpc.境界.阶段 = '';
-        if (typeof repairedNpc.境界.当前进度 !== 'number' || isNaN(repairedNpc.境界.当前进度)) repairedNpc.境界.当前进度 = 0;
-        if (typeof repairedNpc.境界.下一级所需 !== 'number' || isNaN(repairedNpc.境界.下一级所需)) repairedNpc.境界.下一级所需 = 100;
-        if (typeof repairedNpc.境界.突破描述 !== 'string') repairedNpc.境界.突破描述 = '引气入体，感悟天地灵气，踏上修仙第一步';
+        const rank = (repairedNpc as any).阶位 as any;
+        if (typeof rank.名称 !== 'string') rank.名称 = '街头新人';
+        if (typeof rank.阶段 !== 'string') rank.阶段 = '';
+        if (typeof rank.当前进度 !== 'number' || isNaN(rank.当前进度)) rank.当前进度 = 0;
+        if (typeof rank.下一级所需 !== 'number' || isNaN(rank.下一级所需)) rank.下一级所需 = 100;
+        if (typeof rank.升级描述 !== 'string') rank.升级描述 = '接入基础接口，完成初次系统校准';
       }
     } catch (e) {
-      console.warn('[NPC校验] 境界字段修复失败，使用默认值:', e);
-      repairedNpc.境界 = {
-        名称: '凡人',
+      console.warn('[NPC校验] 阶位字段修复失败，使用默认值:', e);
+      (repairedNpc as any).阶位 = {
+        名称: '街头新人',
         阶段: '',
         当前进度: 0,
         下一级所需: 100,
-        突破描述: '引气入体，感悟天地灵气，踏上修仙第一步'
+        升级描述: '接入基础接口，完成初次系统校准'
       };
     }
 
     // 4. 结构检查与修复 (背包) - 防御性处理
     try {
       if (typeof repairedNpc.背包 !== 'object' || repairedNpc.背包 === null) {
-        repairedNpc.背包 = { 灵石: { 下品: 0, 中品: 0, 上品: 0, 极品: 0 }, 物品: {} };
+        repairedNpc.背包 = { 信用点: { 低额: 0, 中额: 0, 高额: 0, 最高额: 0 }, 物品: {} };
       } else {
-        if (typeof repairedNpc.背包.灵石 !== 'object' || repairedNpc.背包.灵石 === null) {
-          repairedNpc.背包.灵石 = { 下品: 0, 中品: 0, 上品: 0, 极品: 0 };
+        if (typeof (repairedNpc as any).背包.信用点 !== 'object' || (repairedNpc as any).背包.信用点 === null) {
+          (repairedNpc as any).背包.信用点 = { 低额: 0, 中额: 0, 高额: 0, 最高额: 0 };
         }
         if (typeof repairedNpc.背包.物品 !== 'object' || repairedNpc.背包.物品 === null) {
           repairedNpc.背包.物品 = {};
@@ -186,7 +187,7 @@ export function validateAndRepairNpcProfile(npcData: unknown): [boolean, NpcProf
       }
     } catch (e) {
       console.warn('[NPC校验] 背包字段修复失败，使用默认值:', e);
-      repairedNpc.背包 = { 灵石: { 下品: 0, 中品: 0, 上品: 0, 极品: 0 }, 物品: {} };
+      repairedNpc.背包 = { 信用点: { 低额: 0, 中额: 0, 高额: 0, 最高额: 0 }, 物品: {} };
     }
 
     // 5. 确保实时关注是布尔值
@@ -231,8 +232,8 @@ export function validateGameData(
   if (context === 'creation') {
     const loc = (saveData as any)?.角色?.位置;
     if (!loc || typeof loc !== 'object') errors.push('角色.位置 缺失');
-    const realm = (saveData as any)?.角色?.属性?.境界;
-    if (!realm || typeof realm !== 'object') errors.push('角色.属性.境界 缺失');
+    const rank = (saveData as any)?.角色?.属性?.阶位;
+    if (!rank || typeof rank !== 'object') errors.push('角色.属性.阶位 缺失');
   }
 
   return { isValid: errors.length === 0, errors };

@@ -1,7 +1,7 @@
 <template>
   <div class="attribute-allocation-container">
     <div class="header">
-      <h2>{{ $t('先天六命分配') }}</h2>
+      <h2>{{ $t('初始六维分配') }}</h2>
       <div class="points-display">
         {{ $t('剩余技能点:') }}
         <span :class="{ negative: store.remainingTalentPoints < 0 }">{{
@@ -48,21 +48,21 @@ const minValue = 0 // 属性基础值
 const maxValue = 10 // 属性最大值
 
 const attributeNames = {
-  root_bone: '根骨',
-  spirituality: '灵性',
-  comprehension: '悟性',
-  fortune: '气运',
+  root_bone: '体质',
+  spirituality: '能源',
+  comprehension: '算法',
+  fortune: '资源感知',
   charm: '魅力',
-  temperament: '心性',
+  temperament: '心智',
 }
 
 const attributeDescriptions = {
-  root_bone: '决定气血上限、恢复速度、寿命上限。影响炼体修行、抗打击能力。',
-  spirituality: '决定灵气上限、吸收效率。影响修炼速度、法术威力。',
-  comprehension: '决定神识上限、学习效率。影响功法领悟、技能掌握速度。',
-  fortune: '决定各种概率、物品掉落品质。影响天材地宝获取、贵人相助。',
-  charm: '决定初始好感度、社交加成。影响NPC互动、门派声望获取。',
-  temperament: '决定心魔抗性、意志力。影响走火入魔抵抗、关键抉择。',
+  root_bone: '决定生命值上限、恢复速度与机体耐久。影响体能训练与抗打击能力。',
+  spirituality: '决定电量上限、充能效率。影响训练速度与模块输出。',
+  comprehension: '决定带宽上限、学习效率。影响模块掌握与技能升级速度。',
+  fortune: '决定各种概率与物品掉落品质。影响资源获取与关键人脉。',
+  charm: '决定初始好感度、社交加成。影响NPC互动、组织声望获取。',
+  temperament: '决定精神抗性、意志力。影响过载失控抵抗与关键抉择。',
 }
 
 type AttributeKey = keyof typeof attributeNames

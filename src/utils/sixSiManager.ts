@@ -1,29 +1,29 @@
 /**
- * @fileoverview 六司系统管理模块
+ * @fileoverview 六维系统管理模块
  *
  * 【职责】
- * - 管理先天/后天六司的约束
- * - 计算六司对各项属性的加成
- * - 验证六司修改的合法性
+ * - 管理初始/成长六维的约束
+ * - 计算六维对各项属性的加成
+ * - 验证六维修改的合法性
  *
  * 【核心概念】
- * - 先天六司：代表先天天资，范围0-10，占加成权重70%
- * - 后天六司：代表后天增长，范围0-20，占加成权重30%
- * - 等价原则：先天1点 ≈ 后天2.33点效果
+ * - 初始六维：代表初始天赋，范围0-10，占加成权重70%
+ * - 成长六维：代表后天增长，范围0-20，占加成权重30%
+ * - 等价原则：初始1点 ≈ 成长2.33点效果
  */
 
 // ============================================================================
 // 常量定义
 // ============================================================================
 
-/** 六司约束配置 - 内部扩展版本 */
+/** 六维约束配置 - 内部扩展版本 */
 export interface InternalSixSiConstraints {
-  先天六司: {
+  初始六维: {
     每项上限: number;
     总分上限: number;
     对加成权重: number;
   };
-  后天六司: {
+  成长六维: {
     每项上限: number;
     总分上限: number;
     单次增加上限: number;
@@ -32,14 +32,14 @@ export interface InternalSixSiConstraints {
   };
 }
 
-/** 六司约束配置 */
+/** 六维约束配置 */
 export const SIX_SI_CONSTRAINTS: InternalSixSiConstraints = {
-  先天六司: {
+  初始六维: {
     每项上限: 10,
     总分上限: 60,
     对加成权重: 0.7,
   },
-  后天六司: {
+  成长六维: {
     每项上限: 20,
     总分上限: 120,
     单次增加上限: 3,
@@ -48,46 +48,46 @@ export const SIX_SI_CONSTRAINTS: InternalSixSiConstraints = {
   },
 };
 
-/** 六司属性名称 */
-export const SIX_SI_ATTRIBUTES = ['根骨', '灵性', '悟性', '气运', '魅力', '心性'] as const;
+/** 六维属性名称 */
+export const SIX_SI_ATTRIBUTES = ['体质', '能源', '算法', '资源感知', '魅力', '心智'] as const;
 export type SixSiAttribute = (typeof SIX_SI_ATTRIBUTES)[number];
 
-/** 六司属性权重（用于综合计算） */
+/** 六维属性权重（用于综合计算） */
 export const SIX_SI_WEIGHTS: Record<SixSiAttribute, number> = {
-  根骨: 0.25,  // 影响体质、气血、灵气吸收
-  灵性: 0.25,  // 影响灵气感应、法术威力
-  悟性: 0.20,  // 影响功法理解、突破概率
-  心性: 0.15,  // 影响修炼稳定、抗心魔
-  气运: 0.10,  // 影响机缘、掉落、突破
+  体质: 0.25,  // 影响耐受、生命值上限
+  能源: 0.25,  // 影响电量上限与能量运转
+  算法: 0.20,  // 影响模块理解、晋升概率
+  心智: 0.15,  // 影响训练稳定、抗过载
+  资源感知: 0.10,  // 影响机会、资源品质、晋升运势
   魅力: 0.05,  // 影响社交、NPC好感
 };
 
-/** 六司对各项属性的加成系数 */
+/** 六维对各项属性的加成系数 */
 export const SIX_SI_BONUS_COEFFICIENTS = {
-  根骨: {
-    气血上限: 0.05,      // 每点根骨增加5%气血上限
-    灵气吸收: 0.03,      // 每点根骨增加3%灵气吸收效率
-    体质强度: 0.04,      // 每点根骨增加4%体质强度
+  体质: {
+    生命值上限: 0.05,      // 每点体质增加5%生命值上限
+    电量恢复: 0.03,        // 每点体质增加3%电量恢复效率
+    结构强度: 0.04,        // 每点体质增加4%结构强度
   },
-  灵性: {
-    灵气上限: 0.05,      // 每点灵性增加5%灵气上限
-    法术威力: 0.04,      // 每点灵性增加4%法术威力
-    灵气感应: 0.03,      // 每点灵性增加3%灵气感应范围
+  能源: {
+    电量上限: 0.05,      // 每点能源增加5%电量上限
+    模块效能: 0.04,      // 每点能源增加4%模块效能
+    信号感应: 0.03,      // 每点能源增加3%信号感应范围
   },
-  悟性: {
-    修炼速度: 0.04,      // 每点悟性增加4%修炼速度
-    功法理解: 0.05,      // 每点悟性增加5%功法理解速度
-    突破概率: 0.02,      // 每点悟性增加2%突破成功率
+  算法: {
+    训练速度: 0.04,      // 每点算法增加4%训练速度
+    模块理解: 0.05,      // 每点算法增加5%模块理解速度
+    晋升概率: 0.02,      // 每点算法增加2%晋升成功率
   },
-  心性: {
-    修炼稳定: 0.04,      // 每点心性增加4%修炼稳定性
-    抗心魔: 0.05,        // 每点心性增加5%抗心魔能力
-    意志强度: 0.03,      // 每点心性增加3%意志强度
+  心智: {
+    训练稳定: 0.04,      // 每点心智增加4%训练稳定性
+    抗过载: 0.05,        // 每点心智增加5%抗过载能力
+    意志强度: 0.03,      // 每点心智增加3%意志强度
   },
-  气运: {
-    机缘概率: 0.03,      // 每点气运增加3%机缘触发概率
-    掉落品质: 0.02,      // 每点气运增加2%掉落品质
-    突破运势: 0.02,      // 每点气运增加2%突破运势
+  资源感知: {
+    机会概率: 0.03,      // 每点资源感知增加3%机会触发概率
+    资源品质: 0.02,      // 每点资源感知增加2%资源品质
+    晋升运势: 0.02,      // 每点资源感知增加2%晋升运势
   },
   魅力: {
     好感获取: 0.05,      // 每点魅力增加5%好感获取
@@ -96,31 +96,31 @@ export const SIX_SI_BONUS_COEFFICIENTS = {
   },
 } as const;
 
-/** 后天六司获取方式 */
+/** 成长六维获取方式 */
 export const ACQUIRED_SIX_SI_SOURCES = {
   装备增幅: { 最大增加: 3, 描述: '穿戴特殊装备获得的临时/永久加成' },
-  天赋效果: { 最大增加: 2, 描述: '特殊天赋带来的永久加成' },
-  服用丹药: { 最大增加: 2, 描述: '服用洗髓丹等特殊丹药' },
-  机缘奇遇: { 最大增加: 5, 描述: '极稀有机缘，如仙人传承、神物洗礼' },
-  大道感悟: { 最大增加: 1, 描述: '大道突破时的感悟加成' },
-  境界突破: { 最大增加: 1, 描述: '大境界突破时的体质蜕变' },
+  模块效果: { 最大增加: 2, 描述: '特殊模块带来的永久加成' },
+  注入耗材: { 最大增加: 2, 描述: '注入强化剂等特殊耗材' },
+  稀有机遇: { 最大增加: 5, 描述: '极稀有机遇，如核心授权、试验洗礼' },
+  关键突破: { 最大增加: 1, 描述: '关键晋升时的系统适配加成' },
+  阶位晋升: { 最大增加: 1, 描述: '阶位晋升时的体质跃迁' },
 } as const;
 
 // ============================================================================
 // 类型定义
 // ============================================================================
 
-/** 六司数据 */
+/** 六维数据 */
 export interface SixSiData {
-  根骨: number;
-  灵性: number;
-  悟性: number;
-  气运: number;
+  体质: number;
+  能源: number;
+  算法: number;
+  资源感知: number;
   魅力: number;
-  心性: number;
+  心智: number;
 }
 
-/** 六司修改请求 */
+/** 六维修改请求 */
 export interface SixSiModifyRequest {
   属性: SixSiAttribute;
   增加值: number;
@@ -128,7 +128,7 @@ export interface SixSiModifyRequest {
   描述?: string;
 }
 
-/** 六司修改验证结果 */
+/** 六维修改验证结果 */
 export interface SixSiModifyValidation {
   valid: boolean;
   reason: string;
@@ -140,11 +140,11 @@ export interface SixSiModifyValidation {
 // ============================================================================
 
 /**
- * 验证先天六司数据是否合法
+ * 验证初始六维数据是否合法
  */
 export function validateInnateSixSi(sixSi: SixSiData): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
-  const { 每项上限, 总分上限 } = SIX_SI_CONSTRAINTS.先天六司;
+  const { 每项上限, 总分上限 } = SIX_SI_CONSTRAINTS.初始六维;
 
   let total = 0;
   for (const attr of SIX_SI_ATTRIBUTES) {
@@ -159,18 +159,18 @@ export function validateInnateSixSi(sixSi: SixSiData): { valid: boolean; errors:
   }
 
   if (total > 总分上限) {
-    errors.push(`先天六司总分${total}超过上限${总分上限}`);
+    errors.push(`初始六维总分${total}超过上限${总分上限}`);
   }
 
   return { valid: errors.length === 0, errors };
 }
 
 /**
- * 验证后天六司数据是否合法
+ * 验证成长六维数据是否合法
  */
 export function validateAcquiredSixSi(sixSi: SixSiData): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
-  const { 每项上限, 总分上限 } = SIX_SI_CONSTRAINTS.后天六司;
+  const { 每项上限, 总分上限 } = SIX_SI_CONSTRAINTS.成长六维;
 
   let total = 0;
   for (const attr of SIX_SI_ATTRIBUTES) {
@@ -185,21 +185,21 @@ export function validateAcquiredSixSi(sixSi: SixSiData): { valid: boolean; error
   }
 
   if (total > 总分上限) {
-    errors.push(`后天六司总分${total}超过上限${总分上限}`);
+    errors.push(`成长六维总分${total}超过上限${总分上限}`);
   }
 
   return { valid: errors.length === 0, errors };
 }
 
 /**
- * 验证后天六司修改请求是否合法
+ * 验证成长六维修改请求是否合法
  */
 export function validateSixSiModify(
   currentSixSi: SixSiData,
   request: SixSiModifyRequest
 ): SixSiModifyValidation {
   const { 属性, 增加值, 来源 } = request;
-  const { 每项上限, 单次增加上限, 稀有机缘上限 } = SIX_SI_CONSTRAINTS.后天六司;
+  const { 每项上限, 单次增加上限, 稀有机缘上限 } = SIX_SI_CONSTRAINTS.成长六维;
 
   // 检查来源是否有效
   const sourceConfig = ACQUIRED_SIX_SI_SOURCES[来源];
@@ -213,7 +213,7 @@ export function validateSixSiModify(
   }
 
   // 检查单次增加上限
-  const maxIncrease = 来源 === '机缘奇遇' ? 稀有机缘上限 : 单次增加上限;
+  const maxIncrease = 来源 === '稀有机遇' ? 稀有机缘上限 : 单次增加上限;
   if (增加值 > maxIncrease) {
     return {
       valid: false,
@@ -254,7 +254,7 @@ export function validateSixSiModify(
 // ============================================================================
 
 /**
- * 计算单项六司对特定属性的加成
+ * 计算单项六维对特定属性的加成
  */
 export function calculateSingleBonus(
   attribute: SixSiAttribute,
@@ -269,62 +269,62 @@ export function calculateSingleBonus(
     return 0;
   }
 
-  // 先天权重70%，后天权重30%
-  const innateBonus = innateValue * coefficient * SIX_SI_CONSTRAINTS.先天六司.对加成权重;
-  const acquiredBonus = acquiredValue * coefficient * SIX_SI_CONSTRAINTS.后天六司.对加成权重;
+  // 初始权重70%，成长权重30%
+  const innateBonus = innateValue * coefficient * SIX_SI_CONSTRAINTS.初始六维.对加成权重;
+  const acquiredBonus = acquiredValue * coefficient * SIX_SI_CONSTRAINTS.成长六维.对加成权重;
 
   return innateBonus + acquiredBonus;
 }
 
-/** 六司加成结果 - 内部扩展版本 */
+/** 六维加成结果 - 内部扩展版本 */
 export interface InternalSixSiBonus {
-  修炼速度加成: number;
-  气血上限加成: number;
-  灵气上限加成: number;
-  神识上限加成: number;
-  突破概率加成: number;
-  机缘概率加成: number;
+  训练速度加成: number;
+  生命值上限加成: number;
+  电量上限加成: number;
+  带宽上限加成: number;
+  晋升概率加成: number;
+  机会概率加成: number;
 }
 
 /**
- * 计算综合六司加成
+ * 计算综合六维加成
  */
 export function calculateSixSiBonus(
   innateSixSi: SixSiData,
   acquiredSixSi: SixSiData
 ): InternalSixSiBonus {
   const bonus: InternalSixSiBonus = {
-    修炼速度加成: 0,
-    气血上限加成: 0,
-    灵气上限加成: 0,
-    神识上限加成: 0,
-    突破概率加成: 0,
-    机缘概率加成: 0,
+    训练速度加成: 0,
+    生命值上限加成: 0,
+    电量上限加成: 0,
+    带宽上限加成: 0,
+    晋升概率加成: 0,
+    机会概率加成: 0,
   };
 
-  // 根骨加成
-  bonus.气血上限加成 += calculateSingleBonus('根骨', innateSixSi.根骨, acquiredSixSi.根骨, '气血上限');
+  // 体质加成
+  bonus.生命值上限加成 += calculateSingleBonus('体质', innateSixSi.体质, acquiredSixSi.体质, '生命值上限');
 
-  // 灵性加成
-  bonus.灵气上限加成 += calculateSingleBonus('灵性', innateSixSi.灵性, acquiredSixSi.灵性, '灵气上限');
+  // 能源加成
+  bonus.电量上限加成 += calculateSingleBonus('能源', innateSixSi.能源, acquiredSixSi.能源, '电量上限');
 
-  // 悟性加成
-  bonus.修炼速度加成 += calculateSingleBonus('悟性', innateSixSi.悟性, acquiredSixSi.悟性, '修炼速度');
-  bonus.突破概率加成 += calculateSingleBonus('悟性', innateSixSi.悟性, acquiredSixSi.悟性, '突破概率');
+  // 算法加成
+  bonus.训练速度加成 += calculateSingleBonus('算法', innateSixSi.算法, acquiredSixSi.算法, '训练速度');
+  bonus.晋升概率加成 += calculateSingleBonus('算法', innateSixSi.算法, acquiredSixSi.算法, '晋升概率');
 
-  // 心性加成（影响神识）
-  bonus.神识上限加成 += calculateSingleBonus('心性', innateSixSi.心性, acquiredSixSi.心性, '抗心魔') * 0.5;
+  // 心智加成（影响带宽）
+  bonus.带宽上限加成 += calculateSingleBonus('心智', innateSixSi.心智, acquiredSixSi.心智, '抗过载') * 0.5;
 
-  // 气运加成
-  bonus.机缘概率加成 += calculateSingleBonus('气运', innateSixSi.气运, acquiredSixSi.气运, '机缘概率');
-  bonus.突破概率加成 += calculateSingleBonus('气运', innateSixSi.气运, acquiredSixSi.气运, '突破运势');
+  // 资源感知加成
+  bonus.机会概率加成 += calculateSingleBonus('资源感知', innateSixSi.资源感知, acquiredSixSi.资源感知, '机会概率');
+  bonus.晋升概率加成 += calculateSingleBonus('资源感知', innateSixSi.资源感知, acquiredSixSi.资源感知, '晋升运势');
 
   return bonus;
 }
 
 /**
- * 计算六司综合评分
- * 用于快速评估角色天资
+ * 计算六维综合评分
+ * 用于快速评估角色天赋
  */
 export function calculateSixSiScore(
   innateSixSi: SixSiData,
@@ -339,22 +339,22 @@ export function calculateSixSiScore(
     acquiredScore += acquiredSixSi[attr] * weight;
   }
 
-  // 先天满分10，后天满分20，但后天权重只有30%
-  // 综合评分 = 先天评分 * 0.7 + 后天评分 * 0.3 / 2（因为后天上限是先天的2倍）
+  // 初始满分10，成长满分20，但成长权重只有30%
+  // 综合评分 = 初始评分 * 0.7 + 成长评分 * 0.3 / 2（因为成长上限是初始的2倍）
   const totalScore = innateScore * 0.7 + (acquiredScore / 2) * 0.3;
 
   // 评级
   let grade: string;
   if (totalScore >= 9) {
-    grade = '天纵奇才';
+    grade = '天赋极佳';
   } else if (totalScore >= 7) {
-    grade = '资质上佳';
+    grade = '天赋上佳';
   } else if (totalScore >= 5) {
-    grade = '中等之资';
+    grade = '中等水平';
   } else if (totalScore >= 3) {
-    grade = '资质平庸';
+    grade = '表现平庸';
   } else {
-    grade = '资质愚钝';
+    grade = '潜力有限';
   }
 
   return {
@@ -370,41 +370,41 @@ export function calculateSixSiScore(
 // ============================================================================
 
 /**
- * 创建空的六司数据
+ * 创建空的六维数据
  */
 export function createEmptySixSi(): SixSiData {
   return {
-    根骨: 0,
-    灵性: 0,
-    悟性: 0,
-    气运: 0,
+    体质: 0,
+    能源: 0,
+    算法: 0,
+    资源感知: 0,
     魅力: 0,
-    心性: 0,
+    心智: 0,
   };
 }
 
 /**
- * 创建默认的先天六司（中等资质）
+ * 创建默认的初始六维（中等水平）
  */
 export function createDefaultInnateSixSi(): SixSiData {
   return {
-    根骨: 5,
-    灵性: 5,
-    悟性: 5,
-    气运: 5,
+    体质: 5,
+    能源: 5,
+    算法: 5,
+    资源感知: 5,
     魅力: 5,
-    心性: 5,
+    心智: 5,
   };
 }
 
 /**
- * 随机生成先天六司
+ * 随机生成初始六维
  * @param totalPoints 总点数（默认30，即平均每项5点）
  * @param variance 方差系数（0-1，越大越不均匀）
  */
 export function generateRandomInnateSixSi(totalPoints: number = 30, variance: number = 0.5): SixSiData {
   const sixSi = createEmptySixSi();
-  const { 每项上限 } = SIX_SI_CONSTRAINTS.先天六司;
+  const { 每项上限 } = SIX_SI_CONSTRAINTS.初始六维;
 
   // 先平均分配
   const baseValue = Math.floor(totalPoints / 6);
@@ -444,12 +444,12 @@ export function generateRandomInnateSixSi(totalPoints: number = 30, variance: nu
 }
 
 /**
- * 格式化六司数据为显示字符串
+ * 格式化六维数据为显示字符串
  */
-export function formatSixSiDisplay(sixSi: SixSiData, type: '先天' | '后天'): string {
-  const maxValue = type === '先天'
-    ? SIX_SI_CONSTRAINTS.先天六司.每项上限
-    : SIX_SI_CONSTRAINTS.后天六司.每项上限;
+export function formatSixSiDisplay(sixSi: SixSiData, type: '初始' | '成长'): string {
+  const maxValue = type === '初始'
+    ? SIX_SI_CONSTRAINTS.初始六维.每项上限
+    : SIX_SI_CONSTRAINTS.成长六维.每项上限;
 
   return SIX_SI_ATTRIBUTES.map(attr => `${attr}:${sixSi[attr]}/${maxValue}`).join(' ');
 }

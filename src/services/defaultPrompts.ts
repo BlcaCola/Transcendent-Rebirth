@@ -139,7 +139,7 @@ export function getSystemPrompts(): Record<string, PromptDefinition> {
       name: '2. 核心规则',
       content: BUSINESS_RULES,
       category: 'coreRequest',
-      description: '境界、NPC、战斗规则',
+      description: '阶位、NPC、战斗规则',
       order: 2,
       weight: 9
     },
@@ -147,7 +147,7 @@ export function getSystemPrompts(): Record<string, PromptDefinition> {
       name: '2.5 扩展规则',
       content: EXTENDED_BUSINESS_RULES,
       category: 'coreRequest',
-      description: '大道、宗门等扩展',
+      description: '专精、组织等扩展',
       order: 2.5,
       weight: 5
     },
@@ -171,7 +171,7 @@ export function getSystemPrompts(): Record<string, PromptDefinition> {
       name: '5. 世界标准',
       content: WORLD_STANDARDS,
       category: 'coreRequest',
-      description: '境界属性、品质',
+      description: '阶位属性、品质',
       order: 5,
       weight: 7
     },
@@ -247,7 +247,7 @@ export function getSystemPrompts(): Record<string, PromptDefinition> {
     // ==================== 总结请求提示词 ====================
     memorySummary: {
       name: '记忆总结',
-      content: `记忆总结助手。第一人称"我"，250-400字，保留人名/地名/事件/物品/境界，忽略对话/情绪/细节。
+      content: `记忆总结助手。第一人称"我"，250-400字，保留人名/地名/事件/物品/等级，忽略对话/情绪/细节。
 输出：{"text": "总结内容"}`,
       category: 'summary',
       description: '中期→长期记忆',
@@ -267,10 +267,10 @@ export function getSystemPrompts(): Record<string, PromptDefinition> {
     // ==================== 动态生成提示词 ====================
     npcGeneration: {
       name: 'NPC生成',
-      content: `生成修仙世界NPC。
-核心：世界不以玩家为中心，NPC有独立生活；严禁参考玩家境界生成"镜像NPC"或"量身对手"。
-要求：根据场景合理分布境界、姓名性格多样化、身份决定行为。
-输出JSON：{姓名,性别,年龄,境界:{名称,阶段},性格,外貌,背景,说话风格,当前行为,个人目标,初始好感度:50}`,
+      content: `生成赛博朋克世界NPC。
+    核心：世界不以玩家为中心，NPC有独立生活；严禁参考玩家等级生成"镜像NPC"或"量身对手"。
+    要求：根据场景合理分布等级、姓名性格多样化、身份决定行为。
+    输出JSON：{姓名,性别,年龄,等级:{名称,阶段},性格,外貌,背景,说话风格,当前行为,个人目标,初始好感度:50}`,
       category: 'generation',
       description: '动态生成NPC',
       order: 1,
@@ -278,11 +278,11 @@ export function getSystemPrompts(): Record<string, PromptDefinition> {
     },
     eventGeneration: {
       name: '事件生成',
-      content: `生成修仙世界“刚刚发生”的世界事件（用于影响玩家与世界演变）。要求：
-- 必须让玩家受到影响（危险/资源/关系/位置/修炼环境/势力格局至少一项）
-- 事件可以是宗门大战、世界变化、异宝降世、秘境现世、好友出事/突破等
-- 涉及好友时，需参考关系/好感度与境界，不能无端超规格
-- 不要公告式总结，要有现场感（刚发生）
+      content: `生成赛博朋克世界“刚刚发生”的城市事件（用于影响玩家与世界演变）。要求：
+    - 必须让玩家受到影响（危险/资源/关系/位置/训练环境/势力格局至少一项）
+    - 事件可以是公司冲突、系统故障、数据泄露、封锁升级、好友出事/晋升等
+    - 涉及好友时，需参考关系/好感度与等级，不能无端超规格
+    - 不要公告式总结，要有现场感（刚发生）
 输出JSON（不要代码块/解释/额外文本）：
 {
   "event": {
@@ -306,8 +306,8 @@ export function getSystemPrompts(): Record<string, PromptDefinition> {
     },
     itemGeneration: {
       name: '物品生成',
-      content: `生成修仙世界物品。品质：凡(1-3)/黄(4-5)/玄(6-7)/地(8-9)/天(10)。
-输出JSON：{物品ID,名称,类型,品质:{quality,grade},描述,数量,效果}`,
+      content: `生成赛博朋克世界物品。品质：民用(1-3)/改装(4-5)/军规(6-7)/特级(8-9)/禁忌(10)。
+    输出JSON：{物品ID,名称,类型,品质:{quality,grade},描述,数量,效果}`,
       category: 'generation',
       description: '动态生成物品',
       order: 3,
@@ -324,7 +324,7 @@ export function getSystemPrompts(): Record<string, PromptDefinition> {
         continentCount: 3
       }),
       category: 'initialization',
-      description: '生成大陆、势力、地点',
+      description: '生成区域、势力、节点',
       order: 1,
       weight: 8
     },
@@ -339,7 +339,7 @@ export function getSystemPrompts(): Record<string, PromptDefinition> {
     newbieGuide: {
       name: '新手引导',
       content: `新手引导（前3回合）。原则：自然融入叙事，不打破沉浸感，通过NPC对话传递。
-内容：行动方式/查看状态/物品使用/交流/探索。`,
+    内容：行动方式/查看状态/装备使用/沟通/探索。`,
       category: 'initialization',
       description: '自然新手引导',
       order: 3,
@@ -351,12 +351,12 @@ export function getSystemPrompts(): Record<string, PromptDefinition> {
       name: '文本优化',
       content: `# 文本优化助手
 
-你是一个专业的中文文学编辑，负责优化修仙小说文本。
+你是一个专业的中文文学编辑，负责优化赛博朋克小说文本。
 
 ## 优化原则
 1. **保持原意**：不改变故事情节、人物行为、对话内容
 2. **提升文采**：使用更优美、更具画面感的表达
-3. **修仙风格**：保持修仙世界的语言风格和氛围
+3. **赛博朋克风格**：保持赛博朋克世界的语言风格和氛围
 4. **流畅自然**：确保行文流畅，过渡自然
 5. **精简冗余**：删除重复、啰嗦的表达
 

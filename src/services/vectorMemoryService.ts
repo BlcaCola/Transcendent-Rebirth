@@ -67,23 +67,24 @@ const DEFAULT_CONFIG: VectorMemoryConfig = {
 
 // ============ 中文分词和关键词提取 ============
 
-// 修仙相关关键词词典
-const CULTIVATION_KEYWORDS = new Set([
-  // 境界
-  '凡人', '炼气', '筑基', '金丹', '元婴', '化神', '炼虚', '合体', '渡劫', '飞升',
-  '初期', '中期', '后期', '圆满', '极境', '突破', '瓶颈',
-  // 修炼
-  '修炼', '闭关', '悟道', '感悟', '丹田', '经脉', '灵气', '真气', '法力', '神识',
-  // 战斗
-  '战斗', '交手', '斩杀', '击败', '重伤', '轻伤', '濒死', '陨落',
-  // 物品
-  '丹药', '法宝', '灵石', '功法', '秘籍', '材料', '灵草',
-  // 关系
-  '师父', '徒弟', '道友', '敌人', '仇人', '盟友', '宗门', '门派',
-  // 地点
-  '洞府', '山门', '秘境', '禁地', '坊市', '城池',
+// 赛博朋克相关关键词词典
+const CYBERPUNK_KEYWORDS = new Set([
+  // 等级/身份
+  '等级', '阶位', '权限', '认证', '升格', '晋升', '通行证',
+  // 改造与训练
+  '义体', '改造', '植入', '芯片', '模块', '校准', '升级', '训练', '协议',
+  // 网络与数据
+  '网络', '矩阵', '数据', '节点', '端口', '接口', '入侵', '黑客', '漏洞', '防火墙',
+  // 资源与货币
+  '信用点', '资源', '电量', '带宽', '耗材', '补给',
+  // 战斗与冲突
+  '枪战', '交火', '突袭', '追击', '爆炸', '火力', '护盾', '无人机',
+  // 组织与关系
+  '公司', '财团', '安保', '帮派', '中间人', '联系人', '雇主', '客户',
+  // 地点与场景
+  '街区', '黑市', '仓库', '高区', '底层', '巢区', '禁区',
   // 事件
-  '拜师', '入门', '出关', '历练', '任务', '机缘', '劫难',
+  '事件', '事故', '封锁', '停电', '泄露', '通缉', '任务', '委托',
 ]);
 
 // 停用词
@@ -101,7 +102,7 @@ function tokenize(text: string): string[] {
   const tokens: string[] = [];
 
   // 先提取词典中的关键词
-  for (const keyword of CULTIVATION_KEYWORDS) {
+  for (const keyword of CYBERPUNK_KEYWORDS) {
     if (text.includes(keyword)) tokens.push(keyword);
   }
 
@@ -110,7 +111,7 @@ function tokenize(text: string): string[] {
   let match;
   while ((match = namePattern.exec(text)) !== null) {
     const word = match[0];
-    if (!STOP_WORDS.has(word) && !CULTIVATION_KEYWORDS.has(word)) {
+    if (!STOP_WORDS.has(word) && !CYBERPUNK_KEYWORDS.has(word)) {
       tokens.push(word);
     }
   }
@@ -126,8 +127,8 @@ export function extractTags(content: string): string[] {
   const tokens = tokenize(content);
 
   for (const token of tokens) {
-    // 优先添加修仙关键词
-    if (CULTIVATION_KEYWORDS.has(token)) {
+    // 优先添加赛博关键词
+    if (CYBERPUNK_KEYWORDS.has(token)) {
       tags.push(token);
     }
   }
@@ -137,7 +138,7 @@ export function extractTags(content: string): string[] {
   let match;
   while ((match = namePattern.exec(content)) !== null) {
     const word = match[0];
-    if (!STOP_WORDS.has(word) && !CULTIVATION_KEYWORDS.has(word)) {
+    if (!STOP_WORDS.has(word) && !CYBERPUNK_KEYWORDS.has(word)) {
       // 可能是人名或地名
       if (tags.length < 15) {
         tags.push(word);
@@ -152,18 +153,18 @@ export function extractTags(content: string): string[] {
  * 推断记忆分类
  */
 export function inferCategory(content: string, tags: string[]): VectorMemoryEntry['category'] {
-  const combatKeywords = ['战斗', '交手', '斩杀', '击败', '重伤', '攻击', '防御'];
-  const socialKeywords = ['师父', '徒弟', '道友', '拜师', '结交', '好感', '关系'];
-  const cultivationKeywords = ['修炼', '闭关', '突破', '感悟', '境界', '功法'];
-  const explorationKeywords = ['探索', '发现', '秘境', '历练', '寻找'];
-  const eventKeywords = ['机缘', '劫难', '事件', '任务', '完成'];
+  const combatKeywords = ['枪战', '交火', '突袭', '追击', '爆炸', '战斗', '冲突'];
+  const socialKeywords = ['联系人', '中间人', '雇主', '客户', '谈判', '关系', '好感'];
+  const upgradeKeywords = ['改造', '升级', '训练', '校准', '植入', '技能', '权限'];
+  const explorationKeywords = ['潜入', '渗透', '侦查', '探索', '搜查', '潜行'];
+  const eventKeywords = ['事件', '事故', '封锁', '停电', '泄露', '通缉', '任务', '委托'];
 
   const check = (keywords: string[]) =>
     keywords.some(k => content.includes(k) || tags.includes(k));
 
   if (check(combatKeywords)) return 'combat';
   if (check(socialKeywords)) return 'social';
-  if (check(cultivationKeywords)) return 'cultivation';
+  if (check(upgradeKeywords)) return 'cultivation';
   if (check(explorationKeywords)) return 'exploration';
   if (check(eventKeywords)) return 'event';
   return 'other';
@@ -180,8 +181,8 @@ class SimpleVectorizer {
   private wordToIndex: Map<string, number>;
 
   constructor() {
-    // 使用修仙关键词作为词汇表
-    this.vocabulary = Array.from(CULTIVATION_KEYWORDS);
+    // 使用赛博关键词作为词汇表
+    this.vocabulary = Array.from(CYBERPUNK_KEYWORDS);
     this.wordToIndex = new Map();
     this.vocabulary.forEach((word, index) => {
       this.wordToIndex.set(word, index);
@@ -418,7 +419,7 @@ class VectorMemoryService {
       importance,
       category,
       metadata: {
-        npcs: tags.filter(t => !CULTIVATION_KEYWORDS.has(t)).slice(0, 5),
+        npcs: tags.filter(t => !CYBERPUNK_KEYWORDS.has(t)).slice(0, 5),
       },
     };
 
@@ -472,7 +473,7 @@ class VectorMemoryService {
             timestamp: Date.now(),
             importance,
             category,
-            metadata: { npcs: tags.filter(t => !CULTIVATION_KEYWORDS.has(t)).slice(0, 5) },
+            metadata: { npcs: tags.filter(t => !CYBERPUNK_KEYWORDS.has(t)).slice(0, 5) },
           };
           await this.db.put('memories', entry);
           imported++;
@@ -490,7 +491,7 @@ class VectorMemoryService {
             timestamp: Date.now(),
             importance,
             category,
-            metadata: { npcs: tags.filter(t => !CULTIVATION_KEYWORDS.has(t)).slice(0, 5) },
+            metadata: { npcs: tags.filter(t => !CYBERPUNK_KEYWORDS.has(t)).slice(0, 5) },
           };
           await this.db.put('memories', entry);
           imported++;

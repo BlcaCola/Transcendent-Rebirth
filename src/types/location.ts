@@ -39,13 +39,13 @@ export interface WorldLocation {
   特色?: string[];
   与玩家关系?: string;
   leadership?: {
-    宗主?: string;
-    宗主修为?: string;
+    负责人?: string;
+    负责人阶位?: string;
     [key: string]: any;
   };
   领导层?: {
-    宗主?: string;
-    宗主修为?: string;
+    负责人?: string;
+    负责人阶位?: string;
     [key: string]: any;
   };
   memberCount?: {

@@ -190,7 +190,7 @@
                     </div>
                     <div class="char-meta">
                       <span class="world">{{ profile.角色.世界.name }}</span>
-                      <span class="talent">{{ getFieldName(profile.角色.天资.name) }}</span>
+                      <span class="talent">{{ getFieldName(profile.角色.模块阶位) }}</span>
                     </div>
                   </div>
                   <div class="save-count">
@@ -300,7 +300,7 @@
 
                         <div class="save-badges">
                           <span class="realm-badge">{{
-                            getRealmName(normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.境界)
+                            getRankName(normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.阶位)
                           }}</span>
                           <span class="age-badge"
                             >{{ normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.寿命?.当前 ?? 18 }}岁</span
@@ -310,26 +310,26 @@
                         <div class="save-stats">
                           <div class="stat-grid">
                             <div class="stat">
-                              <span class="label">气血</span>
+                              <span class="label">生命值</span>
                               <span class="value"
-                                >{{ normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.气血?.当前 ?? 0 }}/{{
-                                  normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.气血?.上限 ?? 0
+                                >{{ normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.生命值?.当前 ?? 0 }}/{
+                                  normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.生命值?.上限 ?? 0
                                 }}</span
                               >
                             </div>
                             <div class="stat">
-                              <span class="label">灵气</span>
+                              <span class="label">电量</span>
                               <span class="value"
-                                >{{ normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.灵气?.当前 ?? 0 }}/{{
-                                  normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.灵气?.上限 ?? 0
+                                >{{ normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.电量?.当前 ?? 0 }}/{
+                                  normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.电量?.上限 ?? 0
                                 }}</span
                               >
                             </div>
                             <div class="stat">
-                              <span class="label">神识</span>
+                              <span class="label">带宽</span>
                               <span class="value"
-                                >{{ normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.神识?.当前 ?? 0 }}/{{
-                                  normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.神识?.上限 ?? 0
+                                >{{ normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.带宽?.当前 ?? 0 }}/{
+                                  normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.带宽?.上限 ?? 0
                                 }}</span
                               >
                             </div>
@@ -365,7 +365,7 @@
                 <div class="login-icon">🔐</div>
                 <h3>{{ $t('需要登录') }}</h3>
                 <p>{{ $t('请先登录以管理联机角色存档') }}</p>
-                <button @click="handleLogin" class="btn-login">{{ $t('登入道籍') }}</button>
+                <button @click="handleLogin" class="btn-login">{{ $t('登入终端') }}</button>
               </div>
 
               <!-- 加载中状态 -->
@@ -374,17 +374,17 @@
                 <span>{{ $t('正在加载云端存档...') }}</span>
               </div>
 
-              <div v-else-if="selectedCharacter.存档列表?.['云端修行']?.存档数据" class="online-save-card">
+              <div v-else-if="selectedCharacter.存档列表?.['云端运行']?.存档数据" class="online-save-card">
                 <div class="save-data">
                   <div class="save-header">
                     <h4 class="save-name">{{ $t('云端存档') }}</h4>
                     <div class="save-badges">
                       <span class="realm-badge">{{
-                        getRealmName(normalizeSaveDataV3(selectedCharacter.存档列表['云端修行'].存档数据)?.角色?.属性?.境界)
+                        getRankName(normalizeSaveDataV3(selectedCharacter.存档列表['云端运行'].存档数据)?.角色?.属性?.阶位)
                       }}</span>
                       <span class="age-badge"
                         >{{
-                          normalizeSaveDataV3(selectedCharacter.存档列表['云端修行'].存档数据)?.角色?.属性?.寿命?.当前 ?? 18
+                          normalizeSaveDataV3(selectedCharacter.存档列表['云端运行'].存档数据)?.角色?.属性?.寿命?.当前 ?? 18
                         }}岁</span
                       >
                     </div>
@@ -393,33 +393,33 @@
                   <div class="save-stats">
                     <div class="stat-grid">
                       <div class="stat">
-                        <span class="label">气血</span>
+                        <span class="label">生命值</span>
                         <span class="value"
-                          >{{ normalizeSaveDataV3(selectedCharacter.存档列表['云端修行'].存档数据)?.角色?.属性?.气血?.当前 ?? 0 }}/{{
-                            normalizeSaveDataV3(selectedCharacter.存档列表['云端修行'].存档数据)?.角色?.属性?.气血?.上限 ?? 0
+                          >{{ normalizeSaveDataV3(selectedCharacter.存档列表['云端运行'].存档数据)?.角色?.属性?.生命值?.当前 ?? 0 }}/{
+                            normalizeSaveDataV3(selectedCharacter.存档列表['云端运行'].存档数据)?.角色?.属性?.生命值?.上限 ?? 0
                           }}</span
                         >
                       </div>
                       <div class="stat">
-                        <span class="label">灵气</span>
+                        <span class="label">电量</span>
                         <span class="value"
-                          >{{ normalizeSaveDataV3(selectedCharacter.存档列表['云端修行'].存档数据)?.角色?.属性?.灵气?.当前 ?? 0 }}/{{
-                            normalizeSaveDataV3(selectedCharacter.存档列表['云端修行'].存档数据)?.角色?.属性?.灵气?.上限 ?? 0
+                          >{{ normalizeSaveDataV3(selectedCharacter.存档列表['云端运行'].存档数据)?.角色?.属性?.电量?.当前 ?? 0 }}/{
+                            normalizeSaveDataV3(selectedCharacter.存档列表['云端运行'].存档数据)?.角色?.属性?.电量?.上限 ?? 0
                           }}</span
                         >
                       </div>
                       <div class="stat">
-                        <span class="label">神识</span>
+                        <span class="label">带宽</span>
                         <span class="value"
-                          >{{ normalizeSaveDataV3(selectedCharacter.存档列表['云端修行'].存档数据)?.角色?.属性?.神识?.当前 ?? 0 }}/{{
-                            normalizeSaveDataV3(selectedCharacter.存档列表['云端修行'].存档数据)?.角色?.属性?.神识?.上限 ?? 0
+                          >{{ normalizeSaveDataV3(selectedCharacter.存档列表['云端运行'].存档数据)?.角色?.属性?.带宽?.当前 ?? 0 }}/{
+                            normalizeSaveDataV3(selectedCharacter.存档列表['云端运行'].存档数据)?.角色?.属性?.带宽?.上限 ?? 0
                           }}</span
                         >
                       </div>
                       <div class="stat">
                         <span class="label">声望</span>
                         <span class="value">{{
-                          normalizeSaveDataV3(selectedCharacter.存档列表['云端修行'].存档数据)?.角色?.属性?.声望 ?? 0
+                          normalizeSaveDataV3(selectedCharacter.存档列表['云端运行'].存档数据)?.角色?.属性?.声望 ?? 0
                         }}</span>
                       </div>
                     </div>
@@ -427,15 +427,15 @@
 
                   <div class="save-footer">
                     <span class="location">{{
-                      normalizeSaveDataV3(selectedCharacter.存档列表['云端修行'].存档数据)?.角色?.位置?.描述 || '初始地'
+                      normalizeSaveDataV3(selectedCharacter.存档列表['云端运行'].存档数据)?.角色?.位置?.描述 || '初始地'
                     }}</span>
                     <div class="sync-info">
                       <span
                         class="sync-status"
-                        :class="{ synced: !selectedCharacter.存档列表['云端修行'].云端同步信息?.需要同步 }"
+                        :class="{ synced: !selectedCharacter.存档列表['云端运行'].云端同步信息?.需要同步 }"
                       >
                         {{
-                          selectedCharacter.存档列表['云端修行'].云端同步信息?.需要同步
+                          selectedCharacter.存档列表['云端运行'].云端同步信息?.需要同步
                             ? $t('待同步')
                             : $t('已同步')
                         }}
@@ -444,10 +444,10 @@
                   </div>
 
                   <div class="online-actions">
-                    <button @click="handleSelect(selectedCharId!, '云端修行', true)" class="btn-play">
+                    <button @click="handleSelect(selectedCharId!, '云端运行', true)" class="btn-play">
                       {{ $t('进入游戏') }}
                     </button>
-                    <button v-if="selectedCharacter.存档列表['云端修行']?.云端同步信息?.需要同步" class="btn-sync">
+                    <button v-if="selectedCharacter.存档列表['云端运行']?.云端同步信息?.需要同步" class="btn-sync">
                       {{ $t('同步云端') }}
                     </button>
                   </div>
@@ -458,9 +458,9 @@
               <div v-else class="online-save-card">
                 <div class="save-empty">
                   <div class="empty-slot-icon">☁️</div>
-                  <span class="empty-text">{{ $t('尚未开始修行') }}</span>
-                  <p class="empty-hint">{{ $t('开始您的联机修仙之旅，存档将自动同步到云端') }}</p>
-                  <button @click="handleSelect(selectedCharId!, '云端修行', false)" class="btn-start">
+                  <span class="empty-text">{{ $t('尚未开始行动') }}</span>
+                  <p class="empty-hint">{{ $t('开始您的联机旅程，存档将自动同步到云端') }}</p>
+                  <button @click="handleSelect(selectedCharId!, '云端运行', false)" class="btn-start">
                     {{ $t('开始游戏') }}
                   </button>
                 </div>
@@ -501,16 +501,16 @@
                   <span class="value">{{ getFieldName(detailsCharacter.角色.世界) }}</span>
                 </div>
                 <div class="detail-item">
-                  <span class="label">{{ $t('天资') }}</span>
-                  <span class="value">{{ getFieldName(detailsCharacter.角色.天资) }}</span>
+                  <span class="label">{{ $t('模块阶位') }}</span>
+                  <span class="value">{{ getFieldName(detailsCharacter.角色.模块阶位) }}</span>
                 </div>
                 <div class="detail-item">
                   <span class="label">{{ $t('出身') }}</span>
                   <span class="value">{{ getFieldName(detailsCharacter.角色.出生) }}</span>
                 </div>
                 <div class="detail-item">
-                  <span class="label">{{ $t('灵根') }}</span>
-                  <span class="value">{{ getFieldName(detailsCharacter.角色.灵根) }}</span>
+                  <span class="label">{{ $t('改造核心') }}</span>
+                  <span class="value">{{ getFieldName(detailsCharacter.角色.改造核心) }}</span>
                 </div>
                 <div class="detail-item">
                   <span class="label">{{ $t('模式') }}</span>
@@ -520,11 +520,11 @@
             </div>
 
             <div class="detail-section">
-              <h4>{{ $t('先天六司') }}</h4>
+              <h4>{{ $t('初始六维') }}</h4>
               <div class="attributes-display">
                 <HexagonChart
-                  v-if="detailsCharacter.角色.先天六司"
-                  :stats="convertToStats(detailsCharacter.角色.先天六司)"
+                  v-if="detailsCharacter.角色.初始六维"
+                  :stats="convertToStats(detailsCharacter.角色.初始六维)"
                   :size="150"
                   :maxValue="10"
                 />
@@ -532,11 +532,11 @@
             </div>
 
             <div class="detail-section">
-              <h4>{{ $t('天赋神通') }}</h4>
+              <h4>{{ $t('模块技能') }}</h4>
               <div class="talents-list">
-                <div v-if="detailsCharacter.角色.天赋?.length" class="talent-items">
+                <div v-if="detailsCharacter.角色.模块?.length" class="talent-items">
                   <span
-                    v-for="(talent, index) in detailsCharacter.角色.天赋"
+                    v-for="(talent, index) in detailsCharacter.角色.模块"
                     :key="index"
                     class="talent-tag"
                     :title="getTalentDescription(talent)"
@@ -544,7 +544,7 @@
                     {{ getTalentName(talent) }}
                   </span>
                 </div>
-                <span v-else class="no-talents">{{ $t('暂无天赋') }}</span>
+                <span v-else class="no-talents">{{ $t('暂无模块') }}</span>
               </div>
             </div>
           </div>
@@ -564,7 +564,7 @@ import { ArrowLeft, Upload, History, Clock, Star, Wrench } from 'lucide-vue-next
 import LegacySaveMigrationModal from './LegacySaveMigrationModal.vue';
 import type { CharacterProfile, SaveSlot } from '@/types/game';
 import "@/style.css";
-import { formatRealmWithStage } from '@/utils/realmUtils';
+import { formatRankWithStage } from '@/utils/realmUtils';
 import { toast } from '@/utils/toast';
 import { isTavernEnv } from '@/utils/tavern';
 import { ensureSaveDataHasTavernNsfw } from '@/utils/nsfw';
@@ -815,7 +815,7 @@ const getSaveCount = (profile: CharacterProfile) => {
       .filter(([key, slot]: [string, SaveSlot]) => key !== '上次对话' && slot.存档数据);
     return saves.length;
   } else {
-    return profile.存档列表?.['云端修行']?.存档数据 ? 1 : 0;
+    return profile.存档列表?.['云端运行']?.存档数据 ? 1 : 0;
   }
 };
 
@@ -865,7 +865,7 @@ const handleSelect = async (charId: string, slotKey: string, hasData: boolean) =
     const title = isAutoSave ? '创建新存档' : '开启新征程';
     const message = isAutoSave
       ? `是否在【${slotKey}】位置创建新的存档开始游戏？`
-      : `是否在存档位 \"${slotKey}\" 开始一段新的修行？`;
+      : `是否在存档位 \"${slotKey}\" 开始一段新的行动？`;
 
     showConfirm(
       title,
@@ -892,7 +892,7 @@ const handleDeleteCharacter = (charId: string) => {
   const charName = characterStore.rootState.角色列表[charId]?.角色.名字;
   showConfirm(
     '删除角色',
-    `确定要彻底删除角色\"${charName}\"及其所有修行记录吗？此操作不可恢复。`,
+    `确定要彻底删除角色\"${charName}\"及其所有行动记录吗？此操作不可恢复。`,
     async () => {
       // 🔥 修复：如果删除的是当前选中的角色，先清空选中状态
       if (selectedCharId.value === charId) {
@@ -1021,9 +1021,9 @@ const normalizeSaveDataV3 = (saveData: unknown): SaveDataV3 | null => {
   return (isSaveDataV3(raw) ? raw : migrateSaveDataToLatest(raw).migrated) as SaveDataV3;
 };
 
-// 境界显示：统一为“境界+阶段”（初期/中期/后期/圆满），凡人不加阶段
-const getRealmName = (realm: unknown): string => {
-  return formatRealmWithStage(realm as { 境界: string; 境界等级?: number; 阶段?: string } | null);
+// 等级显示：统一为“等级+阶段”（初期/中期/后期/圆满），凡人不加阶段
+const getRankName = (rank: unknown): string => {
+  return formatRankWithStage(rank as { 名称?: string; name?: string; 阶段?: string; stage?: string } | null);
 };
 
 // 格式化时间
@@ -1038,38 +1038,38 @@ const formatTime = (timeStr: string | null): string => {
   });
 };
 
-// 转换先天六司
+// 转换初始六维
 const convertToStats = (innateAttrs: Record<string, number>) => {
   return {
-    root_bone: innateAttrs['根骨'] || 0,
-    spirituality: innateAttrs['灵性'] || 0,
-    comprehension: innateAttrs['悟性'] || 0,
-    fortune: innateAttrs['气运'] || 0,
+    root_bone: innateAttrs['体质'] || 0,
+    spirituality: innateAttrs['能源'] || 0,
+    comprehension: innateAttrs['算法'] || 0,
+    fortune: innateAttrs['资源感知'] || 0,
     charm: innateAttrs['魅力'] || 0,
-    temperament: innateAttrs['心性'] || 0
+    temperament: innateAttrs['心智'] || 0
   };
 };
 
-// 获取天赋名称（兼容字符串和对象格式）
+// 获取模块名称（兼容字符串和对象格式）
 const getTalentName = (talent: unknown): string => {
   if (typeof talent === 'string') return talent;
   if (talent && typeof talent === 'object') {
     const t = talent as Record<string, unknown>;
-    return String(t['名称'] || t['name'] || '未知天赋');
+    return String(t['名称'] || t['name'] || '未知模块');
   }
-  return '未知天赋';
+  return '未知模块';
 };
 
-// 获取天赋描述（兼容字符串和对象格式）
+// 获取模块说明（兼容字符串和对象格式）
 const getTalentDescription = (talent: unknown): string => {
-  if (typeof talent === 'string') return `天赋《${talent}》`;
+  if (typeof talent === 'string') return `模块《${talent}》`;
   if (talent && typeof talent === 'object') {
     const t = talent as Record<string, unknown>;
     const desc = t['描述'] || t['description'] || '';
     const name = getTalentName(talent);
-    return desc ? String(desc) : `天赋《${name}》`;
+    return desc ? String(desc) : `模块《${name}》`;
   }
-  return '未知天赋';
+  return '未知模块';
 };
 
 // 通用字段名称获取（兼容字符串和对象格式 { 名称, 描述 } 或 { name, description }）

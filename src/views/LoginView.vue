@@ -339,7 +339,7 @@ const handleRegister = async () => {
       body: JSON.stringify(body),
     });
 
-    toast.success('用户名注册成功，欢迎踏入修仙之路！');
+    toast.success('用户名注册成功，欢迎踏入霓虹之城！');
 
     // 注册成功后切换到登录模式，让用户手动登录
     successMessage.value = '注册成功！请登录您的用户名';

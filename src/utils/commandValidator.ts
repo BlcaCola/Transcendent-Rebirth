@@ -112,45 +112,45 @@ function validateValueType(key: string, value: unknown, action: string): string[
       '元数据.时间.小时',
       '元数据.时间.分钟',
       '角色.属性.声望',
-      '角色.属性.气血.当前',
-      '角色.属性.气血.上限',
-      '角色.属性.灵气.当前',
-      '角色.属性.灵气.上限',
-      '角色.属性.神识.当前',
-      '角色.属性.神识.上限',
+      '角色.属性.生命值.当前',
+      '角色.属性.生命值.上限',
+      '角色.属性.电量.当前',
+      '角色.属性.电量.上限',
+      '角色.属性.带宽.当前',
+      '角色.属性.带宽.上限',
       '角色.属性.寿命.当前',
       '角色.属性.寿命.上限',
-      '角色.背包.灵石.下品',
-      '角色.背包.灵石.中品',
-      '角色.背包.灵石.上品',
-      '角色.背包.灵石.极品',
+      '角色.背包.信用点.低额',
+      '角色.背包.信用点.中额',
+      '角色.背包.信用点.高额',
+      '角色.背包.信用点.最高额',
     ];
 
-    const houTianFields = ['根骨', '灵性', '悟性', '气运', '魅力', '心性'];
+    const houTianFields = ['体质', '能源', '算法', '资源感知', '魅力', '心智'];
 
     if (action === 'add') {
       if (numberFields.includes(key) && typeof value !== 'number') {
         errors.push(`${key} 使用 add 时 value 必须是数字，当前类型: ${typeof value}`);
       }
 
-      if (key.startsWith('角色.身份.后天六司.') && houTianFields.some((f) => key.endsWith(`.${f}`))) {
+      if (key.startsWith('角色.身份.成长六维.') && houTianFields.some((f) => key.endsWith(`.${f}`))) {
         if (typeof value !== 'number') {
           errors.push(`${key} 使用 add 时 value 必须是数字，当前类型: ${typeof value}`);
         }
       }
     }
 
-    // 玩家境界对象
-    if (key === '角色.属性.境界' && action === 'set') {
+    // 玩家阶位对象
+    if (key === '角色.属性.阶位' && action === 'set') {
       if (typeof value !== 'object' || value === null) {
-        errors.push('角色.属性.境界 必须是对象类型');
+        errors.push('角色.属性.阶位 必须是对象类型');
       } else {
         const val = value as Record<string, any>;
-        if (val.名称 !== undefined && typeof val.名称 !== 'string') errors.push('境界.名称必须是字符串类型');
-        if (val.阶段 !== undefined && typeof val.阶段 !== 'string') errors.push('境界.阶段必须是字符串类型');
-        if (val.当前进度 !== undefined && typeof val.当前进度 !== 'number') errors.push('境界.当前进度必须是数字类型');
-        if (val.下一级所需 !== undefined && typeof val.下一级所需 !== 'number') errors.push('境界.下一级所需必须是数字类型');
-        if (val.突破描述 !== undefined && typeof val.突破描述 !== 'string') errors.push('境界.突破描述必须是字符串类型');
+        if (val.名称 !== undefined && typeof val.名称 !== 'string') errors.push('阶位.名称必须是字符串类型');
+        if (val.阶段 !== undefined && typeof val.阶段 !== 'string') errors.push('阶位.阶段必须是字符串类型');
+        if (val.当前进度 !== undefined && typeof val.当前进度 !== 'number') errors.push('阶位.当前进度必须是数字类型');
+        if (val.下一级所需 !== undefined && typeof val.下一级所需 !== 'number') errors.push('阶位.下一级所需必须是数字类型');
+        if (val.升级描述 !== undefined && typeof val.升级描述 !== 'string') errors.push('阶位.升级描述必须是字符串类型');
       }
     }
 
@@ -202,25 +202,25 @@ function validateValueType(key: string, value: unknown, action: string): string[
     if (key.startsWith('社交.关系.') && (key.match(/\./g) || []).length === 2 && action === 'set') {
       if (typeof value === 'object' && value !== null) {
         const val = value as Record<string, any>;
-        if (val.境界 && (typeof val.境界 !== 'object' || val.境界 === null)) errors.push('NPC境界必须是对象类型');
-        if (val.天赋 !== undefined && !Array.isArray(val.天赋)) errors.push('NPC天赋必须是数组类型');
+        if (val.阶位 && (typeof val.阶位 !== 'object' || val.阶位 === null)) errors.push('NPC阶位必须是对象类型');
+        if (val.模块 !== undefined && !Array.isArray(val.模块)) errors.push('NPC模块必须是数组类型');
       }
     }
 
-    // NPC 境界更新（社交.关系.<npc>.境界）
-    if (key.startsWith('社交.关系.') && key.endsWith('.境界') && action === 'set') {
+    // NPC 阶位更新（社交.关系.<npc>.阶位）
+    if (key.startsWith('社交.关系.') && key.endsWith('.阶位') && action === 'set') {
       if (typeof value !== 'object' || value === null) {
-        errors.push('NPC境界必须是对象类型');
+        errors.push('NPC阶位必须是对象类型');
       } else {
         const val = value as Record<string, any>;
-        if (val.名称 !== undefined && typeof val.名称 !== 'string') errors.push('NPC境界.名称必须是字符串类型');
-        if (val.阶段 !== undefined && typeof val.阶段 !== 'string') errors.push('NPC境界.阶段必须是字符串类型');
+        if (val.名称 !== undefined && typeof val.名称 !== 'string') errors.push('NPC阶位.名称必须是字符串类型');
+        if (val.阶段 !== undefined && typeof val.阶段 !== 'string') errors.push('NPC阶位.阶段必须是字符串类型');
       }
     }
 
-    // 大道对象（角色.大道.大道列表.<道名>）
-    if (key.startsWith('角色.大道.大道列表.') && action === 'set' && (key.match(/\./g) || []).length === 3) {
-      if (typeof value !== 'object' || value === null) errors.push('大道对象必须是对象类型');
+    // 流派对象（角色.流派.流派列表.<流派名>）
+    if (key.startsWith('角色.流派.流派列表.') && action === 'set' && (key.match(/\./g) || []).length === 3) {
+      if (typeof value !== 'object' || value === null) errors.push('流派对象必须是对象类型');
     }
 
     // 任务对象（社交.任务.当前任务列表 push）

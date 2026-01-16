@@ -16,10 +16,10 @@ export async function initializeCharacterOffline(
 ): Promise<SaveData> {
   console.log('[离线初始化] 开始执行本地角色创建...');
 
-  // 确保后天六司存在，开局默认全为0
-  if (!baseInfo.后天六司) {
-    baseInfo.后天六司 = { 根骨: 0, 灵性: 0, 悟性: 0, 气运: 0, 魅力: 0, 心性: 0 };
-    console.log('[离线初始化] 初始化后天六司为全0');
+  // 确保成长六维存在，开局默认全为0
+  if (!baseInfo.成长六维) {
+    baseInfo.成长六维 = { 体质: 0, 能源: 0, 算法: 0, 资源感知: 0, 魅力: 0, 心智: 0 };
+    console.log('[离线初始化] 初始化成长六维为全0');
   }
 
   // 1) 计算基础属性
@@ -49,45 +49,45 @@ export async function initializeCharacterOffline(
     角色: {
       身份: baseInfo,
       属性: {
-        境界: playerStatus.境界,
+        阶位: playerStatus.阶位,
         声望: playerStatus.声望,
-        气血: playerStatus.气血,
-        灵气: playerStatus.灵气,
-        神识: playerStatus.神识,
+        生命值: playerStatus.生命值,
+        电量: playerStatus.电量,
+        带宽: playerStatus.带宽,
         寿命: playerStatus.寿命,
       },
       位置: playerStatus.位置 as any,
       效果: [],
       背包: {
-        灵石: { 下品: 10, 中品: 0, 上品: 0, 极品: 0 },
+        信用点: { 低额: 10, 中额: 0, 高额: 0, 最高额: 0 },
         物品: {
-          consumable_xinshou_danyao_01: {
-            物品ID: 'consumable_xinshou_danyao_01',
-            名称: '新手丹药',
+          consumable_starter_injector_01: {
+            物品ID: 'consumable_starter_injector_01',
+            名称: '应急注射剂',
             类型: '其他',
             数量: 3,
-            品质: { quality: '凡', grade: 1 },
-            描述: '一颗普通的丹药，能恢复少量气血。',
+            品质: { quality: '民用', grade: 1 },
+            描述: '一次性注射剂，能恢复少量生命值。',
           },
-          equipment_cubuyi_01: {
-            物品ID: 'equipment_cubuyi_01',
-            名称: '粗布衣',
+          equipment_street_jacket_01: {
+            物品ID: 'equipment_street_jacket_01',
+            名称: '街头夹克',
             类型: '装备',
             数量: 1,
-            品质: { quality: '凡', grade: 1 },
-            描述: '一件朴素的粗布衣服，能提供微不足道的防御。',
+            品质: { quality: '民用', grade: 1 },
+            描述: '一件轻便夹克，能提供有限的防护。',
           },
         },
       },
       装备: { 装备1: null, 装备2: null, 装备3: null, 装备4: null, 装备5: null, 装备6: null },
-      功法: { 当前功法ID: null, 功法进度: {}, 功法套装: { 主修: null, 辅修: [] } },
-      修炼: { 修炼功法: null, 修炼状态: { 模式: '未修炼' } },
-      大道: createEmptyThousandDaoSystem(),
+      程序: { 当前程序ID: null, 程序进度: {}, 程序套装: { 主槽: null, 副槽: [] } },
+      训练: { 训练程序: null, 训练状态: { 模式: '未训练' } },
+      流派: createEmptyThousandDaoSystem(),
       技能: { 掌握技能: [], 装备栏: [], 冷却: {} },
     },
     社交: {
       关系: {},
-      宗门: null,
+      组织: null,
       事件: {
         配置: {
           启用随机事件: true,
@@ -116,9 +116,9 @@ export async function initializeCharacterOffline(
     },
     系统: {
       配置: {
-        规则: { 属性上限: { 先天六司: { 每项上限: 10 } } },
+        规则: { 属性上限: { 初始六维: { 每项上限: 10 } } },
         提示: [
-          '系统规则：先天六司每项上限为10（NPC同样适用），如超限需裁剪至上限。',
+          '系统规则：初始六维每项上限为10（NPC同样适用），如超限需裁剪至上限。',
           '系统会根据时间自动计算当前年龄，无需手动更新寿命.当前字段。',
         ],
       } as any,

@@ -72,7 +72,7 @@
                     </div>
                   </div>
                   <div class="person-realm" v-if="getNpcRealm(person) !== '未知'">
-                    <span class="realm-label">境界:</span>
+                    <span class="realm-label">等级:</span>
                     <span class="realm-value">{{ getNpcRealm(person) }}</span>
                   </div>
                   <div class="intimacy-info">
@@ -168,7 +168,7 @@
                     <h5 class="section-title">基础档案</h5>
                     <div class="info-grid-responsive">
                       <div class="info-item-row">
-                        <span class="info-label">境界</span
+                        <span class="info-label">等级</span
                         ><span class="info-value">{{ getNpcRealm(selectedPerson) }}</span>
                       </div>
                       <div class="info-item-row">
@@ -180,7 +180,7 @@
                         ><span class="info-value">{{ getNpcAge(selectedPerson) }}</span>
                       </div>
                       <div class="info-item-row">
-                        <span class="info-label">灵根</span
+                        <span class="info-label">改造核心</span
                         ><span class="info-value">{{ getNpcSpiritRoot(selectedPerson) }}</span>
                       </div>
                       <div class="info-item-row" v-if="selectedPerson.当前位置">
@@ -217,17 +217,17 @@
                     </div>
                   </div>
 
-                  <!-- 天赋与六司 -->
+                  <!-- 模块与六维 -->
                   <div
                     class="detail-section"
-                    v-if="selectedPerson.天赋?.length || selectedPerson.先天六司"
+                    v-if="selectedPerson.模块?.length || selectedPerson.初始六维"
                   >
-                    <h5 class="section-title">天赋与六司</h5>
-                    <div v-if="selectedPerson.天赋?.length">
-                      <h6 class="subsection-title">天赋能力</h6>
+                    <h5 class="section-title">模块与六维</h5>
+                    <div v-if="selectedPerson.模块?.length">
+                      <h6 class="subsection-title">模块能力</h6>
                       <div class="talents-grid">
                         <span
-                          v-for="(talent, index) in selectedPerson.天赋"
+                          v-for="(talent, index) in selectedPerson.模块"
                           :key="index"
                           class="talent-tag"
                           @click="showTalentDetail(talent)"
@@ -237,32 +237,32 @@
                         </span>
                       </div>
                     </div>
-                    <div v-if="selectedPerson.先天六司" style="margin-top: 1rem">
-                      <h6 class="subsection-title">先天六司</h6>
+                    <div v-if="selectedPerson.初始六维" style="margin-top: 1rem">
+                      <h6 class="subsection-title">初始六维</h6>
                       <div class="attributes-grid">
                         <div class="attribute-item">
-                          <span class="attr-label">根骨</span
-                          ><span class="attr-value">{{ selectedPerson.先天六司.根骨 || 0 }}</span>
+                          <span class="attr-label">体质</span
+                          ><span class="attr-value">{{ selectedPerson.初始六维.体质 || 0 }}</span>
                         </div>
                         <div class="attribute-item">
-                          <span class="attr-label">灵性</span
-                          ><span class="attr-value">{{ selectedPerson.先天六司.灵性 || 0 }}</span>
+                          <span class="attr-label">能源</span
+                          ><span class="attr-value">{{ selectedPerson.初始六维.能源 || 0 }}</span>
                         </div>
                         <div class="attribute-item">
-                          <span class="attr-label">悟性</span
-                          ><span class="attr-value">{{ selectedPerson.先天六司.悟性 || 0 }}</span>
+                          <span class="attr-label">算法</span
+                          ><span class="attr-value">{{ selectedPerson.初始六维.算法 || 0 }}</span>
                         </div>
                         <div class="attribute-item">
-                          <span class="attr-label">气运</span
-                          ><span class="attr-value">{{ selectedPerson.先天六司.气运 || 0 }}</span>
+                          <span class="attr-label">资源感知</span
+                          ><span class="attr-value">{{ selectedPerson.初始六维.资源感知 || 0 }}</span>
                         </div>
                         <div class="attribute-item">
                           <span class="attr-label">魅力</span
-                          ><span class="attr-value">{{ selectedPerson.先天六司.魅力 || 0 }}</span>
+                          ><span class="attr-value">{{ selectedPerson.初始六维.魅力 || 0 }}</span>
                         </div>
                         <div class="attribute-item">
-                          <span class="attr-label">心性</span
-                          ><span class="attr-value">{{ selectedPerson.先天六司.心性 || 0 }}</span>
+                          <span class="attr-label">心智</span
+                          ><span class="attr-value">{{ selectedPerson.初始六维.心智 || 0 }}</span>
                         </div>
                       </div>
                     </div>
@@ -682,18 +682,18 @@
                 <div v-show="activeTab === 'inventory'" class="tab-panel">
                   <div class="detail-section">
                     <h5 class="section-title">背包</h5>
-                    <div v-if="selectedPerson.背包?.灵石" class="spirit-stones-grid">
+                    <div v-if="selectedPerson.背包?.信用点" class="spirit-stones-grid">
                       <div class="spirit-stone-item">
-                        <span>下品灵石</span><span>{{ selectedPerson.背包.灵石.下品 || 0 }}</span>
+                        <span>低额信用点</span><span>{{ selectedPerson.背包.信用点.低额 || 0 }}</span>
                       </div>
                       <div class="spirit-stone-item">
-                        <span>中品灵石</span><span>{{ selectedPerson.背包.灵石.中品 || 0 }}</span>
+                        <span>中额信用点</span><span>{{ selectedPerson.背包.信用点.中额 || 0 }}</span>
                       </div>
                       <div class="spirit-stone-item">
-                        <span>上品灵石</span><span>{{ selectedPerson.背包.灵石.上品 || 0 }}</span>
+                        <span>高额信用点</span><span>{{ selectedPerson.背包.信用点.高额 || 0 }}</span>
                       </div>
                       <div class="spirit-stone-item">
-                        <span>极品灵石</span><span>{{ selectedPerson.背包.灵石.极品 || 0 }}</span>
+                        <span>最高额信用点</span><span>{{ selectedPerson.背包.信用点.最高额 || 0 }}</span>
                       </div>
                     </div>
                     <div class="npc-inventory" style="margin-top: 1rem">
@@ -1013,9 +1013,9 @@ const resetMemoryPagination = () => {
 };
 
 
-// 获取NPC境界信息
+// 获取NPC阶位信息
 const getNpcRealm = (npc: NpcProfile): string => {
-  const realmField = npc.境界;
+  const realmField = npc.阶位;
   if (!realmField) return '未知';
 
   if (typeof realmField === 'object' && realmField !== null) {
@@ -1033,9 +1033,9 @@ const getNpcRealm = (npc: NpcProfile): string => {
   return '未知';
 };
 
-// 获取NPC灵根信息
+// 获取NPC改造核心信息
 const getNpcSpiritRoot = (npc: NpcProfile): string => {
-  return formatSpiritRoot(npc.灵根);
+  return formatSpiritRoot(npc.改造核心);
 };
 
 // 获取NPC出生信息
@@ -1068,7 +1068,7 @@ const getNpcRecentMemories = (npc: NpcProfile): string[] => {
   return [];
 };
 
-// 格式化灵根显示
+// 格式化改造核心显示
 const formatSpiritRootTier = (tier: unknown): string => {
   if (!tier) return '';
   if (typeof tier === 'string') return tier;
@@ -1092,7 +1092,7 @@ const formatSpiritRootTier = (tier: unknown): string => {
   return '';
 };
 
-// 格式化灵根显示
+// 格式化改造核心显示
 const formatSpiritRoot = (spiritRoot: string | SpiritRoot | { 名称?: string; 品级?: string; 描述?: string } | undefined): string => {
   if (!spiritRoot) return '未知';
   if (typeof spiritRoot === 'string') return spiritRoot;
@@ -1537,7 +1537,7 @@ ${memoriesText}
           { role: 'system', content: `【输出格式】：\n\`\`\`json\n{"text": "总结内容"}\n\`\`\`` },
 
           // 5. 总结要求
-          { role: 'system', content: `【总结要求】：\n- 第一人称"我"（${npcName}的视角）\n- 150-250字\n- 连贯的现代修仙小说叙述风格\n- 仅输出JSON，不要thinking/commands/options` },
+          { role: 'system', content: `【总结要求】：\n- 第一人称"我"（${npcName}的视角）\n- 150-250字\n- 连贯的赛博朋克纪实叙述风格\n- 仅输出JSON，不要thinking/commands/options` },
 
           // 6. 必须保留
           { role: 'system', content: `【必须保留】：\n- 原文中的人名（特别是玩家名字）\n- 原文中的地名\n- 原文中的事件\n- 原文中的物品交换\n- 原文中的情感变化` },
@@ -1546,7 +1546,7 @@ ${memoriesText}
           { role: 'system', content: `【必须忽略】：\n- 对话内容\n- 详细情绪描写\n- 过程细节` },
 
           // 8. 示例
-          { role: 'system', content: `【示例】：\n原文："青云峰遇千夜。他帮我击退魔修。我很感激。他送我聚气丹。我们成为朋友。三天后藏经阁再遇。他求教剑法。我教他基础剑诀。"\n正确："三日前我在青云峰遇到了千夜，当时有魔修来袭，千夜出手相助，我才得以脱险。我很感激他的恩德，于是我们结为道友。千夜还赠予我一枚聚气丹，我们的情谊更加深厚。后来在藏经阁重逢，千夜向我求教剑法，我便传授了他基础剑诀。"\n错误："我继续修炼，又遇到了新的机缘..."（❌ 编造了原文没有的内容）` },
+          { role: 'system', content: `【示例】：\n原文："霓虹区遇千夜。他帮我击退街头帮派。我很感激。他送我一枚通信芯片。我们成为朋友。三天后在数据档案库再遇。他求教入侵技巧。我教他基础解码。"\n正确："三日前我在霓虹区遇到了千夜，当时街头帮派袭来，千夜出手相助，我才得以脱险。我很感激他的援手，于是我们成为伙伴。千夜还赠予我一枚通信芯片，我们的信任更深。后来在数据档案库重逢，千夜向我求教入侵技巧，我便传授了他基础解码。"\n错误："我继续训练，又遇到了新的机会..."（❌ 编造了原文没有的内容）` },
 
           // 9. 重要提醒
           { role: 'system', content: `【重要提醒】：\n- 不要把这当成游戏对话\n- 不要推进故事\n- 不要编造新内容\n- 严格基于用户提供的记忆进行总结` },
@@ -1585,7 +1585,7 @@ ${saveDataJson}
 【总结要求】：
 - 第一人称"我"（${npcName}的视角）
 - 150-250字
-- 连贯的现代修仙小说叙述风格
+- 连贯的赛博朋克纪实叙述风格
 - 仅输出JSON，不要thinking/commands/options
 
 【必须保留】：
@@ -1601,9 +1601,9 @@ ${saveDataJson}
 - 过程细节
 
 【示例】：
-原文："青云峰遇千夜。他帮我击退魔修。我很感激。他送我聚气丹。我们成为朋友。三天后藏经阁再遇。他求教剑法。我教他基础剑诀。"
-正确："三日前我在青云峰遇到了千夜，当时有魔修来袭，千夜出手相助，我才得以脱险。我很感激他的恩德，于是我们结为道友。千夜还赠予我一枚聚气丹，我们的情谊更加深厚。后来在藏经阁重逢，千夜向我求教剑法，我便传授了他基础剑诀。"
-错误："我继续修炼，又遇到了新的机缘..."（❌ 编造了原文没有的内容）
+原文："霓虹区遇千夜。他帮我击退街头帮派。我很感激。他送我一枚通信芯片。我们成为朋友。三天后在数据档案库再遇。他求教入侵技巧。我教他基础解码。"
+正确："三日前我在霓虹区遇到了千夜，当时街头帮派袭来，千夜出手相助，我才得以脱险。我很感激他的援手，于是我们成为伙伴。千夜还赠予我一枚通信芯片，我们的信任更深。后来在数据档案库重逢，千夜向我求教入侵技巧，我便传授了他基础解码。"
+错误："我继续训练，又遇到了新的机会..."（❌ 编造了原文没有的内容）
 
 【重要提醒】：
 - 不要把这当成游戏对话
@@ -1821,8 +1821,8 @@ const exportToWorldBook = async () => {
       const birthDate = npc.出生日期;
       entryContent += `- 出生日期：${birthDate.年}年${birthDate.月}月${birthDate.日}日\n`;
     }
-    entryContent += `- 境界：${getNpcRealm(npc)}\n`;
-    entryContent += `- 灵根：${getNpcSpiritRoot(npc)}\n`;
+    entryContent += `- 等级：${getNpcRealm(npc)}\n`;
+    entryContent += `- 改造核心：${getNpcSpiritRoot(npc)}\n`;
     if (npc.势力归属) entryContent += `- 势力：${npc.势力归属}\n`;
     if (npc.出生) entryContent += `- 出生地：${getNpcOrigin(npc.出生)}\n`;
     if (npc.当前位置?.描述) entryContent += `- 当前位置：${npc.当前位置.描述}\n`;
@@ -1836,20 +1836,20 @@ const exportToWorldBook = async () => {
       entryContent += `\n**性格特点**\n${(npc as any).性格}\n`;
     }
 
-    // 天赋能力
-    if (npc.天赋 && Array.isArray(npc.天赋) && npc.天赋.length > 0) {
-      entryContent += `\n**天赋能力**\n${npc.天赋.map(t => `- ${getTalentName(t)}${getTalentDescription(t) ? ': ' + getTalentDescription(t) : ''}`).join('\n')}\n`;
+    // 模块能力
+    if (npc.模块 && Array.isArray(npc.模块) && npc.模块.length > 0) {
+      entryContent += `\n**模块能力**\n${npc.模块.map(t => `- ${getTalentName(t)}${getTalentDescription(t) ? ': ' + getTalentDescription(t) : ''}`).join('\n')}\n`;
     }
 
-    // 先天六司
-    if (npc.先天六司) {
-      entryContent += `\n**先天六司**\n`;
-      entryContent += `- 根骨：${npc.先天六司.根骨 || 0}\n`;
-      entryContent += `- 灵性：${npc.先天六司.灵性 || 0}\n`;
-      entryContent += `- 悟性：${npc.先天六司.悟性 || 0}\n`;
-      entryContent += `- 气运：${npc.先天六司.气运 || 0}\n`;
-      entryContent += `- 魅力：${npc.先天六司.魅力 || 0}\n`;
-      entryContent += `- 心性：${npc.先天六司.心性 || 0}\n`;
+    // 初始六维
+    if (npc.初始六维) {
+      entryContent += `\n**初始六维**\n`;
+      entryContent += `- 体质：${npc.初始六维.体质 || 0}\n`;
+      entryContent += `- 能源：${npc.初始六维.能源 || 0}\n`;
+      entryContent += `- 算法：${npc.初始六维.算法 || 0}\n`;
+      entryContent += `- 资源感知：${npc.初始六维.资源感知 || 0}\n`;
+      entryContent += `- 魅力：${npc.初始六维.魅力 || 0}\n`;
+      entryContent += `- 心智：${npc.初始六维.心智 || 0}\n`;
     }
 
     // 人格底线
@@ -1875,16 +1875,16 @@ const exportToWorldBook = async () => {
       });
     }
 
-    // 灵石
-    if (npc.背包?.灵石) {
-      const stones = npc.背包.灵石;
-      const total = (stones.下品 || 0) + (stones.中品 || 0) + (stones.上品 || 0) + (stones.极品 || 0);
+    // 信用点
+    if (npc.背包?.信用点) {
+      const credits = npc.背包.信用点;
+      const total = (credits.低额 || 0) + (credits.中额 || 0) + (credits.高额 || 0) + (credits.最高额 || 0);
       if (total > 0) {
-        entryContent += `\n**灵石**\n`;
-        if (stones.下品) entryContent += `- 下品：${stones.下品}\n`;
-        if (stones.中品) entryContent += `- 中品：${stones.中品}\n`;
-        if (stones.上品) entryContent += `- 上品：${stones.上品}\n`;
-        if (stones.极品) entryContent += `- 极品：${stones.极品}\n`;
+        entryContent += `\n**信用点**\n`;
+        if (credits.低额) entryContent += `- 低额：${credits.低额}\n`;
+        if (credits.中额) entryContent += `- 中额：${credits.中额}\n`;
+        if (credits.高额) entryContent += `- 高额：${credits.高额}\n`;
+        if (credits.最高额) entryContent += `- 最高额：${credits.最高额}\n`;
       }
     }
 
@@ -3741,7 +3741,7 @@ const confirmDeleteNpc = (person: NpcProfile) => {
   line-height: 1.5;
 }
 
-/* ========== NPC六司属性样式 ========== */
+/* ========== NPC六维属性样式 ========== */
 .npc-attributes-container {
   display: flex;
   flex-direction: column;

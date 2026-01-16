@@ -113,7 +113,7 @@ import { parseJsonFromText } from '@/utils/jsonExtract'
 
 const emit = defineEmits(['ai-generate'])
 const store = useCharacterCreationStore()
-const activeOrigin = ref<Origin | 'random' | null>(null) // For hover details view - 仿照天赋选择
+const activeOrigin = ref<Origin | 'random' | null>(null) // For hover details view - 仿照模块选择
 const isCustomModalVisible = ref(false)
 const isEditModalVisible = ref(false)
 const isAIPromptModalVisible = ref(false)
@@ -150,14 +150,14 @@ const filteredOrigins = computed(() => {
   }
 });
 
-// 先天属性选项 - 出身影响的是先天属性
+// 初始属性选项 - 出身影响的是初始属性
 const _attributeOptions = [
-  { value: 'root_bone', label: '先天根骨' },
-  { value: 'spirit', label: '先天灵性' },
-  { value: 'comprehension', label: '先天悟性' },
-  { value: 'luck', label: '先天气运' },
-  { value: 'charm', label: '先天魅力' },
-  { value: 'temperament', label: '先天心性' }
+  { value: 'root_bone', label: '初始体质' },
+  { value: 'spirit', label: '初始能源' },
+  { value: 'comprehension', label: '初始算法' },
+  { value: 'luck', label: '初始资源感知' },
+  { value: 'charm', label: '初始魅力' },
+  { value: 'temperament', label: '初始心智' }
 ] as const
 
 // 调整数值选项
@@ -191,12 +191,12 @@ const customOriginFields: ModalField[] = [
         placeholder: '属性名称',
         type: 'select',
         options: [
-          { value: '根骨', label: '根骨' },
-          { value: '灵性', label: '灵性' },
-          { value: '悟性', label: '悟性' },
-          { value: '气运', label: '气运' },
+          { value: '体质', label: '体质' },
+          { value: '能源', label: '能源' },
+          { value: '算法', label: '算法' },
+          { value: '资源感知', label: '资源感知' },
           { value: '魅力', label: '魅力' },
-          { value: '心性', label: '心性' }
+          { value: '心智', label: '心智' }
         ]
       },
       { key: 'value', placeholder: '修正值（可为负数）', type: 'text' }
@@ -484,7 +484,7 @@ const _selectedDisplayName = computed(() => {
 
 const _selectedDescription = computed(() => {
  if (isRandomSelected.value)
-   return '天道无常，造化弄人。选择此项，你的出身将完全随机生成。是生于帝王之家，或为山野遗孤，皆在天道一念之间。'
+  return '系统无常，造化弄人。选择此项，你的出身将完全随机生成。是生于帝王之家，或为山野遗孤，皆在系统一念之间。'
  return store.selectedOrigin?.description || '身世如谜，过往一片空白。'
 });
 
@@ -502,7 +502,7 @@ const activeDisplayName = computed(() => {
 
 const activeDescription = computed(() => {
  if (activeOrigin.value === 'random')
-   return '天道无常，造化弄人。选择此项，你的出身将完全随机生成。是生于帝王之家，或为山野遗孤，皆在天道一念之间。'
+  return '系统无常，造化弄人。选择此项，你的出身将完全随机生成。是生于帝王之家，或为山野遗孤，皆在系统一念之间。'
  if (activeOrigin.value && typeof activeOrigin.value === 'object') return activeOrigin.value.description || '身世如谜，过往一片空白。'
  return '身世如谜，过往一片空白。'
 });

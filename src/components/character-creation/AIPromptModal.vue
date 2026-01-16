@@ -10,7 +10,7 @@
         <textarea
           v-model="userPrompt"
           class="prompt-input"
-          :placeholder="$t('例如：生成一个火属性的天赋，适合剑修...')"
+          :placeholder="$t('例如：生成一个等离子属性的模块，适合街头战斗...')"
           rows="6"
           @keydown.ctrl.enter="handleSubmit"
         ></textarea>

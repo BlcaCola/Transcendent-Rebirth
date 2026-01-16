@@ -209,7 +209,7 @@ onMounted(async () => {
 
   console.log('【角色创建】当前数据量:');
   console.log('- 总世界数量:', totalWorlds);
-  console.log('- 总天赋数量:', totalTalents);
+  console.log('- 总模块数量:', totalTalents);
 
   // 在联机模式下，如果数据量明显不足（小于等于本地数据量），尝试获取更新数据
   if (!store.isLocalCreation && (totalWorlds <= 3 || totalTalents <= 5)) {
@@ -219,7 +219,7 @@ onMounted(async () => {
 
     console.log('【角色创建】云端数据获取完成，最终数据量:');
     console.log('- 总世界数量:', store.creationData.worlds.length);
-    console.log('- 总天赋数量:', store.creationData.talents.length);
+    console.log('- 总模块数量:', store.creationData.talents.length);
   }
 
   // 2. 获取角色名字 - 自动从酒馆获取，无需用户输入
@@ -230,11 +230,11 @@ onMounted(async () => {
       store.characterPayload.character_name = tavernCharacterName;
     } else {
       console.log('【角色创建】无法获取酒馆角色卡名字，使用默认值');
-      store.characterPayload.character_name = store.isLocalCreation ? '无名者' : '修士';
+      store.characterPayload.character_name = store.isLocalCreation ? '无名者' : '游民';
     }
   } catch (error) {
     console.error('【角色创建】获取角色名字时出错:', error);
-    store.characterPayload.character_name = store.isLocalCreation ? '无名者' : '修士';
+    store.characterPayload.character_name = store.isLocalCreation ? '无名者' : '游民';
   }
 });
 
@@ -257,7 +257,7 @@ const stepLabels = computed(() => [
   t('初始人设'),
   t('出身设置'),
   t('基础设定'),
-  t('天赋选择'),
+  t('模块选择'),
   t('属性加点'),
   t('最终预览'),
 ])
@@ -276,7 +276,7 @@ const characterDataForPreset = computed(() => ({
   spiritRoot: store.selectedSpiritRoot,
   talents: store.selectedTalents,
 
-  // 先天六司
+  // 初始六维
   baseAttributes: {
     root_bone: store.attributes.root_bone,
     spirituality: store.attributes.spirituality,
@@ -307,7 +307,7 @@ const isNextDisabled = computed(() => {
   console.log('[DEBUG] 按钮状态检查 - isGenerating:', generating);
   console.log('[DEBUG] 按钮状态检查 - 选中的世界:', selectedWorld?.name);
   console.log('[DEBUG] 按钮状态检查 - 选中的天资:', selectedTalentTier?.name);
-  console.log('[DEBUG] 按钮状态检查 - 剩余天赋点:', remainingPoints);
+  console.log('[DEBUG] 按钮状态检查 - 剩余模块点:', remainingPoints);
 
   // You can add validation logic here for each step
   if (currentStep === 1 && !selectedWorld) {
@@ -428,12 +428,12 @@ async function createCharacter() {
   console.log('[DEBUG] 选中的世界:', store.selectedWorld);
   console.log('[DEBUG] 选中的天资:', store.selectedTalentTier);
   console.log('[DEBUG] 选中的出身:', store.selectedOrigin);
-  console.log('[DEBUG] 选中的灵根:', store.selectedSpiritRoot);
+  console.log('[DEBUG] 选中的改造核心:', store.selectedSpiritRoot);
 
   // 角色名自动获取，如果为空则使用默认值
   if (!store.characterPayload.character_name) {
     console.log('[DEBUG] 角色名为空，使用默认值');
-    store.characterPayload.character_name = '修士';
+    store.characterPayload.character_name = '夜行者';
   }
   if (!store.selectedWorld || !store.selectedTalentTier) {
     console.log('[DEBUG] 验证失败：缺少必需选择项');
@@ -443,9 +443,9 @@ async function createCharacter() {
     return;
   }
 
-  // 出身和灵根可以为空（表示随机选择）
+  // 出身和改造核心可以为空（表示随机选择）
   console.log('[DEBUG] selectedOrigin:', store.selectedOrigin, '(可为空，表示随机出生)');
-  console.log('[DEBUG] selectedSpiritRoot:', store.selectedSpiritRoot, '(可为空，表示随机灵根)');
+  console.log('[DEBUG] selectedSpiritRoot:', store.selectedSpiritRoot, '(可为空，表示随机改造)');
 
   // 进入创建流程后锁定按钮，防止重复点击/重复请求
   isGenerating.value = true;
@@ -464,25 +464,25 @@ async function createCharacter() {
       // 🔥 关键修复：确保所有核心选择都传递完整对象，而不仅仅是名称或ID
       // 这解决了下游服务（如AI提示生成）无法获取详细描述的问题
       世界: store.selectedWorld,
-      天资: store.selectedTalentTier,
+      模块阶位: store.selectedTalentTier,
       出生: store.selectedOrigin || '随机出身', // service层会处理字符串
-      灵根: store.selectedSpiritRoot || '随机灵根', // service层会处理字符串
-      天赋: store.selectedTalents,
-      先天六司: {
-        根骨: store.attributes.root_bone,
-        灵性: store.attributes.spirituality,
-        悟性: store.attributes.comprehension,
-        气运: store.attributes.fortune,
+      改造核心: store.selectedSpiritRoot || '随机改造', // service层会处理字符串
+      模块: store.selectedTalents,
+      初始六维: {
+        体质: store.attributes.root_bone,
+        能源: store.attributes.spirituality,
+        算法: store.attributes.comprehension,
+        资源感知: store.attributes.fortune,
         魅力: store.attributes.charm,
-        心性: store.attributes.temperament,
+        心智: store.attributes.temperament,
       },
-      后天六司: {
-        根骨: 0,
-        灵性: 0,
-        悟性: 0,
-        气运: 0,
+      成长六维: {
+        体质: 0,
+        能源: 0,
+        算法: 0,
+        资源感知: 0,
         魅力: 0,
-        心性: 0,
+        心智: 0,
       },
       // 移除冗余的 "详情" 字段，因为主字段现在就是完整对象
     };

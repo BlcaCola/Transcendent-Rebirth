@@ -1,8 +1,8 @@
 <template>
   <div class="sect-migration">
     <div class="migration-header">
-      <h4>检测到旧版宗门存档</h4>
-      <p>将把宗门数据升级到 V{{ targetVersion }}，只写入 V3 路径（不再保留旧字段）。</p>
+      <h4>检测到旧版组织存档</h4>
+      <p>将把组织数据升级到 V{{ targetVersion }}，只写入 V3 路径（不再保留旧字段）。</p>
     </div>
 
     <div v-if="displayReasons.length" class="migration-reasons">
@@ -14,7 +14,7 @@
 
     <div class="migration-meta">
       <div class="meta-item">
-        <span class="label">当前宗门</span>
+        <span class="label">当前组织</span>
         <span class="value">{{ currentSectName }}</span>
       </div>
       <div class="meta-item">
@@ -65,18 +65,18 @@ const uiStore = useUIStore();
 const isMigrating = ref(false);
 
 const targetVersion = computed(() => props.toVersion ?? SECT_SYSTEM_VERSION);
-const displayReasons = computed(() => props.reasons?.length ? props.reasons : ['检测到旧版宗门字段']);
+const displayReasons = computed(() => props.reasons?.length ? props.reasons : ['检测到旧版组织字段']);
 
 const currentSectName = computed(() => {
-  const fromPlayer = gameStateStore.sectMemberInfo?.宗门名称;
-  const fromSystem = gameStateStore.sectSystem?.当前宗门 ?? undefined;
-  return fromPlayer || fromSystem || '未加入宗门';
+  const fromPlayer = gameStateStore.sectMemberInfo?.组织名称;
+  const fromSystem = gameStateStore.sectSystem?.当前组织 ?? undefined;
+  return fromPlayer || fromSystem || '未加入组织';
 });
 
 const factionCount = computed(() => {
   const sectSystem = gameStateStore.sectSystem;
-  if (sectSystem?.宗门档案) {
-    return Object.keys(sectSystem.宗门档案).length;
+  if (sectSystem?.组织档案) {
+    return Object.keys(sectSystem.组织档案).length;
   }
   return gameStateStore.worldInfo?.势力信息?.length || 0;
 });
@@ -97,7 +97,7 @@ const createBackup = async (saveData: SaveData) => {
     return;
   }
 
-  const backupName = `宗门迁移备份-${formatStamp()}`;
+  const backupName = `组织迁移备份-${formatStamp()}`;
 
   if (profile.模式 === '单机') {
     await characterStore.saveAsNewSlot(backupName);
@@ -105,7 +105,7 @@ const createBackup = async (saveData: SaveData) => {
   }
 
   await storage.saveSaveData(active.角色ID, backupName, saveData);
-  const backupIndexKey = 'sect_migration_backups';
+  const backupIndexKey = 'org_migration_backups';
   const record = { 角色ID: active.角色ID, 存档槽位: backupName, 时间: new Date().toISOString() };
   const existing = JSON.parse(localStorage.getItem(backupIndexKey) || '[]');
   existing.push(record);
@@ -130,10 +130,10 @@ const runMigration = async () => {
     gameStateStore.loadFromSaveData(migrated);
     await characterStore.saveCurrentGame();
 
-    toast.success('宗门存档迁移完成');
+    toast.success('组织存档迁移完成');
     uiStore.hideDetailModal();
   } catch (error) {
-    toast.error(`宗门存档迁移失败：${error instanceof Error ? error.message : '未知错误'}`);
+    toast.error(`组织存档迁移失败：${error instanceof Error ? error.message : '未知错误'}`);
   } finally {
     isMigrating.value = false;
   }

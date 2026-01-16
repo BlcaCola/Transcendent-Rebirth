@@ -8,7 +8,7 @@
         </div>
         <div class="stats-info">
           <span class="stats-value">{{ unlockedDaosCount }}</span>
-          <span class="stats-label">已悟大道</span>
+          <span class="stats-label">已解锁专精</span>
         </div>
       </div>
       <div class="stats-card">
@@ -17,14 +17,14 @@
         </div>
         <div class="stats-info">
           <span class="stats-value">{{ formatNumber(totalDaoExperience) }}</span>
-          <span class="stats-label">总悟道值</span>
+          <span class="stats-label">总专精值</span>
         </div>
       </div>
       <div class="stats-actions">
-        <button class="action-btn-icon" @click="openDaoExplore" title="探索新道">
+        <button class="action-btn-icon" @click="openDaoExplore" title="探索新专精">
           <Compass :size="18" />
         </button>
-        <button class="action-btn-icon" @click="startMeditation" title="冥想感悟">
+        <button class="action-btn-icon" @click="startMeditation" title="深度训练">
           <Moon :size="18" />
         </button>
       </div>
@@ -56,7 +56,7 @@
 
     <!-- 主内容区 -->
     <div class="dao-content">
-      <!-- 无大道时的快速入门 -->
+      <!-- 无流派时的快速入门 -->
       <div v-if="unlockedDaosCount === 0" class="dao-empty">
         <div class="empty-illustration">
           <div class="empty-icon-wrapper">
@@ -68,21 +68,21 @@
             <div class="ring ring-3"></div>
           </div>
         </div>
-        <h3 class="empty-title">尚未领悟任何大道</h3>
-        <p class="empty-desc">天地法则蕴含无穷奥秘，静心感悟方能窥见一二</p>
+        <h3 class="empty-title">尚未解锁任何专精</h3>
+        <p class="empty-desc">城市规则与系统噪声并存，静心解析方能窥见一二</p>
         <div class="quick-actions">
           <button class="action-btn primary" @click="comprehendFromSkill">
             <BookOpen :size="16" />
-            从功法领悟
+            从模块解析
           </button>
           <button class="action-btn secondary" @click="comprehendFromNature">
             <Sparkles :size="16" />
-            观天地悟道
+            观测系统规则
           </button>
         </div>
       </div>
 
-      <!-- 大道列表 -->
+      <!-- 流派列表 -->
       <div v-else class="dao-list">
         <div
           v-for="daoName in sortedDaosList"
@@ -126,14 +126,14 @@
             <button class="dao-action-btn cultivate" @click="cultivateDao(daoName)" title="感悟">
               <Zap :size="14" />
             </button>
-            <button class="dao-action-btn meditate" @click="meditateDao(daoName)" title="参悟">
+            <button class="dao-action-btn meditate" @click="meditateDao(daoName)" title="解析">
               <Moon :size="14" />
             </button>
             <button
               v-if="canBreakthroughDao(daoName)"
               class="dao-action-btn breakthrough"
               @click="attemptDaoBreakthrough(daoName)"
-              title="突破"
+              title="升级"
             >
               <TrendingUp :size="14" />
             </button>
@@ -141,7 +141,7 @@
         </div>
       </div>
 
-      <!-- 选中大道的详情面板 -->
+      <!-- 选中流派的详情面板 -->
       <div v-if="selectedDao && selectedDaoProgress" class="dao-detail-panel">
         <div class="detail-header">
           <div class="detail-title-group">
@@ -186,7 +186,7 @@
               </div>
               <div class="stat-card-content">
                 <span class="stat-card-value">{{ formatNumber(getNextStageRequirement(selectedDao)) }}</span>
-                <span class="stat-card-label">突破所需</span>
+                <span class="stat-card-label">升级所需</span>
               </div>
             </div>
             <div class="detail-stat-card">
@@ -202,7 +202,7 @@
 
           <!-- 阶段进度轨道 -->
           <div class="stage-progress-section" v-if="getDaoData(selectedDao)?.阶段列表?.length">
-            <h4 class="section-title">修炼阶段</h4>
+            <h4 class="section-title">训练阶段</h4>
             <div class="stage-timeline">
               <div
                 v-for="(stage, index) in getDaoData(selectedDao)?.阶段列表"
@@ -230,14 +230,14 @@
           <div v-if="canBreakthroughDao(selectedDao)" class="breakthrough-guide">
             <div class="guide-header">
               <TrendingUp :size="16" />
-              <span>突破指引</span>
+              <span>升级指引</span>
             </div>
             <div class="guide-content">
-              <p class="guide-desc">当前悟道值已达到突破要求，可尝试突破至下一阶段</p>
+              <p class="guide-desc">当前专精值已达到升级要求，可尝试提升至下一阶段</p>
               <ul class="guide-tips">
-                <li>确保状态良好，无负面效果干扰</li>
-                <li>选择灵气充沛之地进行突破</li>
-                <li>准备护道丹药以防万一</li>
+                <li>确保状态稳定，无故障与负面效果</li>
+                <li>选择信号稳定区域进行升级</li>
+                <li>准备备份与耗材以防意外</li>
               </ul>
               <div class="breakthrough-chance">
                 <span class="chance-label">预估成功率:</span>
@@ -250,11 +250,11 @@
           <div class="detail-actions">
             <button class="action-btn primary large" @click="cultivateDao(selectedDao)">
               <Zap :size="18" />
-              感悟此道
+              训练此专精
             </button>
             <button class="action-btn secondary large" @click="meditateDao(selectedDao)">
               <Moon :size="18" />
-              深度参悟
+              深度解析
             </button>
             <button
               v-if="canBreakthroughDao(selectedDao)"
@@ -262,7 +262,7 @@
               @click="attemptDaoBreakthrough(selectedDao)"
             >
               <TrendingUp :size="18" />
-              尝试突破
+              尝试升级
             </button>
           </div>
         </div>
@@ -287,13 +287,13 @@ const selectedDao = ref<string | null>(null);
 const activeCategory = ref('all');
 const activeSortKey = ref('progress');
 
-// 大道分类定义
+// 流派分类定义
 const daoCategories = [
   { key: 'all', label: '全部', icon: Sparkles },
   { key: 'nature', label: '自然', icon: Sun },
-  { key: 'concept', label: '法则', icon: Scale },
+  { key: 'concept', label: '规则', icon: Scale },
   { key: 'combat', label: '战斗', icon: Sword },
-  { key: 'cultivation', label: '修行', icon: Flame },
+  { key: 'cultivation', label: '训练', icon: Flame },
 ];
 
 // 排序选项
@@ -304,14 +304,15 @@ const sortOptions = [
   { key: 'name', label: '按名称' },
 ];
 
-// 获取大道分类
+// 获取流派分类
 const getDaoCategory = (daoName: string): string => {
   const categoryMap: Record<string, string> = {
     '剑': 'combat', '刀': 'combat', '拳': 'combat', '枪': 'combat', '戟': 'combat',
-    '金': 'nature', '木': 'nature', '水': 'nature', '火': 'nature', '土': 'nature',
+    '合金': 'nature', '生物': 'nature', '液冷': 'nature', '等离子': 'nature', '地质': 'nature',
     '风': 'nature', '雷': 'nature', '冰': 'nature', '雪': 'nature',
+    '电磁': 'nature', '信号': 'nature', '网络': 'nature', '数据': 'nature',
     '因果': 'concept', '轮回': 'concept', '时间': 'concept', '空间': 'concept', '命运': 'concept',
-    '丹': 'cultivation', '炼器': 'cultivation', '阵': 'cultivation', '符': 'cultivation',
+    '制剂': 'cultivation', '装配': 'cultivation', '矩阵': 'cultivation', '协议': 'cultivation',
   };
   for (const [keyword, category] of Object.entries(categoryMap)) {
     if (daoName.includes(keyword)) return category;
@@ -336,27 +337,27 @@ const formatNumber = (num: number): string => {
   return num.toString();
 };
 
-// 三千大道数据
+// 流派数据
 const daoSystem = computed((): ThousandDaoSystem => {
-  return gameStateStore.thousandDao || { 大道列表: {} };
+  return gameStateStore.thousandDao || { 流派列表: {} };
 });
 
-// 已解锁大道
+// 已解锁流派
 const unlockedDaosList = computed(() => {
-  return Object.entries(daoSystem.value.大道列表)
+  return Object.entries(daoSystem.value.流派列表)
     .filter(([_, daoData]) => daoData.是否解锁)
     .map(([daoName]) => daoName);
 });
 
 const unlockedDaosCount = computed(() => unlockedDaosList.value.length);
 
-// 筛选后的大道列表
+// 筛选后的流派列表
 const filteredDaosList = computed(() => {
   if (activeCategory.value === 'all') return unlockedDaosList.value;
   return unlockedDaosList.value.filter(daoName => getDaoCategory(daoName) === activeCategory.value);
 });
 
-// 排序后的大道列表
+// 排序后的流派列表
 const sortedDaosList = computed(() => {
   const list = [...filteredDaosList.value];
   switch (activeSortKey.value) {
@@ -383,18 +384,18 @@ const sortedDaosList = computed(() => {
 
 const selectedDaoProgress = computed((): DaoData | null => {
   if (!selectedDao.value) return null;
-  return daoSystem.value.大道列表[selectedDao.value] || null;
+  return daoSystem.value.流派列表[selectedDao.value] || null;
 });
 
 const totalDaoExperience = computed(() => {
-  return Object.values(daoSystem.value.大道列表).reduce((total, daoData) => {
+  return Object.values(daoSystem.value.流派列表).reduce((total, daoData) => {
     return total + (daoData.总经验 ?? 0);
   }, 0);
 });
 
-// 获取大道数据
+// 获取流派数据
 const getDaoData = (daoName: string): DaoData | null => {
-  return daoSystem.value.大道列表[daoName] || null;
+  return daoSystem.value.流派列表[daoName] || null;
 };
 
 // 获取阶段样式类
@@ -408,7 +409,7 @@ const getDaoStageClass = (daoName: string): string => {
   return 'stage-low';
 };
 
-// 获取大道阶段显示
+// 获取流派阶段显示
 const getDaoStageDisplay = (daoName: string): string => {
   const daoData = getDaoData(daoName);
   if (!daoData) return '未悟';
@@ -416,7 +417,7 @@ const getDaoStageDisplay = (daoName: string): string => {
   return daoData.阶段列表?.[stage]?.名称 || `第${stage}阶`;
 };
 
-// 获取大道进度百分比
+// 获取流派进度百分比
 const getDaoProgressPercent = (daoName: string): number => {
   const daoData = getDaoData(daoName);
   if (!daoData) return 0;
@@ -443,7 +444,7 @@ const getDaoBreakthroughChance = (daoName: string): number => {
   return baseChance;
 };
 
-// 选择大道
+// 选择流派
 const selectDao = (daoName: string) => {
   selectedDao.value = selectedDao.value === daoName ? null : daoName;
 };
@@ -458,81 +459,81 @@ const canBreakthroughDao = (daoName: string): boolean => {
 
 // === 功能操作 ===
 
-// 感悟大道
+// 训练专精
 const cultivateDao = (daoName: string) => {
   actionQueueStore.addAction({
     type: 'comprehend',
     itemName: daoName,
-    itemType: '大道',
-    description: `感悟《${daoName}》`
+    itemType: '专精',
+    description: `训练《${daoName}》`
   });
-  toast.success(`开始感悟《${daoName}》`);
+  toast.success(`开始训练《${daoName}》`);
 };
 
-// 深度参悟
+// 深度解析
 const meditateDao = (daoName: string) => {
   actionQueueStore.addAction({
     type: 'meditate',
     itemName: daoName,
-    itemType: '参悟',
-    description: `深度参悟《${daoName}》`
+    itemType: '解析',
+    description: `深度解析《${daoName}》`
   });
-  toast.info(`进入《${daoName}》参悟状态`);
+  toast.info(`进入《${daoName}》解析状态`);
 };
 
-// 尝试突破
+// 尝试升级
 const attemptDaoBreakthrough = (daoName: string) => {
   actionQueueStore.addAction({
     type: 'dao_breakthrough',
     itemName: daoName,
-    itemType: '突破',
-    description: `尝试突破《${daoName}》境界`
+    itemType: '升级',
+    description: `尝试升级《${daoName}》阶段`
   });
-  toast.warning(`尝试突破《${daoName}》`);
+  toast.warning(`尝试升级《${daoName}》`);
 };
 
-// 探索新道
+// 探索新专精
 const openDaoExplore = () => {
   actionQueueStore.addAction({
     type: 'explore',
-    itemName: '大道',
+    itemName: '专精',
     itemType: '探索',
-    description: '探索未知大道，寻求新的感悟'
+    description: '探索未知专精，寻求新的突破'
   });
-  toast.info('开始探索新的大道...');
+  toast.info('开始探索新的专精...');
 };
 
-// 冥想感悟
+// 深度训练
 const startMeditation = () => {
   actionQueueStore.addAction({
     type: 'meditate',
-    itemName: '天地',
-    itemType: '冥想',
-    description: '静心冥想，感悟天地法则'
+    itemName: '系统',
+    itemType: '训练',
+    description: '静默调校，解析城市规则'
   });
-  toast.info('进入冥想状态...');
+  toast.info('进入训练状态...');
 };
 
-// 从功法领悟
+// 从模块解析
 const comprehendFromSkill = () => {
   actionQueueStore.addAction({
     type: 'comprehend',
-    itemName: '功法',
-    itemType: '领悟',
-    description: '从已修炼的功法中领悟大道'
+    itemName: '模块',
+    itemType: '解析',
+    description: '从已训练模块中解析专精'
   });
-  toast.info('尝试从功法中领悟大道...');
+  toast.info('尝试从模块中解析专精...');
 };
 
-// 观天地悟道
+// 观测系统规则
 const comprehendFromNature = () => {
   actionQueueStore.addAction({
     type: 'comprehend',
-    itemName: '天地',
-    itemType: '悟道',
-    description: '观察天地自然，感悟大道法则'
+    itemName: '系统',
+    itemType: '解析',
+    description: '观测系统环境，解析专精规则'
   });
-  toast.info('开始观天地悟道...');
+  toast.info('开始观测系统规则...');
 };
 </script>
 
@@ -757,7 +758,7 @@ const comprehendFromNature = () => {
   max-width: 350px;
 }
 
-/* 大道卡片 */
+/* 流派卡片 */
 .dao-card {
   display: flex;
   flex-direction: column;
@@ -1277,7 +1278,7 @@ const comprehendFromNature = () => {
   gap: 12px;
 }
 
-/* 大道列表 */
+/* 流派列表 */
 .dao-list {
   flex: 1;
   overflow-y: auto;

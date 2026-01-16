@@ -1,7 +1,7 @@
 import type {
   ActionQueue,
   CharacterBaseInfo,
-  CultivationTechniqueReference,
+  ProgramReference,
   Equipment,
   GameMessage,
   GameTime,
@@ -9,8 +9,8 @@ import type {
   MasteredSkill,
   Memory,
   NpcProfile,
-  SectMemberInfo,
-  SectSystemV2,
+  FactionMemberInfo,
+  FactionSystemV2,
   StatusEffect,
   SystemConfig,
   PlayerAttributes,
@@ -47,36 +47,36 @@ export interface OnlineStateV3 {
   冲突策略?: '服务器' | '客户端' | '合并' | string;
 }
 
-export interface TechniqueProgressEntryV3 {
+export interface ProgramProgressEntryV3 {
   熟练度: number;
   已解锁技能: string[];
 }
 
-export interface TechniqueSystemV3 {
-  当前功法ID: string | null;
-  功法进度: Record<string, TechniqueProgressEntryV3>;
-  功法套装: {
-    主修: string | null;
-    辅修: string[];
+export interface ProgramSystemV3 {
+  当前程序ID: string | null;
+  程序进度: Record<string, ProgramProgressEntryV3>;
+  程序套装: {
+    主槽: string | null;
+    副槽: string[];
   };
 }
 
-export interface CultivationStateV3 {
-  修炼功法: CultivationTechniqueReference | null;
-  修炼状态?: {
+export interface TrainingStateV3 {
+  训练程序: ProgramReference | null;
+  训练状态?: {
     模式: string;
     开始时间?: string;
     消耗?: Record<string, unknown>;
     [key: string]: unknown;
   };
-  经脉?: unknown;
-  丹田?: unknown;
-  突破?: unknown;
+  线路?: unknown;
+  能源核心?: unknown;
+  升级?: unknown;
   [key: string]: unknown;
 }
 
-export interface DaoSystemV3 {
-  大道列表: Record<string, unknown>;
+export interface ProtocolSystemV3 {
+  流派列表: Record<string, unknown>;
   [key: string]: unknown;
 }
 
@@ -96,14 +96,14 @@ export interface SaveDataV3 {
     身体?: BodyStats;
     背包: Inventory;
     装备: Equipment;
-    功法: TechniqueSystemV3;
-    修炼: CultivationStateV3;
-    大道: DaoSystemV3;
+    程序: ProgramSystemV3;
+    训练: TrainingStateV3;
+    流派: ProtocolSystemV3;
     技能: SkillStateV3;
   };
   社交: {
     关系: Record<string, NpcProfile>;
-    宗门?: (SectSystemV2 & { 成员信息?: SectMemberInfo }) | null;
+    组织?: (FactionSystemV2 & { 成员信息?: FactionMemberInfo }) | null;
     事件: EventSystem;
     记忆: Memory;
   };

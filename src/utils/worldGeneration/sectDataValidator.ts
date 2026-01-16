@@ -1,86 +1,89 @@
 /**
- * 宗门数据验证器
- * 确保AI生成的宗门数据逻辑一致性
+ * 组织数据验证器
+ * 确保AI生成的组织数据逻辑一致性
  */
 
-// 境界等级映射 - 支持带"期"和不带"期"的格式
-// 注意：同一境界的不同阶段（初期、中期、后期、圆满、极境）都算同一等级
-const REALM_LEVELS: Record<string, number> = {
-  // 不带期的格式
-  '练气': 1, '练气初期': 1, '练气中期': 1, '练气后期': 1, '练气圆满': 1, '练气极境': 1,
-  '筑基': 2, '筑基初期': 2, '筑基中期': 2, '筑基后期': 2, '筑基圆满': 2, '筑基极境': 2,
-  '金丹': 3, '金丹初期': 3, '金丹中期': 3, '金丹后期': 3, '金丹圆满': 3, '金丹极境': 3,
-  '元婴': 4, '元婴初期': 4, '元婴中期': 4, '元婴后期': 4, '元婴圆满': 4, '元婴极境': 4,
-  '化神': 5, '化神初期': 5, '化神中期': 5, '化神后期': 5, '化神圆满': 5, '化神极境': 5,
-  '炼虚': 6, '炼虚初期': 6, '炼虚中期': 6, '炼虚后期': 6, '炼虚圆满': 6, '炼虚极境': 6,
-  '合体': 7, '合体初期': 7, '合体中期': 7, '合体后期': 7, '合体圆满': 7, '合体极境': 7,
-  '渡劫': 8, '渡劫初期': 8, '渡劫中期': 8, '渡劫后期': 8, '渡劫圆满': 8, '渡劫极境': 8,
-
-  // 带期的格式
-  '练气期': 1, '筑基期': 2, '金丹期': 3, '元婴期': 4, '化神期': 5,
-  '炼虚期': 6, '合体期': 7, '渡劫期': 8
+// 阶位等级映射 - 支持带阶段后缀的格式
+// 注意：同一阶位的不同阶段（初期、中期、后期、圆满、极境）都算同一等级
+const RANK_LEVELS: Record<string, number> = {
+  // 街头级
+  '街头级': 1, '街头级初期': 1, '街头级中期': 1, '街头级后期': 1, '街头级圆满': 1, '街头级极境': 1,
+  // 区域级
+  '区域级': 2, '区域级初期': 2, '区域级中期': 2, '区域级后期': 2, '区域级圆满': 2, '区域级极境': 2,
+  // 城域级
+  '城域级': 3, '城域级初期': 3, '城域级中期': 3, '城域级后期': 3, '城域级圆满': 3, '城域级极境': 3,
+  // 核心级
+  '核心级': 4, '核心级初期': 4, '核心级中期': 4, '核心级后期': 4, '核心级圆满': 4, '核心级极境': 4,
+  // 主权级
+  '主权级': 5, '主权级初期': 5, '主权级中期': 5, '主权级后期': 5, '主权级圆满': 5, '主权级极境': 5,
+  // 超域级
+  '超域级': 6, '超域级初期': 6, '超域级中期': 6, '超域级后期': 6, '超域级圆满': 6, '超域级极境': 6,
+  // 星域级
+  '星域级': 7, '星域级初期': 7, '星域级中期': 7, '星域级后期': 7, '星域级圆满': 7, '星域级极境': 7,
+  // 极域级
+  '极域级': 8, '极域级初期': 8, '极域级中期': 8, '极域级后期': 8, '极域级圆满': 8, '极域级极境': 8
 };
 
 /**
- * 获取境界等级
+ * 获取阶位等级
  */
-function getRealmLevel(realm: string): number {
-  return REALM_LEVELS[realm] || 0;
+function getRankLevel(rank: string): number {
+  return RANK_LEVELS[rank] || 0;
 }
 
 /**
- * 验证并修复宗门境界分布数据
+ * 验证并修复组织阶位分布数据
  */
-export function validateAndFixSectRealmData(sectData: any): any {
-  if (!sectData) return sectData;
+export function validateAndFixFactionRankData(factionData: any): any {
+  if (!factionData) return factionData;
 
   // 字段名兼容：将英文字段名转换为中文字段名
-  if (sectData.leadership && !sectData.领导层) {
-    sectData.领导层 = sectData.leadership;
-    delete sectData.leadership;
+  if (factionData.leadership && !factionData.领导层) {
+    factionData.领导层 = factionData.leadership;
+    delete factionData.leadership;
   }
 
-  // 特殊规则：合欢宗若缺失“圣女”，自动补齐（避免只生成宗门不生成关键职位）
-  const sectName = String(sectData.名称 || sectData.name || '');
-  if (sectName.includes('合欢')) {
-    if (!sectData.领导层) {
-      sectData.领导层 = {
-        宗主: '合欢老魔',
-        宗主修为: sectData.最强修为 || '化神期',
-        最强修为: sectData.最强修为 || '化神期',
-        圣女: '灰夫人(合欢圣女)'
+  // 特殊规则：夜宴组织若缺失“特使”，自动补齐（避免只生成组织不生成关键职位）
+  const factionName = String(factionData.名称 || factionData.name || '');
+  if (factionName.includes('夜宴')) {
+    if (!factionData.领导层) {
+      factionData.领导层 = {
+        首领: '夜宴首席',
+        首领阶位: factionData.最强阶位 || '核心级圆满',
+        最强阶位: factionData.最强阶位 || '核心级圆满',
+        特使: '灰烬女士(夜宴特使)'
       };
-    } else if (!sectData.领导层.圣女) {
-      sectData.领导层.圣女 = '灰夫人(合欢圣女)';
+    } else if (!factionData.领导层.特使) {
+      factionData.领导层.特使 = '灰烬女士(夜宴特使)';
     }
-  } else if (sectData.领导层) {
-    // 彩蛋限定：其他宗门不应出现“圣女/圣子”字段（即便AI生成了也移除）
-    if ('圣女' in sectData.领导层) delete sectData.领导层.圣女;
-    if ('圣子' in sectData.领导层) delete sectData.领导层.圣子;
+  } else if (factionData.领导层) {
+    // 彩蛋限定：其他组织不应出现“特使/候补特使”字段（即便AI生成了也移除）
+    if ('特使' in factionData.领导层) delete factionData.领导层.特使;
+    if ('候补特使' in factionData.领导层) delete factionData.领导层.候补特使;
   }
 
   // 处理 memberCount 字段
-  if (sectData.memberCount && !sectData.成员数量) {
-    sectData.成员数量 = {
-      总数: sectData.memberCount.total,
-      按境界: sectData.memberCount.byRealm,
-      按职位: sectData.memberCount.byPosition
+  if (factionData.memberCount && !factionData.成员数量) {
+    factionData.成员数量 = {
+      总数: factionData.memberCount.total,
+      按阶位: factionData.memberCount.byRank,
+      按职位: factionData.memberCount.byPosition
     };
-    delete sectData.memberCount;
+    delete factionData.memberCount;
   }
 
   // 处理已存在的成员数量字段中的英文子字段
-  if (sectData.成员数量) {
-    const memberCount = sectData.成员数量;
+  if (factionData.成员数量) {
+    const memberCount = factionData.成员数量;
 
     // 转换 total -> 总数
     if (memberCount.total !== undefined && memberCount.总数 === undefined) {
       memberCount.总数 = memberCount.total;
     }
 
-    // 转换 byRealm -> 按境界
-    if (memberCount.byRealm && !memberCount.按境界) {
-      memberCount.按境界 = memberCount.byRealm;
+    // 转换 byRank -> 按阶位
+    if (memberCount.byRank && !memberCount.按阶位) {
+      memberCount.按阶位 = memberCount.byRank;
     }
 
     // 转换 byPosition -> 按职位
@@ -89,124 +92,122 @@ export function validateAndFixSectRealmData(sectData: any): any {
     }
   }
 
-  // 获取最强修为等级
-  const maxRealm = sectData.领导层?.最强修为 || sectData.最强修为;
-  const maxLevel = getRealmLevel(maxRealm);
+  // 获取最强阶位等级
+  const maxRank = factionData.领导层?.最强阶位 || factionData.最强阶位;
+  const maxLevel = getRankLevel(maxRank);
 
-  console.log(`[宗门验证] ${sectData.名称}: 最强修为="${maxRealm}" → 等级=${maxLevel}`);
-  console.log(`[宗门验证] ${sectData.名称}: 原始境界分布=`, sectData.成员数量?.按境界);
+  console.log(`[组织验证] ${factionData.名称}: 最强阶位="${maxRank}" → 等级=${maxLevel}`);
+  console.log(`[组织验证] ${factionData.名称}: 原始阶位分布=`, factionData.成员数量?.按阶位);
 
-  // 🔥 智能修复：根据境界分布自动设置最强修为
-  if (sectData.成员数量?.按境界) {
-    const realmDist = sectData.成员数量.按境界;
+  // 🔥 智能修复：根据阶位分布自动设置最强阶位
+  if (factionData.成员数量?.按阶位) {
+    const rankDist = factionData.成员数量.按阶位;
 
-    // 找出境界分布中的最高境界
-    let highestRealmLevel = 0;
-    let highestRealmName = '';
+    // 找出阶位分布中的最高阶位
+    let highestRankLevel = 0;
+    let highestRankName = '';
 
-    Object.keys(realmDist).forEach(realm => {
-      const count = realmDist[realm];
+    Object.keys(rankDist).forEach(rank => {
+      const count = rankDist[rank];
       if (count > 0) {
-        const realmLevel = getRealmLevel(realm);
-        if (realmLevel > highestRealmLevel) {
-          highestRealmLevel = realmLevel;
-          highestRealmName = realm;
+        const rankLevel = getRankLevel(rank);
+        if (rankLevel > highestRankLevel) {
+          highestRankLevel = rankLevel;
+          highestRankName = rank;
         }
       }
     });
 
-    // 如果找到了最高境界，用它来更新最强修为
-    if (highestRealmLevel > 0 && highestRealmName) {
-      // 将"练气期"转换为"练气圆满"等更合理的描述
-      const realmNameWithoutSuffix = highestRealmName.replace('期', '');
-      const correctedMaxRealm = `${realmNameWithoutSuffix}圆满`;
+    // 如果找到了最高阶位，用它来更新最强阶位
+    if (highestRankLevel > 0 && highestRankName) {
+      const correctedMaxRank = highestRankName.includes('圆满') ? highestRankName : `${highestRankName}圆满`;
 
-      // 更新leadership中的最强修为
-      if (sectData.领导层) {
-        const oldMaxRealm = sectData.领导层.最强修为;
-        sectData.领导层.最强修为 = correctedMaxRealm;
-        console.log(`[宗门验证] ${sectData.名称}: 根据境界分布自动修正最强修为: "${oldMaxRealm}" → "${correctedMaxRealm}"`);
+      // 更新领导层中的最强阶位
+      if (factionData.领导层) {
+        const oldMaxRank = factionData.领导层.最强阶位;
+        factionData.领导层.最强阶位 = correctedMaxRank;
+        console.log(`[组织验证] ${factionData.名称}: 根据阶位分布自动修正最强阶位: "${oldMaxRank}" → "${correctedMaxRank}"`);
 
-        // 如果宗主修为低于最强修为，也更新宗主修为
-        const masterRealmLevel = getRealmLevel(sectData.领导层.宗主修为 || '');
-        if (masterRealmLevel < highestRealmLevel) {
-          sectData.领导层.宗主修为 = correctedMaxRealm;
-          console.log(`[宗门验证] ${sectData.名称}: 同时更新宗主修为为: "${correctedMaxRealm}"`);
+        // 如果首领阶位低于最强阶位，也更新首领阶位
+        const leaderRankLevel = getRankLevel(factionData.领导层.首领阶位 || '');
+        if (leaderRankLevel < highestRankLevel) {
+          factionData.领导层.首领阶位 = correctedMaxRank;
+          console.log(`[组织验证] ${factionData.名称}: 同时更新首领阶位为: "${correctedMaxRank}"`);
         }
       }
     }
 
-    console.log(`[宗门验证] ${sectData.名称}: 境界分布包含:`, Object.keys(realmDist).filter(r => realmDist[r] > 0));
+    console.log(`[组织验证] ${factionData.名称}: 阶位分布包含:`, Object.keys(rankDist).filter(r => rankDist[r] > 0));
   }
 
-  console.log(`[宗门验证] ${sectData.名称}: 验证后境界分布=`, sectData.成员数量?.按境界);
+  console.log(`[组织验证] ${factionData.名称}: 验证后阶位分布=`, factionData.成员数量?.按阶位);
 
-  // 验证长老数量与高境界修士数量的一致性
-  if (sectData.领导层?.长老数量 && sectData.成员数量?.按境界) {
-    const elderCount = sectData.领导层.长老数量;
-    const realmDist = sectData.成员数量.按境界;
-    
-    // 计算元婴期及以上的修士总数
+  // 验证骨干数量与高阶成员数量的一致性
+  if (factionData.领导层?.骨干数量 && factionData.成员数量?.按阶位) {
+    const coreCount = factionData.领导层.骨干数量;
+    const rankDist = factionData.成员数量.按阶位;
+
+    // 计算核心级及以上的成员总数
     let highRealmCount = 0;
-    Object.keys(realmDist).forEach(realm => {
-      const realmLevel = getRealmLevel(realm);
-      if (realmLevel >= 4) {
-        highRealmCount += realmDist[realm] || 0;
+    Object.keys(rankDist).forEach(rank => {
+      const rankLevel = getRankLevel(rank);
+      if (rankLevel >= 4) {
+        highRealmCount += rankDist[rank] || 0;
       }
     });
 
-    if (highRealmCount > elderCount * 1.5) {
-      const ratio = elderCount * 1.2 / highRealmCount;
-      Object.keys(realmDist).forEach(realm => {
-        const realmLevel = getRealmLevel(realm);
-        if (realmLevel >= 4) {
-          const originalCount = realmDist[realm];
-          realmDist[realm] = Math.max(1, Math.round(originalCount * ratio));
+    if (highRealmCount > coreCount * 1.5) {
+      const ratio = coreCount * 1.2 / highRealmCount;
+      Object.keys(rankDist).forEach(rank => {
+        const rankLevel = getRankLevel(rank);
+        if (rankLevel >= 4) {
+          const originalCount = rankDist[rank];
+          rankDist[rank] = Math.max(1, Math.round(originalCount * ratio));
         }
       });
     }
   }
 
-  return sectData;
+  return factionData;
 }
 
 /**
- * 验证宗门数据的整体一致性
+ * 验证组织数据的整体一致性
  */
-export function validateSectConsistency(sectData: any): { isValid: boolean; errors: string[] } {
+export function validateFactionConsistency(factionData: any): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
 
-  if (!sectData) {
-    errors.push('宗门数据为空');
+  if (!factionData) {
+    errors.push('组织数据为空');
     return { isValid: false, errors };
   }
 
-  // 检查最强修为与境界分布的一致性
-  const maxRealm = sectData.领导层?.最强修为 || sectData.最强修为;
-  const maxLevel = getRealmLevel(maxRealm);
+  // 检查最强阶位与阶位分布的一致性
+  const maxRank = factionData.领导层?.最强阶位 || factionData.最强阶位;
+  const maxLevel = getRankLevel(maxRank);
 
-  if (sectData.成员数量?.按境界) {
-    Object.keys(sectData.成员数量.按境界).forEach(realm => {
-      const realmLevel = getRealmLevel(realm);
-      if (realmLevel > maxLevel) {
-        errors.push(`境界分布错误: 存在${realm}期修士，但最强修为仅为${maxRealm}`);
+  if (factionData.成员数量?.按阶位) {
+    Object.keys(factionData.成员数量.按阶位).forEach(rank => {
+      const rankLevel = getRankLevel(rank);
+      if (rankLevel > maxLevel) {
+        errors.push(`阶位分布错误: 存在${rank}成员，但最强阶位仅为${maxRank}`);
       }
     });
   }
 
-  // 检查长老数量与高境界修士的合理性
-  const elderCount = sectData.领导层?.长老数量;
-  if (elderCount && sectData.成员数量?.按境界) {
+  // 检查骨干数量与高阶成员的合理性
+  const coreCount = factionData.领导层?.骨干数量;
+  if (coreCount && factionData.成员数量?.按阶位) {
     let highRealmCount = 0;
-    Object.keys(sectData.成员数量.按境界).forEach(realm => {
-      const realmLevel = getRealmLevel(realm);
-      if (realmLevel >= 4) {
-        highRealmCount += sectData.成员数量.按境界[realm] || 0;
+    Object.keys(factionData.成员数量.按阶位).forEach(rank => {
+      const rankLevel = getRankLevel(rank);
+      if (rankLevel >= 4) {
+        highRealmCount += factionData.成员数量.按阶位[rank] || 0;
       }
     });
 
-    if (highRealmCount > elderCount * 2) {
-      errors.push(`人员配置不合理: 长老${elderCount}位，但元婴期以上修士${highRealmCount}人`);
+    if (highRealmCount > coreCount * 2) {
+      errors.push(`人员配置不合理: 骨干${coreCount}位，但核心级以上成员${highRealmCount}人`);
     }
   }
 
@@ -214,19 +215,19 @@ export function validateSectConsistency(sectData: any): { isValid: boolean; erro
 }
 
 /**
- * 批量验证并修复宗门数据列表
+ * 批量验证并修复组织数据列表
  */
-export function validateAndFixSectDataList(sects: any[]): any[] {
-  if (!Array.isArray(sects)) return sects;
+export function validateAndFixFactionDataList(factions: any[]): any[] {
+  if (!Array.isArray(factions)) return factions;
 
-  return sects.map(sect => {
-    const fixedSect = validateAndFixSectRealmData(sect);
-    const validation = validateSectConsistency(fixedSect);
-    
+  return factions.map(faction => {
+    const fixedFaction = validateAndFixFactionRankData(faction);
+    const validation = validateFactionConsistency(fixedFaction);
+
     if (!validation.isValid) {
-      console.warn(`[宗门验证] ${sect.名称 || '未知宗门'}存在问题:`, validation.errors);
+      console.warn(`[组织验证] ${faction.名称 || '未知组织'}存在问题:`, validation.errors);
     }
-    
-    return fixedSect;
+
+    return fixedFaction;
   });
 }

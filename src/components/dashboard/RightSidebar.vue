@@ -4,10 +4,10 @@
     <div class="profile-header" v-if="isDataLoaded && characterInfo">
       <div class="profile-id">
         <span class="profile-name">{{ characterInfo?.名字 || t('无名者') }}</span>
-        <span class="profile-realm">{{ formatRealmDisplay(playerStatus?.境界?.名称) }}</span>
+        <span class="profile-realm">{{ formatRealmDisplay(playerStatus?.阶位?.名称) }}</span>
       </div>
       <div class="profile-meta">
-        <span class="meta-item">{{ t('寿元') }}：{{ currentAge }}</span>
+        <span class="meta-item">{{ t('寿命') }}：{{ currentAge }}</span>
         <span class="meta-item">{{ t('声望') }}：{{ getReputationDisplay() }}</span>
       </div>
     </div>
@@ -17,22 +17,22 @@
         <div class="card-title">{{ t('生命体征') }}</div>
         <div class="stat-grid">
           <div class="stat-item">
-            <span class="stat-label">{{ t('气血') }}</span>
-            <span class="stat-value">{{ playerStatus?.气血?.当前 }} / {{ playerStatus?.气血?.上限 }}</span>
-            <div class="stat-bar"><span class="stat-fill health" :style="{ width: getVitalPercent('气血') + '%' }"></span></div>
+            <span class="stat-label">{{ t('生命值') }}</span>
+            <span class="stat-value">{{ playerStatus?.生命值?.当前 }} / {{ playerStatus?.生命值?.上限 }}</span>
+            <div class="stat-bar"><span class="stat-fill health" :style="{ width: getVitalPercent('生命值') + '%' }"></span></div>
           </div>
           <div class="stat-item">
-            <span class="stat-label">{{ t('灵气') }}</span>
-            <span class="stat-value">{{ playerStatus?.灵气?.当前 }} / {{ playerStatus?.灵气?.上限 }}</span>
-            <div class="stat-bar"><span class="stat-fill mana" :style="{ width: getVitalPercent('灵气') + '%' }"></span></div>
+            <span class="stat-label">{{ t('电量') }}</span>
+            <span class="stat-value">{{ playerStatus?.电量?.当前 }} / {{ playerStatus?.电量?.上限 }}</span>
+            <div class="stat-bar"><span class="stat-fill mana" :style="{ width: getVitalPercent('电量') + '%' }"></span></div>
           </div>
           <div class="stat-item">
-            <span class="stat-label">{{ t('神识') }}</span>
-            <span class="stat-value">{{ playerStatus?.神识?.当前 }} / {{ playerStatus?.神识?.上限 }}</span>
-            <div class="stat-bar"><span class="stat-fill spirit" :style="{ width: getVitalPercent('神识') + '%' }"></span></div>
+            <span class="stat-label">{{ t('带宽') }}</span>
+            <span class="stat-value">{{ playerStatus?.带宽?.当前 }} / {{ playerStatus?.带宽?.上限 }}</span>
+            <div class="stat-bar"><span class="stat-fill spirit" :style="{ width: getVitalPercent('带宽') + '%' }"></span></div>
           </div>
           <div class="stat-item">
-            <span class="stat-label">{{ t('寿元') }}</span>
+            <span class="stat-label">{{ t('寿命') }}</span>
             <span class="stat-value">{{ currentAge }} / {{ playerStatus?.寿命?.上限 }}</span>
             <div class="stat-bar"><span class="stat-fill lifespan" :style="{ width: getLifespanPercent() + '%' }"></span></div>
           </div>
@@ -40,11 +40,11 @@
       </div>
 
       <div class="info-card">
-        <div class="card-title">{{ t('修为进度') }}</div>
+        <div class="card-title">{{ t('等级进度') }}</div>
         <div class="realm-block">
-          <span class="realm-name">{{ formatRealmDisplay(playerStatus?.境界?.名称) }}</span>
-          <span v-if="playerStatus?.境界?.突破描述" class="realm-desc">{{ playerStatus?.境界?.突破描述 }}</span>
-          <div v-if="playerStatus?.境界?.名称 === '凡人'" class="realm-hint">{{ t('等待仙缘，引气入体') }}</div>
+          <span class="realm-name">{{ formatRealmDisplay(playerStatus?.阶位?.名称) }}</span>
+          <span v-if="playerStatus?.阶位?.晋升描述" class="realm-desc">{{ playerStatus?.阶位?.晋升描述 }}</span>
+          <div v-if="playerStatus?.阶位?.名称 === '街头新人'" class="realm-hint">{{ t('等待任务，完成首次升级') }}</div>
           <div v-else class="realm-progress">
             <div class="stat-bar"><span class="stat-fill cultivation" :class="getRealmProgressClass()" :style="{ width: realmProgressPercent + '%' }"></span></div>
             <span class="realm-percent" :class="getRealmProgressClass()">{{ realmProgressPercent }}%</span>
@@ -53,7 +53,7 @@
       </div>
 
       <div class="info-card">
-        <div class="card-title">{{ t('天赋神通') }}</div>
+        <div class="card-title">{{ t('天赋模块') }}</div>
         <div class="chip-grid">
           <button
             v-for="talent in characterInfo.天赋"
@@ -64,7 +64,7 @@
             {{ typeof talent === 'string' ? talent : talent.name }}
           </button>
           <div v-if="!characterInfo.天赋 || characterInfo.天赋.length === 0" class="empty-text">
-            {{ t('暂无天赋神通') }}
+            {{ t('暂无天赋模块') }}
           </div>
         </div>
       </div>
@@ -90,7 +90,7 @@
     </div>
 
     <div v-else class="no-character">
-      <div class="no-char-text">{{ t('请选择角色开启修仙之旅') }}</div>
+      <div class="no-char-text">{{ t('请选择角色开启霓虹旅程') }}</div>
     </div>
 
     <DetailModal />
@@ -105,7 +105,7 @@ import StatusDetailCard from './components/StatusDetailCard.vue';
 import { useGameStateStore } from '@/stores/gameStateStore';
 import { useUIStore } from '@/stores/uiStore';
 import type { StatusEffect } from '@/types/game.d.ts';
-import { formatRealmWithStage } from '@/utils/realmUtils';
+import { formatRankWithStage } from '@/utils/realmUtils';
 import { calculateAgeFromBirthdate } from '@/utils/lifespanCalculator';
 import { useI18n } from '@/i18n';
 
@@ -168,9 +168,9 @@ const formatTimeDisplay = (time: string | undefined): string => {
 
 // 计算百分比的工具方法
 const realmProgressPercent = computed(() => {
-  if (!gameStateStore.attributes?.境界) return 0;
-  const progress = gameStateStore.attributes.境界.当前进度;
-  const maxProgress = gameStateStore.attributes.境界.下一级所需;
+  if (!gameStateStore.attributes?.阶位) return 0;
+  const progress = gameStateStore.attributes.阶位.当前进度;
+  const maxProgress = gameStateStore.attributes.阶位.下一级所需;
   return progress && maxProgress ? Math.round((progress / maxProgress) * 100) : 0;
 });
 
@@ -183,7 +183,7 @@ const getRealmProgressClass = (): string => {
 };
 
 // 计算生命体征百分比
-const getVitalPercent = (type: '气血' | '灵气' | '神识') => {
+const getVitalPercent = (type: '生命值' | '电量' | '带宽') => {
   if (!gameStateStore.attributes) return 0;
   const vital = (gameStateStore.attributes as any)[type];
   if (!vital?.当前 || !vital?.上限) return 0;
@@ -197,39 +197,39 @@ const getLifespanPercent = () => {
   return Math.round((currentAge.value / maxLifespan) * 100);
 };
 
-// 获取天赋数据
+// 获取模块数据
 const getTalentData = (talent: string): any => {
-  // 从角色身份信息（V3：gameStateStore.character）的天赋列表中查找
+  // 从角色身份信息（V3：gameStateStore.character）的模块列表中查找
   const baseInfoValue = gameStateStore.character;
-  if (baseInfoValue?.天赋 && Array.isArray(baseInfoValue.天赋)) {
-    const talentDetail = baseInfoValue.天赋.find((t: any) => t.名称 === talent);
+  if (baseInfoValue?.模块 && Array.isArray(baseInfoValue.模块)) {
+    const talentDetail = baseInfoValue.模块.find((t: any) => t.名称 === talent);
     if (talentDetail) {
       return talentDetail;
     }
   }
 
-  // 向后兼容：从三千大道系统中查找
-  const daoDataValue = gameStateStore.thousandDao;
-  const daoProgress = daoDataValue?.大道列表?.[talent];
-  return daoProgress;
+  // 向后兼容：从流派系统中查找
+  const protocolDataValue = gameStateStore.thousandDao;
+  const protocolProgress = protocolDataValue?.流派列表?.[talent];
+  return protocolProgress;
 };
 
-// 显示天赋详情
+// 显示模块详情
 const showTalentDetail = (talent: string) => {
-  // 首先尝试从角色的天赋列表中查找(AI生成的自定义天赋)
+  // 首先尝试从角色的模块列表中查找(AI生成的自定义模块)
   const baseInfoValue = characterInfo.value;
-  const customTalent = baseInfoValue?.天赋?.find((t: any) => t.name === talent);
+  const customTalent = baseInfoValue?.模块?.find((t: any) => t.name === talent);
 
-  // 然后从LOCAL_TALENTS中查找天赋信息(前端内嵌天赋)
+  // 然后从LOCAL_TALENTS中查找模块信息(前端内嵌模块)
   const localTalent = LOCAL_TALENTS.find(t => t.name === talent);
 
-  // 优先使用自定义天赋数据,其次使用内嵌天赋数据
+  // 优先使用自定义模块数据,其次使用内嵌模块数据
   const talentInfo = customTalent ? {
-    description: customTalent.description || '自定义天赋'
+    description: customTalent.description || '自定义模块'
   } : localTalent ? {
     description: localTalent.description || ''
   } : {
-    description: `天赋《${talent}》的详细描述暂未开放，请期待后续更新。`
+    description: `模块《${talent}》的详细描述暂未开放，请期待后续更新。`
   };
 
   // 构建详情内容文本（只显示描述）
@@ -254,12 +254,12 @@ const showStatusDetail = (effect: StatusEffect) => {
   });
 };
 
-// 显示境界：统一返回"境界+阶段"（初期/中期/后期/圆满），凡人不加阶段
+// 显示阶位：统一返回"阶位+阶段"（初期/中期/后期/圆满），凡人不加阶段
 const formatRealmDisplay = (name?: string): string => {
-  const progress = playerStatus.value?.境界?.当前进度;
-  const maxProgress = playerStatus.value?.境界?.下一级所需;
-  const stage = playerStatus.value?.境界?.阶段;
-  return formatRealmWithStage({ name, 阶段: stage, progress, maxProgress });
+  const progress = playerStatus.value?.阶位?.当前进度;
+  const maxProgress = playerStatus.value?.阶位?.下一级所需;
+  const stage = playerStatus.value?.阶位?.阶段;
+  return formatRankWithStage({ name, 阶段: stage, progress, maxProgress });
 };
 
 // 获取声望显示文本

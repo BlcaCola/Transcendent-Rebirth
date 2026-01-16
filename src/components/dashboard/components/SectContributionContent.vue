@@ -31,8 +31,8 @@
       <div v-if="filteredItems.length === 0" class="empty-state">
         <Package :size="48" class="empty-icon" />
         <p class="empty-text">暂无可兑换物品</p>
-        <p class="empty-hint">可兑换物品由AI根据宗门设定生成</p>
-        <button class="ask-btn" @click="sendPrompt('请告诉我宗门贡献可以兑换什么物品')">
+        <p class="empty-hint">可兑换物品由AI根据组织设定生成</p>
+        <button class="ask-btn" @click="sendPrompt('请告诉我组织贡献可以兑换什么物品')">
           <MessageCircle :size="14" />
           <span>询问可兑换物品</span>
         </button>
@@ -87,7 +87,7 @@
       <div class="tips-list">
         <div class="tip-item">
           <Scroll :size="12" />
-          <span>参与宗门事务</span>
+          <span>参与组织事务</span>
         </div>
         <div class="tip-item">
           <Package :size="12" />
@@ -95,11 +95,11 @@
         </div>
         <div class="tip-item">
           <Swords :size="12" />
-          <span>参与宗门战斗</span>
+          <span>参与组织战斗</span>
         </div>
         <div class="tip-item">
           <Users :size="12" />
-          <span>指导低阶弟子</span>
+          <span>指导低阶成员</span>
         </div>
       </div>
     </div>
@@ -129,17 +129,17 @@ const activeTab = ref<string>('all');
 const exchangeTabs = [
   { key: 'all', label: '全部', icon: Package },
   { key: '丹药', label: '丹药', icon: Pill },
-  { key: '功法', label: '功法', icon: BookOpen },
+  { key: '模块', label: '模块', icon: BookOpen },
   { key: '装备', label: '装备', icon: Sword },
   { key: '材料', label: '材料', icon: Gem }
 ];
 
-// 玩家宗门信息
+// 玩家组织信息
 const playerSectInfo = computed(() => gameStateStore.sectMemberInfo);
-const playerPosition = computed(() => playerSectInfo.value?.职位 || '散修');
+const playerPosition = computed(() => playerSectInfo.value?.职位 || '游民');
 const playerContribution = computed(() => playerSectInfo.value?.贡献 || 0);
 
-// 可兑换物品列表（来自宗门系统）
+// 可兑换物品列表（来自组织系统）
 type ExchangeItem = {
   id: string;
   name: string;
@@ -156,17 +156,17 @@ const normalizeExchangeItem = (raw: any, index: number): ExchangeItem => ({
   name: raw?.name || raw?.名称 || '未知物品',
   icon: raw?.icon || 'O',
   type: raw?.type || raw?.类型 || '其他',
-  quality: raw?.quality || raw?.品质 || '凡品',
+  quality: raw?.quality || raw?.品质 || '民用',
   description: raw?.description || raw?.描述 || '',
   cost: Number(raw?.cost ?? raw?.价格 ?? 0),
   stock: raw?.stock ?? raw?.库存,
 });
 
 const exchangeItems = computed<ExchangeItem[]>(() => {
-  const sectName = playerSectInfo.value?.宗门名称;
+  const sectName = playerSectInfo.value?.组织名称;
   if (!sectName) return [];
 
-  const rawItems = gameStateStore.sectSystem?.宗门贡献商店?.[sectName];
+  const rawItems = gameStateStore.sectSystem?.组织权限商店?.[sectName];
   if (!Array.isArray(rawItems)) return [];
 
   return rawItems.map(normalizeExchangeItem);
@@ -179,11 +179,11 @@ const filteredItems = computed(() => {
 
 // 品质样式
 function getQualityClass(quality: string): string {
-  if (quality.includes('凡')) return 'quality-common';
-  if (quality.includes('黄')) return 'quality-yellow';
-  if (quality.includes('玄')) return 'quality-xuan';
-  if (quality.includes('地')) return 'quality-earth';
-  if (quality.includes('天')) return 'quality-heaven';
+  if (quality.includes('民用')) return 'quality-common';
+  if (quality.includes('改装')) return 'quality-yellow';
+  if (quality.includes('军规')) return 'quality-xuan';
+  if (quality.includes('特级')) return 'quality-heaven';
+  if (quality.includes('禁忌')) return 'quality-heaven';
   return 'quality-common';
 }
 

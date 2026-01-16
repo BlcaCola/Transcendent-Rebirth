@@ -171,11 +171,11 @@ export class EnhancedWorldGenerator {
       // 优先从 promptStorage 获取用户修改过的提示词
       const customPrompt = await promptStorage.get('worldGeneration');
 
-      // 🔥 彩蛋：酒馆端 70% 概率生成合欢宗
-      // "这个概率就是随机数，超过30%就会生成合欢宗" -> 随机数(0-100) > 30 -> 70% 概率
-      const shouldGenerateHehuan = isTavernEnv() && Math.random() > 0.3;
-      if (shouldGenerateHehuan) {
-        console.log('[世界生成] 🎲 彩蛋触发：将强制生成合欢宗');
+      // 🔥 彩蛋：酒馆端 70% 概率生成夜宴组织
+      // "这个概率就是随机数，超过30%就会生成夜宴组织" -> 随机数(0-100) > 30 -> 70% 概率
+      const shouldGenerateNightGala = isTavernEnv() && Math.random() > 0.3;
+      if (shouldGenerateNightGala) {
+        console.log('[世界生成] 🎲 彩蛋触发：将强制生成夜宴组织');
       }
 
       // 获取默认提示词用于比较
@@ -193,12 +193,12 @@ export class EnhancedWorldGenerator {
       };
       let defaultPrompt = EnhancedWorldPromptBuilder.buildPrompt(promptConfig);
 
-      // 🔥 注入合欢宗要求
-      if (shouldGenerateHehuan) {
+      // 🔥 注入夜宴组织要求
+      if (shouldGenerateNightGala) {
         defaultPrompt += `
 
 【特殊要求】
-请务必在势力列表中包含一个名为"合欢宗"的宗门。设定为魔道或中立，以双修采补闻名，宗门风气开放。`;
+    请务必在势力列表中包含一个名为"夜宴组织"的势力。设定为黑域或中立，以感官改造与情报交易闻名，组织风格开放诡秘。`;
       }
 
       // 如果用户有自定义提示词且不为空，使用自定义的
@@ -281,13 +281,13 @@ export class EnhancedWorldGenerator {
    */
   private convertToWorldInfo(rawData: RawWorldData): WorldInfo {
     return {
-      世界名称: this.config.worldName || rawData.world_name || rawData.worldName || '修仙界',
+      世界名称: this.config.worldName || rawData.world_name || rawData.worldName || '霓虹域',
       世界背景: this.config.worldBackground || rawData.world_background || rawData.worldBackground || '',
       大陆信息: (rawData.continents || []).map((continent: Record<string, any>) => ({
         名称: continent.名称 || continent.name || '未名大陆',
-        描述: continent.描述 || continent.description || '一片神秘的修仙大陆，灵气充沛，势力林立',
+        描述: continent.描述 || continent.description || '一片霓虹闪烁的赛博大陆，数据脉络交织，势力林立',
         地理特征: continent.terrain_features || continent.地理特征 || [],
-        修真环境: continent.cultivation_environment || continent.修真环境 || '灵气充沛，适宜修行',
+        科技生态: continent.tech_ecosystem || continent.科技生态 || '高密度网络与改造设施并存',
         气候: continent.climate || continent.气候 || '四季分明，温和宜人',
         天然屏障: continent.natural_barriers || continent.天然屏障 || [],
         大洲边界: continent.continent_bounds || continent.大洲边界 || []
@@ -296,40 +296,41 @@ export class EnhancedWorldGenerator {
         // 计算声望与综合战力（若可）
         const calcInput: SectCalculationData = {
           名称: faction.name || faction.名称,
-          类型: faction.type || faction.类型 || '修仙宗门',
+          类型: faction.type || faction.类型 || '企业集团',
           等级: faction.level || faction.等级 || '三流',
-          宗主修为: faction.leadership?.宗主修为,
-          最强修为: faction.leadership?.最强修为,
-          长老数量: faction.memberCount?.byPosition?.长老 || 0,
-          核心弟子数: faction.leadership?.核心弟子数,
-          内门弟子数: faction.leadership?.内门弟子数,
-          外门弟子数: faction.leadership?.外门弟子数
+          首领阶位: faction.leadership?.首领等级,
+          最强阶位: faction.leadership?.最强等级,
+          管理层数量: faction.leadership?.顾问数量 ?? faction.memberCount?.byPosition?.顾问 ?? 0,
+          核心成员数: faction.leadership?.核心成员数,
+          内部成员数: faction.leadership?.内部成员数,
+          外围成员数: faction.leadership?.外围成员数
         };
         const calculated = calculateSectData(calcInput);
         const factionName = String(faction.name || faction.名称 || '');
-        const isHehuan = factionName.includes('合欢');
+        const isNightGala = factionName.includes('夜宴');
 
         const leadership = faction.leadership
           ? {
-              宗主: faction.leadership.宗主,
-              宗主修为: faction.leadership.宗主修为,
-              副宗主: faction.leadership.副宗主 ?? undefined,
-              圣女: isHehuan ? (faction.leadership.圣女 ?? undefined) : undefined,
-              圣子: isHehuan ? (faction.leadership.圣子 ?? undefined) : undefined,
-              太上长老: faction.leadership.太上长老 ?? undefined,
-              太上长老修为: faction.leadership.太上长老修为 ?? undefined,
-              最强修为: faction.leadership.最强修为 || faction.leadership.宗主修为,
+              首领: faction.leadership.首领,
+              首领等级: faction.leadership.首领等级,
+              副首领: faction.leadership.副首领 ?? undefined,
+              特使: isNightGala ? (faction.leadership.特使 ?? undefined) : undefined,
+              首席分析师: faction.leadership.首席分析师 ?? undefined,
+              首席工程师: faction.leadership.首席工程师 ?? undefined,
+              董事: faction.leadership.董事 ?? undefined,
+              董事等级: faction.leadership.董事等级 ?? undefined,
+              最强等级: faction.leadership.最强等级 || faction.leadership.首领等级,
               综合战力: calculated.综合战力,
-              核心弟子数: faction.leadership.核心弟子数,
-              内门弟子数: faction.leadership.内门弟子数,
-              外门弟子数: faction.leadership.外门弟子数
+              核心成员数: faction.leadership.核心成员数,
+              内部成员数: faction.leadership.内部成员数,
+              外围成员数: faction.leadership.外围成员数
             }
           : undefined;
 
         const memberCount = faction.memberCount
           ? {
               total: Number(faction.memberCount.total) || 0,
-              byRealm: faction.memberCount.byRealm || {},
+              byRank: faction.memberCount.byRank || faction.memberCount.byRealm || {},
               byPosition: faction.memberCount.byPosition || {}
             }
           : undefined;
@@ -360,7 +361,7 @@ export class EnhancedWorldGenerator {
           成员数量: memberCount
             ? {
                 总数: memberCount.total,
-                按境界: memberCount.byRealm,
+                按阶位: memberCount.byRank,
                 按职位: memberCount.byPosition,
                 ...memberCount
               }
@@ -405,7 +406,7 @@ export class EnhancedWorldGenerator {
         maxLat: 10000,
       },
       生成时间: new Date().toISOString(),
-      世界纪元: this.config.worldEra || rawData.world_era || '修仙纪元',
+      世界纪元: this.config.worldEra || rawData.world_era || '霓虹纪元',
       特殊设定: rawData.special_settings || [],
       版本: '2.0-Enhanced'
     };

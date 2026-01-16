@@ -945,7 +945,7 @@ const clearMemory = async () => {
 // 测试记忆转化功能（保留但不使用）
 // const testMemoryConversion = () => {
 //   const testMessages = [
-//     '今日在练功房修炼《太极心经》，有所感悟',
+//     '今日在训练室训练《太极协议》，有所感悟',
 //     '与师兄切磋武艺，招式精进不少',
 //     '在藏书阁阅读古籍，了解到远古修真历史',
 //     '炼制了几枚回气丹，成功率提升',
@@ -1169,8 +1169,8 @@ const deleteMemory = async (memory: Memory) => {
  */
 const exportMemoriesAsNovel = () => {
   try {
-    const characterName = gameStateStore.character?.名字 || t('修仙者');
-    const worldName = gameStateStore.worldInfo?.世界名称 || t('修仙世界');
+    const characterName = gameStateStore.character?.名字 || t('行者');
+    const worldName = gameStateStore.worldInfo?.世界名称 || t('霓虹世界');
     const narrativeHistory = gameStateStore.narrativeHistory || [];
 
     if (narrativeHistory.length === 0) {
@@ -1211,7 +1211,7 @@ const exportMemoriesAsNovel = () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${characterName}_修仙历程_${Date.now()}.txt`;
+    link.download = `${characterName}_霓虹历程_${Date.now()}.txt`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

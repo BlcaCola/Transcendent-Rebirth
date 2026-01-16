@@ -11,7 +11,7 @@ import { DICE_ROLLING_RULES } from '../definitions/textFormats';
  *   - 新增数据同步检查清单
  *   - 优化NPC交互逻辑
  *   - 强化text与tavern_commands同步要求
- * - v3.0.0: 移除骰点系统，判定完全基于属性和境界
+ * - v3.0.0: 移除骰点系统，判定完全基于属性和阶位
  * - v2.2.0: 新增NPC独立演绎逻辑，区分玩家与NPC
  */
 
@@ -34,12 +34,12 @@ export function getCotCorePrompt(userInput: string, enableActionOptions: boolean
 □ 时间流逝 → add \`时间.分钟\`
 □ NPC出场 → set \`关系.NPC名.当前外貌状态\` / \`关系.NPC名.当前内心想法\`
 □ NPC互动 → push \`关系.NPC名.记忆\` + add \`关系.NPC名.好感度\`
-□ 受伤/恢复 → add \`属性.气血.当前\`（±）
+□ 受伤/恢复 → add \`属性.生命值.当前\`（±）
 □ 效果增减 → push \`效果\`
-□ 使用灵气 → add \`属性.灵气.当前\`（负）
-□ 修炼进度 → add \`属性.境界.当前进度\` + add \`背包.物品.[功法ID].修炼进度\`
+□ 使用电量 → add \`属性.电量.当前\`（负）
+□ 训练进度 → add \`属性.阶位.当前进度\` + add \`背包.物品.[模块ID].训练进度\`
 □ 物品增删 → set/delete \`背包.物品.[物品ID]\`
-□ 灵石变化 → add \`背包.灵石.下品/中品/上品/极品\`
+□ 信用点变化 → add \`背包.信用点.低额/中额/高额/最高额\`
 
 ## 行动选项
 - 若启用：输出 \`action_options\`（3-5个）

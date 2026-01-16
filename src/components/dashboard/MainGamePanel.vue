@@ -261,7 +261,7 @@
 
             <!-- 时间配置 -->
             <div v-if="selectedAction.timeRequired" class="config-section">
-              <label class="config-label">{{ t('修炼时间') }}</label>
+              <label class="config-label">{{ t('训练时间') }}</label>
               <div class="time-selector">
                 <button
                   v-for="timeOption in timeOptions"
@@ -590,7 +590,7 @@ const generateSceneImage = async () => {
   try {
     // 构建提示词
     const location = gameStateStore.character?.所在位置?.名称 || '未知地点';
-    const basePrompt = `中国古风水墨画，修仙玄幻风格，高品质，细节丰富。当前地点：${location}。剧情描述：`;
+    const basePrompt = `赛博朋克风格插画，高品质，细节丰富。当前地点：${location}。剧情描述：`;
     // 截取前500字作为提示词
     const prompt = basePrompt + text.substring(0, 500);
 
@@ -751,30 +751,30 @@ const timeOptions = ref([
 // 行动分类数据
 const actionCategories = ref<ActionCategory[]>([
   {
-    name: '修炼',
+    name: '训练',
     icon: '',
     actions: [
       {
-        name: '基础修炼',
+        name: '基础训练',
         icon: '⚡',
         type: 'cultivation',
-        description: '吐纳天地灵气，淬炼自身修为，是提升境界的根本之法。',
+        description: '在训练舱进行基础强化，提升等级与模块熟练度。',
         timeRequired: true
       },
       {
-        name: '炼体',
+        name: '体能强化',
         icon: 'Shield',
         iconComponent: Shield,
         type: 'cultivation',
-        description: '以灵气或外力锤炼肉身，强化筋骨皮膜，增强体魄与防御。',
+        description: '通过负载训练或改造强化体魄与防御。',
         timeRequired: true
       },
       {
-        name: '冥想',
+        name: '神经校准',
         icon: 'BrainCircuit',
         iconComponent: BrainCircuit,
         type: 'cultivation',
-        description: '沉入心海，观想天地，可稳固心境，提升神识，偶有顿悟。',
+        description: '进行神经校准，稳定心智，提升带宽，偶有灵感。',
         timeRequired: true
       }
     ]
@@ -1112,7 +1112,7 @@ const removeActionFromQueue = async (index: number) => {
       return;
     }
 
-    // 如果是装备、卸下、使用或修炼类操作，尝试按名称精准撤回
+    // 如果是装备、卸下、使用或训练类操作，尝试按名称精准撤回
     if (action.type && ['equip', 'unequip', 'use', 'cultivate'].includes(action.type) && action.itemName) {
       const success = await enhancedActionQueue.undoByItemName(action.type as 'equip' | 'unequip' | 'use' | 'cultivate', action.itemName);
       if (success) {
@@ -1146,9 +1146,9 @@ const sendMessage = async () => {
   // 检查角色死亡状态
   const saveData = gameStateStore.toSaveData();
   if (saveData) {
-    // 检查气血
-    if ((saveData as any).角色?.属性?.气血?.当前 !== undefined && (saveData as any).角色.属性.气血.当前 <= 0) {
-      toast.error('角色已死亡，气血耗尽。无法继续游戏，请重新开始或复活角色。');
+    // 检查生命值
+    if ((saveData as any).角色?.属性?.生命值?.当前 !== undefined && (saveData as any).角色.属性.生命值.当前 <= 0) {
+      toast.error('角色已死亡，生命值耗尽。无法继续游戏，请重新开始或复活角色。');
       return;
     }
     // 检查寿命
@@ -1252,7 +1252,7 @@ const sendMessage = async () => {
         console.log('[图片上传] 将发送', selectedImages.value.length, '张图片');
       }
 
-      // 天道系统已整合到COT判定流程中，无需单独同步
+      // 系统模块已整合到COT判定流程中，无需单独同步
 
       aiResponse = await bidirectionalSystem.processPlayerAction(
         finalUserMessage,
@@ -1276,7 +1276,7 @@ const sendMessage = async () => {
 
           if (retryResponse) {
             aiResponse = retryResponse;
-            // 注意：重试成功后不显示额外的toast，统一在最后显示"天道已回"
+            // 注意：重试成功后不显示额外的toast，统一在最后显示"系统已回"
             console.log('[AI响应验证] 重试成功');
           } else {
             // 所有重试都失败了，中止处理
@@ -1360,9 +1360,9 @@ const sendMessage = async () => {
       // 检查角色死亡状态（在状态更新后）
       const currentSaveData = gameStateStore.toSaveData();
       if (currentSaveData) {
-        // 检查气血
-        if (currentSaveData.属性?.气血?.当前 !== undefined && currentSaveData.属性.气血.当前 <= 0) {
-          toast.error('角色已死亡，气血耗尽');
+        // 检查生命值
+        if (currentSaveData.属性?.生命值?.当前 !== undefined && currentSaveData.属性.生命值.当前 <= 0) {
+          toast.error('角色已死亡，生命值耗尽');
         }
         // 检查寿命
         if (currentSaveData.属性?.寿命?.当前 !== undefined &&

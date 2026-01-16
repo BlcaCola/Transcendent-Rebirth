@@ -48,8 +48,8 @@ function getOnlineSaveSlot(profile: CharacterProfile): SaveSlot | null {
   if (profile.模式 !== '联机') return null;
 
   // 新结构：使用存档列表
-  if (profile.存档列表?.['云端修行']) {
-    return profile.存档列表['云端修行'];
+  if (profile.存档列表?.['云端训练']) {
+    return profile.存档列表['云端训练'];
   }
 
   // 兼容旧数据：如果旧的 profile.存档 存在，迁移到新结构
@@ -60,11 +60,11 @@ function getOnlineSaveSlot(profile: CharacterProfile): SaveSlot | null {
       profile.存档列表 = {};
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    profile.存档列表['云端修行'] = (profile as any).存档;
+    profile.存档列表['云端训练'] = (profile as any).存档;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     delete (profile as any).存档; // 清理旧字段
-    debug.log('角色商店', '✅ 旧存档数据已迁移到 存档列表["云端修行"]');
-    return profile.存档列表['云端修行'];
+    debug.log('角色商店', '✅ 旧存档数据已迁移到 存档列表["云端训练"]');
+    return profile.存档列表['云端训练'];
   }
 
   return null;
@@ -141,7 +141,7 @@ export const useCharacterStore = defineStore('characterV3', () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       Object.entries(rootState.value.角色列表).forEach(([_charId, profile]) => {
         // 访问废弃字段用于迁移
-        if (profile.模式 === '联机' && profile.存档 && !profile.存档列表?.['云端修行']) {
+        if (profile.模式 === '联机' && profile.存档 && !profile.存档列表?.['云端训练']) {
           debug.log('角色商店', `🔄 迁移联机角色「${profile.角色.名字}」的存档结构`);
 
           // 初始化存档列表（如果不存在）
@@ -150,10 +150,10 @@ export const useCharacterStore = defineStore('characterV3', () => {
           }
 
           // 访问废弃字段用于迁移
-          // 将旧的 profile.存档 迁移到 profile.存档列表['云端修行']
-          profile.存档列表['云端修行'] = {
+          // 将旧的 profile.存档 迁移到 profile.存档列表['云端训练']
+          profile.存档列表['云端训练'] = {
             ...profile.存档,
-            存档名: '云端修行',
+            存档名: '云端训练',
           };
 
           // 添加"上次对话"槽位（如果不存在）
@@ -236,7 +236,7 @@ export const useCharacterStore = defineStore('characterV3', () => {
           ...slot,
           id: key,
           角色名字: slot.角色名字 || profile.角色?.名字 || '未知',
-          境界: slot.境界 || slot.存档数据?.属性?.境界?.名称 || '凡人',
+          阶位: slot.阶位 || slot.存档数据?.属性?.阶位?.名称 || '街头人',
           位置: slot.位置 || slot.存档数据?.位置?.描述 || '未知',
           保存时间: slot.保存时间 || null,
           最后保存时间: slot.最后保存时间 ?? slot.保存时间 ?? null,
@@ -250,9 +250,9 @@ export const useCharacterStore = defineStore('characterV3', () => {
       if (onlineSlot) {
         const enhancedSlot = {
           ...onlineSlot,
-          id: '云端修行',
+          id: '云端任务',
           角色名字: onlineSlot.角色名字 || profile.角色?.名字 || '未知',
-          境界: onlineSlot.境界 || onlineSlot.存档数据?.属性?.境界?.名称 || '凡人',
+          阶位: onlineSlot.阶位 || onlineSlot.存档数据?.属性?.阶位?.名称 || '街头人',
           位置: onlineSlot.位置 || onlineSlot.存档数据?.位置?.描述 || '未知',
           保存时间: onlineSlot.保存时间 || null,
           最后保存时间: onlineSlot.最后保存时间 ?? onlineSlot.保存时间 ?? null,
@@ -460,14 +460,14 @@ export const useCharacterStore = defineStore('characterV3', () => {
       const playerAttributes = (slot.存档数据 as any).角色?.属性 ?? null;
       const playerLocation = (slot.存档数据 as any).角色?.位置 ?? null;
       if (playerAttributes) {
-        // 境界统一为 Realm 对象
-        slot.境界 = playerAttributes.境界?.名称 || '凡人';
+        // 阶位统一为 Realm 对象
+        slot.阶位 = playerAttributes.阶位?.名称 || '街头新人';
 
-        // 计算修为进度百分比（从境界的当前进度获取）
-        if (typeof playerAttributes.境界 === 'object' && playerAttributes.境界 !== null) {
-          const realm = playerAttributes.境界 as Realm;
+        // 计算阶位进度百分比（从阶位的当前进度获取）
+        if (typeof playerAttributes.阶位 === 'object' && playerAttributes.阶位 !== null) {
+          const realm = playerAttributes.阶位 as Realm;
           if (realm.下一级所需 > 0) {
-            slot.修为进度 = Math.floor((realm.当前进度 / realm.下一级所需) * 100);
+            slot.阶位进度 = Math.floor((realm.当前进度 / realm.下一级所需) * 100);
           }
         }
       }
@@ -566,18 +566,18 @@ export const useCharacterStore = defineStore('characterV3', () => {
     const authoritativeBaseInfo: CharacterBaseInfo = {
       ...baseInfo, // 保留玩家输入的名字、性别等
       世界: creationStore.selectedWorld!,
-      天资: creationStore.selectedTalentTier!,
+      模块阶位: creationStore.selectedTalentTier!,
       出生: creationStore.selectedOrigin || '随机出身',
-      灵根: creationStore.selectedSpiritRoot || '随机灵根',
-      天赋: creationStore.selectedTalents,
-      // 确保后天六司存在且初始化为0（开局默认全为0）
-      后天六司: baseInfo.后天六司 || {
-        根骨: 0,
-        灵性: 0,
-        悟性: 0,
-        气运: 0,
+      改造核心: creationStore.selectedSpiritRoot || '随机改造',
+      模块: creationStore.selectedTalents,
+      // 确保成长六维存在且初始化为0（开局默认全为0）
+      成长六维: baseInfo.成长六维 || {
+        体质: 0,
+        能源: 0,
+        算法: 0,
+        资源感知: 0,
         魅力: 0,
-        心性: 0,
+        心智: 0,
       },
     };
     debug.log('角色商店', '构建权威创角信息:', authoritativeBaseInfo);
@@ -647,11 +647,11 @@ export const useCharacterStore = defineStore('characterV3', () => {
             '存档1': {
               存档名: '存档1',
               保存时间: now,
-              游戏内时间: '修仙元年 春',
+              游戏内时间: '霓虹纪元 元年 春',
               角色名字: authoritativeBaseInfo.名字,
-              境界: '凡人',
+              阶位: '街头新人',
               位置: '未知',
-              修为进度: 0,
+              阶位进度: 0,
               存档数据: initialSaveData
             },
             '上次对话': {
@@ -668,14 +668,14 @@ export const useCharacterStore = defineStore('characterV3', () => {
           模式: '联机',
           角色: (initialSaveData as any)?.角色?.身份 || authoritativeBaseInfo,
           存档列表: {
-            '云端修行': {
-              存档名: '云端修行',
+            '云端训练': {
+              存档名: '云端训练',
               保存时间: now,
-              游戏内时间: '修仙元年 春',
+              游戏内时间: '霓虹纪元 元年 春',
               角色名字: authoritativeBaseInfo.名字,
-              境界: '凡人',
+              阶位: '街头新人',
               位置: '未知',
-              修为进度: 0,
+              阶位进度: 0,
               存档数据: initialSaveData,
               // 联机模式专属字段
               云端同步信息: {
@@ -697,7 +697,7 @@ export const useCharacterStore = defineStore('characterV3', () => {
       rootState.value.角色列表[charId] = newProfile;
 
       // 2. 设置为当前激活存档
-      const slotKey = mode === '单机' ? '存档1' : '云端修行'; // 🔥 联机也使用存档列表的key
+      const slotKey = mode === '单机' ? '存档1' : '云端训练'; // 🔥 联机也使用存档列表的key
       rootState.value.当前激活存档 = { 角色ID: charId, 存档槽位: slotKey };
 
       // 🔥 [核心修复] 必须先将完整的初始存档数据持久化，再保存元数据
@@ -720,7 +720,7 @@ export const useCharacterStore = defineStore('characterV3', () => {
           const saveDataToSync = {
             save_data: saveDataForCloud,
             world_map: {}, // 从酒馆变量或初始化结果获取地图数据
-            game_time: '修仙元年 春'
+            game_time: '霓虹纪元 元年 春'
           };
 
           debug.log('角色商店', '准备同步到云端的初始存档数据', saveDataToSync);
@@ -890,7 +890,7 @@ export const useCharacterStore = defineStore('characterV3', () => {
         try {
           const saveData = await storage.loadSaveData(charId, slotKey);
           if (saveData) {
-            console.log('[15] 从IndexedDB加载的角色.背包.灵石数据:', (saveData as any).角色?.背包?.灵石)
+            console.log('[15] 从IndexedDB加载的角色.背包.信用点数据:', (saveData as any).角色?.背包?.信用点)
             targetSlot.存档数据 = saveData;
             debug.log('角色商店', `✅ 已从 IndexedDB 加载存档数据`);
           } else {
@@ -1109,14 +1109,14 @@ export const useCharacterStore = defineStore('characterV3', () => {
 
       debug.log('角色商店', '✅ 从 IndexedDB 加载存档数据');
 
-      // 修复大道数据：确保经验值不是undefined
-      if (saveData.大道) {
-        const daoSystem = saveData.大道;
+      // 修复流派数据：确保经验值不是undefined
+      if (saveData.流派) {
+        const daoSystem = saveData.流派;
 
-        // 修复大道数据（新结构：数据+进度合并）
-        if (daoSystem.大道列表) {
-          Object.keys(daoSystem.大道列表).forEach(daoName => {
-            const daoData = daoSystem.大道列表[daoName];
+        // 修复流派数据（新结构：数据+进度合并）
+        if (daoSystem.流派列表) {
+          Object.keys(daoSystem.流派列表).forEach(daoName => {
+            const daoData = daoSystem.流派列表[daoName];
             if (daoData) {
               // 确保所有数值字段都是数字
               if (daoData.当前经验 === undefined || daoData.当前经验 === null) {
@@ -1131,20 +1131,20 @@ export const useCharacterStore = defineStore('characterV3', () => {
               if (daoData.是否解锁 === undefined) {
                 daoData.是否解锁 = true;
               }
-              if (!daoData.道名) {
-                daoData.道名 = daoName;
+              if (!daoData.流派名) {
+                daoData.流派名 = daoName;
               }
               if (!daoData.阶段列表) {
                 daoData.阶段列表 = [];
               }
               if (!daoData.描述) {
-                daoData.描述 = '神秘的大道';
+                daoData.描述 = '神秘的流派';
               }
             }
           });
         } else {
           // 兼容旧数据结构
-          daoSystem.大道列表 = {};
+          daoSystem.流派列表 = {};
         }
       }
 
@@ -1225,13 +1225,13 @@ export const useCharacterStore = defineStore('characterV3', () => {
           }
         };
       } else if (profile.模式 === '联机') {
-        // 联机模式更新云端修行存档
+        // 联机模式更新云端训练存档
         if (!profile.存档列表) {
           profile.存档列表 = {};
         }
         const currentOnlineSlot = getOnlineSaveSlot(profile);
-        rootState.value.角色列表[charId].存档列表['云端修行'] = {
-          ...(currentOnlineSlot || { 存档名: '云端修行' }),
+        rootState.value.角色列表[charId].存档列表['云端训练'] = {
+          ...(currentOnlineSlot || { 存档名: '云端训练' }),
           存档数据: saveData,
           保存时间: new Date().toISOString()
         };
@@ -1299,8 +1299,8 @@ export const useCharacterStore = defineStore('characterV3', () => {
         profile.存档列表 = {};
       }
       const currentOnlineSlot = getOnlineSaveSlot(profile);
-      rootState.value.角色列表[charId].存档列表['云端修行'] = {
-        ...(currentOnlineSlot || { 存档名: '云端修行' }),
+      rootState.value.角色列表[charId].存档列表['云端训练'] = {
+        ...(currentOnlineSlot || { 存档名: '云端训练' }),
         存档数据: updatedSaveData,
         保存时间: new Date().toISOString()
       };
@@ -1348,7 +1348,7 @@ export const useCharacterStore = defineStore('characterV3', () => {
         throw new Error('无法生成存档数据，游戏状态不完整。');
       }
 
-      console.log('[11] toSaveData()返回的角色.背包.灵石数据:', (currentSaveData as any).角色?.背包?.灵石)
+      console.log('[11] toSaveData()返回的角色.背包.信用点数据:', (currentSaveData as any).角色?.背包?.信用点)
 
       // 2. 自动更新年龄、技能等派生数据
       updateLifespanFromGameTime(currentSaveData);
@@ -1364,7 +1364,7 @@ export const useCharacterStore = defineStore('characterV3', () => {
       console.log('[12] 即将保存到IndexedDB的数据:', {
         角色ID: active.角色ID,
         存档槽位: active.存档槽位,
-        背包灵石: (currentSaveData as any).角色?.背包?.灵石
+        背包信用点: (currentSaveData as any).角色?.背包?.信用点
       })
 
       // 3. 🔥 核心变更：将巨大的SaveData独立保存到IndexedDB
@@ -1377,7 +1377,7 @@ export const useCharacterStore = defineStore('characterV3', () => {
       slot.保存时间 = new Date().toISOString();
       const playerAttributes = (currentSaveData as any).角色?.属性;
       const playerLocation = (currentSaveData as any).角色?.位置;
-      slot.境界 = playerAttributes?.境界?.名称 || '凡人';
+      slot.阶位 = playerAttributes?.阶位?.名称 || '街头新人';
       slot.位置 = playerLocation?.描述 || '未知';
       if ((currentSaveData as any).元数据?.时间) {
         const time = (currentSaveData as any).元数据.时间;
@@ -1393,7 +1393,7 @@ export const useCharacterStore = defineStore('characterV3', () => {
         if (!profile.存档列表) {
           profile.存档列表 = {};
         }
-        profile.存档列表['云端修行'] = slot;
+        profile.存档列表['云端训练'] = slot;
       }
       await commitMetadataToStorage();
 
@@ -1641,15 +1641,15 @@ export const useCharacterStore = defineStore('characterV3', () => {
         存档名: saveName,
         保存时间: now,
         角色名字: (currentSaveData as any).角色?.身份?.名字,
-        境界: playerAttributes?.境界?.名称 || '凡人',
+        阶位: playerAttributes?.阶位?.名称 || '街头新人',
         位置: playerLocation?.描述 || '未知',
         // 深拷贝存档数据
         存档数据: JSON.parse(JSON.stringify(currentSaveData))
       };
 
-      // 计算修为进度
-      if (playerAttributes?.境界 && playerAttributes.境界.下一级所需 > 0) {
-        newSlot.修为进度 = Math.floor((playerAttributes.境界.当前进度 / playerAttributes.境界.下一级所需) * 100);
+      // 计算阶位进度
+      if (playerAttributes?.阶位 && playerAttributes.阶位.下一级所需 > 0) {
+        newSlot.阶位进度 = Math.floor((playerAttributes.阶位.当前进度 / playerAttributes.阶位.下一级所需) * 100);
       }
 
       // 更新时间
@@ -1752,15 +1752,15 @@ export const useCharacterStore = defineStore('characterV3', () => {
         保存时间: now,
         存档数据: currentSaveData,
         角色名字: (currentSaveData as any).角色?.身份?.名字,
-        境界: playerAttributes?.境界?.名称 || '凡人',
+        阶位: playerAttributes?.阶位?.名称 || '街头新人',
         位置: playerLocation?.描述 || '未知',
-        修为进度: 0,
+        阶位进度: 0,
         游戏内时间: undefined
       };
 
-      // 计算修为进度
-      if (playerAttributes?.境界 && playerAttributes.境界.下一级所需 > 0) {
-        newSlotData.修为进度 = Math.floor((playerAttributes.境界.当前进度 / playerAttributes.境界.下一级所需) * 100);
+      // 计算阶位进度
+      if (playerAttributes?.阶位 && playerAttributes.阶位.下一级所需 > 0) {
+        newSlotData.阶位进度 = Math.floor((playerAttributes.阶位.当前进度 / playerAttributes.阶位.下一级所需) * 100);
       }
 
       // 更新时间
@@ -1881,8 +1881,8 @@ export const useCharacterStore = defineStore('characterV3', () => {
         profile.存档列表 = {};
       }
       const currentOnlineSlot = getOnlineSaveSlot(profile);
-      rootState.value.角色列表[charId].存档列表['云端修行'] = {
-        ...(currentOnlineSlot || { 存档名: '云端修行' }),
+      rootState.value.角色列表[charId].存档列表['云端训练'] = {
+        ...(currentOnlineSlot || { 存档名: '云端训练' }),
         存档数据: cloneDeep(save.存档数据), // 深拷贝确保响应式更新
         保存时间: new Date().toISOString()
       };
@@ -1994,7 +1994,7 @@ export const useCharacterStore = defineStore('characterV3', () => {
       saveData = {
         ...saveData,
         角色名字: saveData.角色名字 ?? (v3Data as any)?.角色?.身份?.名字,
-        境界: saveData.境界 ?? attrs?.境界?.名称,
+        阶位: saveData.阶位 ?? attrs?.阶位?.名称,
         位置: saveData.位置 ?? loc?.描述,
         游戏内时间: saveData.游戏内时间 ?? (() => {
           const t = (v3Data as any)?.元数据?.时间;
@@ -2096,7 +2096,7 @@ export const useCharacterStore = defineStore('characterV3', () => {
           id: '上次对话',
           存档名: '上次对话',
           角色名字: (loadedData as any).角色?.身份?.名字 || profile.角色?.名字 || '未知',
-          境界: '未知',
+          阶位: '未知',
           位置: '未知',
           保存时间: new Date().toISOString(),
           存档数据: loadedData
@@ -2125,7 +2125,7 @@ export const useCharacterStore = defineStore('characterV3', () => {
     // 🔥 修复：更新元数据
     const playerAttributes = (rolledBackData as any).角色?.属性;
     const playerLocation = (rolledBackData as any).角色?.位置;
-    activeSlot.境界 = playerAttributes?.境界?.名称 || '凡人';
+    activeSlot.阶位 = playerAttributes?.阶位?.名称 || '街头新人';
     activeSlot.位置 = playerLocation?.描述 || '未知';
     if ((rolledBackData as any).元数据?.时间) {
       const time = (rolledBackData as any).元数据.时间;
@@ -2246,7 +2246,7 @@ export const useCharacterStore = defineStore('characterV3', () => {
       const helper = getTavernHelper();
       if (!helper) throw new Error('酒馆连接不可用');
 
-      uiStore.updateLoadingText('天道正在推演修复方案...');
+      uiStore.updateLoadingText('系统正在推演修复方案...');
       const aiResponse = await helper.generate({
         user_input: systemPrompt,
         overrides: {
@@ -2382,8 +2382,8 @@ const deleteNpc = async (npcName: string) => {
 
 
 /**
- * [新增] 装备一个功法
- * @param itemId 要装备的功法物品ID
+ * [新增] 装备一个模块
+ * @param itemId 要装备的模块物品ID
  */
 const equipTechnique = async (itemId: string) => {
   // 🔥 [修复] 使用 gameStateStore 获取当前存档数据
@@ -2398,33 +2398,33 @@ const equipTechnique = async (itemId: string) => {
 
   const item = (saveData as any).角色?.背包?.物品?.[itemId];
 
-  if (!item || item.类型 !== '功法') {
-    toast.error('要装备的物品不是一个有效的功法');
+  if (!item || item.类型 !== '模块') {
+    toast.error('要装备的物品不是一个有效的模块');
     return;
   }
 
   // 🔍 调试：装备前检查品质数据
-  console.log('[角色商店-调试] 装备功法前的数据:', {
-    功法名称: item.名称,
+  console.log('[角色商店-调试] 装备模块前的数据:', {
+    模块名称: item.名称,
     品质字段存在: !!item.品质,
     品质内容: item.品质,
     完整物品数据: item
   });
 
-  // 1. 卸下当前所有功法
+  // 1. 卸下当前所有模块
   Object.values(((saveData as any).角色?.背包?.物品 ?? {}) as Record<string, Item>).forEach((i) => {
-    if (i.类型 === '功法') {
+    if (i.类型 === '模块') {
       i.已装备 = false;
     }
   });
 
-  // 2. 装备新功法
+  // 2. 装备新模块
   item.已装备 = true;
 
-  // 🔥 [关键修复] 初始化修炼进度（如果未定义）
-  if (item.修炼进度 === undefined || item.修炼进度 === null) {
-    item.修炼进度 = 0;
-    debug.log('角色商店', `初始化功法修炼进度为 0`);
+  // 🔥 [关键修复] 初始化训练进度（如果未定义）
+  if (item.训练进度 === undefined || item.训练进度 === null) {
+    item.训练进度 = 0;
+    debug.log('角色商店', `初始化模块训练进度为 0`);
   }
 
   // 🔥 [关键修复] 初始化并更新已解锁技能数组
@@ -2433,10 +2433,10 @@ const equipTechnique = async (itemId: string) => {
   }
 
   // 检查哪些技能应该立即解锁（解锁阈值 <= 当前进度）
-  if (item.功法技能 && Array.isArray(item.功法技能)) {
-    const currentProgress = item.修炼进度 || 0;
-    debug.log('角色商店', `[技能解锁检查] 功法: ${item.名称}, 进度: ${currentProgress}%, 技能数: ${item.功法技能.length}`);
-    item.功法技能.forEach((skill: any) => {
+  if (item.模块技能 && Array.isArray(item.模块技能)) {
+    const currentProgress = item.训练进度 || 0;
+    debug.log('角色商店', `[技能解锁检查] 模块: ${item.名称}, 进度: ${currentProgress}%, 技能数: ${item.模块技能.length}`);
+    item.模块技能.forEach((skill: any) => {
       const unlockThreshold = skill.熟练度要求 || 0;
       debug.log('角色商店', `  检查技能: ${skill.技能名称}, 阈值: ${unlockThreshold}%, 当前进度: ${currentProgress}%, 应解锁: ${currentProgress >= unlockThreshold}`);
       if (currentProgress >= unlockThreshold && !item.已解锁技能!.includes(skill.技能名称)) {
@@ -2447,25 +2447,25 @@ const equipTechnique = async (itemId: string) => {
     debug.log('角色商店', `[技能解锁结果] 已解锁技能数组:`, item.已解锁技能);
   }
 
-  // 3. 创建或更新修炼槽位（只存储引用）
-  (saveData as any).角色.修炼 = {
-    ...(((saveData as any).角色.修炼 ?? {}) as any),
-    修炼功法: {
+  // 3. 创建或更新训练槽位（只存储引用）
+  (saveData as any).角色.训练 = {
+    ...(((saveData as any).角色.训练 ?? {}) as any),
+    训练模块: {
       物品ID: item.物品ID,
       名称: item.名称,
     },
   };
 
-  debug.log('角色商店', `已装备功法: ${item.名称}`);
-  debug.log('角色商店', `修炼进度存储在: 背包.物品.${item.物品ID}.修炼进度`);
+  debug.log('角色商店', `已装备模块: ${item.名称}`);
+  debug.log('角色商店', `训练进度存储在: 背包.物品.${item.物品ID}.训练进度`);
   debug.log('角色商店', `已解锁技能数量: ${item.已解锁技能?.length || 0}`);
 
-  // 🔥 [掌握技能自动计算] 装备功法后重新计算掌握技能
+  // 🔥 [掌握技能自动计算] 装备模块后重新计算掌握技能
   try {
     const updatedSkills = updateMasteredSkills(saveData);
-    debug.log('角色商店', `装备功法后已更新掌握技能列表，共 ${updatedSkills.length} 个技能`);
+    debug.log('角色商店', `装备模块后已更新掌握技能列表，共 ${updatedSkills.length} 个技能`);
   } catch (e) {
-    debug.error('角色商店', '装备功法后自动计算掌握技能失败:', e);
+    debug.error('角色商店', '装备模块后自动计算掌握技能失败:', e);
   }
 
   // 🔥 [修复] 更新 gameStateStore 并保存完整存档数据
@@ -2474,13 +2474,13 @@ const equipTechnique = async (itemId: string) => {
   // 🔥 [关键修复] loadFromSaveData 后再次确保技能解锁状态正确
   // 因为 loadFromSaveData 可能会创建新对象
   const itemInStore = gameStateStore.inventory?.物品?.[itemId];
-  if (itemInStore && itemInStore.类型 === '功法') {
+  if (itemInStore && itemInStore.类型 === '模块') {
     if (!itemInStore.已解锁技能) {
       itemInStore.已解锁技能 = [];
     }
-    const currentProgress = itemInStore.修炼进度 || 0;
-    if (itemInStore.功法技能 && Array.isArray(itemInStore.功法技能)) {
-      itemInStore.功法技能.forEach((skill: any) => {
+    const currentProgress = itemInStore.训练进度 || 0;
+    if (itemInStore.模块技能 && Array.isArray(itemInStore.模块技能)) {
+      itemInStore.模块技能.forEach((skill: any) => {
         const unlockThreshold = skill.熟练度要求 || 0;
         if (currentProgress >= unlockThreshold && !itemInStore.已解锁技能!.includes(skill.技能名称)) {
           itemInStore.已解锁技能!.push(skill.技能名称);
@@ -2494,16 +2494,16 @@ const equipTechnique = async (itemId: string) => {
 
   // 🔍 调试：同步后再次检查品质数据
   const itemAfterSync = (saveData as any).角色?.背包?.物品?.[itemId];
-  console.log('[角色商店-调试] 持久化后的功法数据:', {
-    功法名称: itemAfterSync?.名称,
+  console.log('[角色商店-调试] 持久化后的模块数据:', {
+    模块名称: itemAfterSync?.名称,
     品质字段存在: !!itemAfterSync?.品质,
     品质内容: itemAfterSync?.品质,
     完整物品数据: itemAfterSync
   });
 
-  // 🔥 修复：显示真实功法名称而非伪装名称
+  // 🔥 修复：显示真实模块名称而非伪装名称
   const realTechniqueName = item.名称;
-  toast.success(`已开始修炼《${realTechniqueName}》`);
+  toast.success(`已开始训练《${realTechniqueName}》`);
 };
 
 /**
@@ -2570,7 +2570,7 @@ const importCharacter = async (profileData: CharacterProfile & { _导入存档�
 	        const attrs = (v3Data as any)?.角色?.属性;
 	        const loc = (v3Data as any)?.角色?.位置;
 	        save.角色名字 = save.角色名字 ?? (v3Data as any)?.角色?.身份?.名字;
-	        save.境界 = save.境界 ?? attrs?.境界?.名称;
+          save.阶位 = save.阶位 ?? attrs?.阶位?.名称;
 	        save.位置 = save.位置 ?? loc?.描述;
 	        save.游戏内时间 = save.游戏内时间 ?? (() => {
 	          const t = (v3Data as any)?.元数据?.时间;
@@ -2601,8 +2601,8 @@ const importCharacter = async (profileData: CharacterProfile & { _导入存档�
 };
 
 /**
- * [新增] 卸下一个功法
- * @param itemId 要卸下的功法物品ID
+ * [新增] 卸下一个模块
+ * @param itemId 要卸下的模块物品ID
  */
 /**
  * 从 IndexedDB 加载指定槽位的存档数据
@@ -2638,18 +2638,18 @@ const loadSaveData = async (characterId: string, saveSlot: string): Promise<Save
 
       // 🔥 联机模式：加载单个存档
       if (profile.模式 === '联机') {
-        // 确保存档列表和云端修行存档存在
+        // 确保存档列表和云端训练存档存在
         if (!profile.存档列表) {
           profile.存档列表 = {};
         }
-        if (!profile.存档列表['云端修行']) {
-          profile.存档列表['云端修行'] = {
-            存档名: '云端修行',
+        if (!profile.存档列表['云端训练']) {
+          profile.存档列表['云端训练'] = {
+            存档名: '云端训练',
             保存时间: '',
             游戏内时间: '',
           };
         }
-        const 存档 = profile.存档列表['云端修行'];
+        const 存档 = profile.存档列表['云端训练'];
 
         // 如果存档数据不在内存中，尝试从云端或本地加载
         if (!存档.存档数据) {
@@ -2686,7 +2686,7 @@ const loadSaveData = async (characterId: string, saveSlot: string): Promise<Save
 
           // 如果云端没有或加载失败，尝试从本地 IndexedDB 加载
           if (!存档.存档数据) {
-            const saveData = await storage.loadSaveData(charId, '云端修行');
+            const saveData = await storage.loadSaveData(charId, '云端训练');
             if (saveData) {
               存档.存档数据 = saveData;
               loadedCount++;
@@ -2741,44 +2741,44 @@ const unequipTechnique = async (itemId: string) => {
   const item = (saveData as any).角色?.背包?.物品?.[itemId];
 
   // 🔥 修复：使用与UI一致的验证逻辑，检查背包中的已装备状态
-  // 兼容旧数据：如果 已装备 为 false 但 修炼中 为 true，也允许卸下
-  const isEquipped = item.已装备 || (item as any).修炼中;
+  // 兼容旧数据：如果 已装备 为 false 但 训练中 为 true，也允许卸下
+  const isEquipped = item.已装备 || (item as any).训练中;
 
-  if (!item || item.类型 !== '功法' || !isEquipped) {
-    debug.error('角色商店', '功法卸载验证失败:', {
+  if (!item || item.类型 !== '模块' || !isEquipped) {
+    debug.error('角色商店', '模块卸载验证失败:', {
       itemExists: !!item,
       itemType: item?.类型,
       isEquipped: item?.已装备,
-      isCultivating: (item as any)?.修炼中,
+      isCultivating: (item as any)?.训练中,
       requestedItemId: itemId
     });
-    toast.error('要卸下的功法与当前修炼的功法不匹配');
+    toast.error('要卸下的模块与当前训练的模块不匹配');
     return;
   }
 
-  // 修炼进度已存储在背包物品本身，无需同步
+  // 训练进度已存储在背包物品本身，无需同步
 
-  // 2. 更新背包中的功法状态
+  // 2. 更新背包中的模块状态
   item.已装备 = false;
-  if ((item as any).修炼中) (item as any).修炼中 = false;
+  if ((item as any).训练中) (item as any).训练中 = false;
 
-  // 3. 清空修炼槽（如果存在的话，确保数据一致性）
-  if ((saveData as any).角色?.修炼?.修炼功法?.物品ID === itemId) {
-    (saveData as any).角色.修炼 = {
-      ...(((saveData as any).角色.修炼 ?? {}) as any),
-      修炼功法: null,
+  // 3. 清空训练槽（如果存在的话，确保数据一致性）
+  if ((saveData as any).角色?.训练?.训练模块?.物品ID === itemId) {
+    (saveData as any).角色.训练 = {
+      ...(((saveData as any).角色.训练 ?? {}) as any),
+      训练模块: null,
     };
   }
 
-  debug.log('角色商店', `已卸下功法: ${item.名称}`);
-  debug.log('角色商店', `修炼进度保留在: 背包.物品.${item.物品ID}.修炼进度`);
+  debug.log('角色商店', `已卸下模块: ${item.名称}`);
+  debug.log('角色商店', `训练进度保留在: 背包.物品.${item.物品ID}.训练进度`);
 
-  // 🔥 [掌握技能自动计算] 卸下功法后重新计算掌握技能
+  // 🔥 [掌握技能自动计算] 卸下模块后重新计算掌握技能
   try {
     const updatedSkills = updateMasteredSkills(saveData);
-    debug.log('角色商店', `卸下功法后已更新掌握技能列表，共 ${updatedSkills.length} 个技能`);
+    debug.log('角色商店', `卸下模块后已更新掌握技能列表，共 ${updatedSkills.length} 个技能`);
   } catch (e) {
-    debug.error('角色商店', '卸下功法后自动计算掌握技能失败:', e);
+    debug.error('角色商店', '卸下模块后自动计算掌握技能失败:', e);
   }
 
   // 🔥 注意：由于saveData是gameStateStore状态的引用，直接修改已自动更新store
@@ -2787,10 +2787,10 @@ const unequipTechnique = async (itemId: string) => {
   triggerRef(rootState);
 
   await commitMetadataToStorage(); // 直接持久化到IndexedDB
-  const progress = item.修炼进度 || 0;
-  // 🔥 修复：显示真实功法名称而非伪装名称
+  const progress = item.训练进度 || 0;
+  // 🔥 修复：显示真实模块名称而非伪装名称
   const realTechniqueName =  item.名称;
-  toast.info(`已停止修炼《${realTechniqueName}》，修炼进度${progress}%已保存到背包`);
+  toast.info(`已停止训练《${realTechniqueName}》，训练进度${progress}%已保存到背包`);
 };
 
 
@@ -2834,7 +2834,7 @@ return {
   initialCreationStateChanges,
   setInitialCreationStateChanges,
   consumeInitialCreationStateChanges,
-  // 功法管理
+  // 模块管理
   equipTechnique,
   unequipTechnique,
   importCharacter, // 新增：导入角色

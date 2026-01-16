@@ -1,5 +1,5 @@
 """
-游戏数据路由 - 世界、天赋、灵根等
+游戏数据路由 - 世界、天赋、改造核心等
 """
 from fastapi import APIRouter, HTTPException, status, Depends
 from pydantic import BaseModel
@@ -70,7 +70,7 @@ async def list_origins():
     return [OriginOut.model_validate(o) for o in origins]
 
 
-# === 灵根相关 ===
+# === 改造核心相关 ===
 class SpiritRootOut(BaseModel):
     id: int
     name: str
@@ -85,7 +85,7 @@ class SpiritRootOut(BaseModel):
 
 @router.get("/spirit_roots/", response_model=List[SpiritRootOut])
 async def list_spirit_roots():
-    """获取灵根列表"""
+    """获取改造核心列表"""
     roots = await SpiritRoot.filter(is_active=True).order_by("order")
     return [SpiritRootOut.model_validate(r) for r in roots]
 
