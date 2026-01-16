@@ -148,8 +148,8 @@ export const LOCAL_SPIRIT_ROOTS: Omit<SpiritRoot, 'source'>[] = [
 export const LOCAL_TALENTS: Omit<Talent, 'source'>[] = [
   {
     id: 1,
-    name: '天命主角',
-    description: '资源感知惊人，总能在绝境中逢生，获得意想不到的机会。',
+    name: '霓虹幸存者',
+    description: '资源感知惊人，总能在绝境中脱险，获得意想不到的机会。',
     talent_cost: 15,
     rarity: 5,
     effects: [
@@ -159,12 +159,12 @@ export const LOCAL_TALENTS: Omit<Talent, 'source'>[] = [
   },
   {
     id: 2,
-    name: '剑道独尊',
-    description: '天生剑心通明，任何剑法一看便会，且威力倍增。',
+    name: '近战协议专精',
+    description: '天生对近战协议高度适配，任何战术一看便会，且威力倍增。',
     talent_cost: 12,
     rarity: 5,
     effects: [
-      { 类型: '技能加成', 技能: '剑法', 数值: 0.2 },
+      { 类型: '技能加成', 技能: '刃系战术', 数值: 0.2 },
       { 类型: '成长六维', 目标: '体质', 数值: 3 }
     ]
   },
@@ -203,7 +203,7 @@ export const LOCAL_TALENTS: Omit<Talent, 'source'>[] = [
   },
   {
     id: 6,
-    name: '多宝童子',
+    name: '物资猎手',
     description: '外出行动时，更容易发现高价值资源。',
     talent_cost: 7,
     rarity: 4,
@@ -214,8 +214,8 @@ export const LOCAL_TALENTS: Omit<Talent, 'source'>[] = [
   },
   {
     id: 7,
-    name: '体修奇才',
-    description: '肉身天生强横，生命值旺盛，适合训练近战模块。',
+    name: '体核强化',
+    description: '体能天生强横，生命值旺盛，适合训练近战模块。',
     talent_cost: 5,
     rarity: 3,
     effects: [
@@ -236,8 +236,8 @@ export const LOCAL_TALENTS: Omit<Talent, 'source'>[] = [
   },
   {
     id: 9,
-    name: '身法鬼魅',
-    description: '身法飘逸，战斗中闪避能力更强。',
+    name: '机动幽影',
+    description: '机动路径更高效，战斗中闪避能力更强。',
     talent_cost: 4,
     rarity: 3,
     effects: [
@@ -247,8 +247,8 @@ export const LOCAL_TALENTS: Omit<Talent, 'source'>[] = [
   },
   {
     id: 10,
-    name: '农夫之子',
-    description: '出身底层，心智坚韧，对作物培育有额外亲和力。',
+    name: '舱区后代',
+    description: '出身底层舱区，心智坚韧，对作物培育有额外亲和力。',
     talent_cost: 2,
     rarity: 2,
     effects: [
@@ -258,7 +258,7 @@ export const LOCAL_TALENTS: Omit<Talent, 'source'>[] = [
   },
   {
     id: 11,
-    name: '过目不忘',
+    name: '缓存记忆',
     description: '记忆力超群，学习模块资料速度加快。',
     talent_cost: 2,
     rarity: 2,
@@ -268,7 +268,7 @@ export const LOCAL_TALENTS: Omit<Talent, 'source'>[] = [
   },
   {
     id: 12,
-    name: '老实人',
+    name: '信用守则',
     description: '与人交易时，不容易被欺骗。',
     talent_cost: 1,
     rarity: 1,
@@ -278,7 +278,7 @@ export const LOCAL_TALENTS: Omit<Talent, 'source'>[] = [
   },
   {
     id: 13,
-    name: '一诺千金',
+    name: '合约信誉',
     description: '你的承诺极具分量，更容易获得他人的信任与好感。',
     talent_cost: 3,
     rarity: 2,
@@ -288,13 +288,13 @@ export const LOCAL_TALENTS: Omit<Talent, 'source'>[] = [
   },
   {
     id: 14,
-    name: '天生毒体',
-    description: '百毒不侵，且能更好地驾驭毒功，但常人不敢轻易接近。',
+    name: '抗毒机体',
+    description: '毒素难侵，且能更好地驾驭腐蚀协议，但常人不敢轻易接近。',
     talent_cost: 6,
     rarity: 4,
     effects: [
       { 类型: '特殊能力', 名称: '毒素免疫', 数值: 1 },
-      { 类型: '技能加成', 技能: '毒术', 数值: 0.15 },
+      { 类型: '技能加成', 技能: '腐蚀协议', 数值: 0.15 },
       { 类型: '成长六维', 目标: '魅力', 数值: -2 }
     ]
   },
@@ -311,8 +311,8 @@ export const LOCAL_TALENTS: Omit<Talent, 'source'>[] = [
   },
   {
     id: 16,
-    name: '顶级魅力',
-    description: '天生丽质，气质非凡，魅力超群。无论走到哪里都是众人瞩目的焦点，极容易获得他人的好感与信任。在社交场合如鱼得水，能够以言语和魅力化解大部分冲突。',
+    name: '聚光人格',
+    description: '气质出众，魅力超群。无论走到哪里都是众人瞩目的焦点，极容易获得他人的好感与信任。在社交场合如鱼得水，能够以言语和魅力化解大部分冲突。',
     talent_cost: 8,
     rarity: 4,
     effects: [
@@ -323,7 +323,7 @@ export const LOCAL_TALENTS: Omit<Talent, 'source'>[] = [
   },
   {
     id: 17,
-    name: '道心坚固',
+    name: '心智固态',
     description: '心智如铁，噪声难侵。晋升时更不容易失控，受到诱惑和幻象影响的几率大幅降低。',
     talent_cost: 6,
     rarity: 4,
@@ -334,8 +334,8 @@ export const LOCAL_TALENTS: Omit<Talent, 'source'>[] = [
   },
   {
     id: 18,
-    name: '天生神力',
-    description: '天生力大无穷，体质远超常人。擅长近战搏杀，生命值旺盛。',
+    name: '力矩强化',
+    description: '天生力矩强劲，体质远超常人。擅长近战搏杀，生命值旺盛。',
     talent_cost: 5,
     rarity: 3,
     effects: [
@@ -345,8 +345,8 @@ export const LOCAL_TALENTS: Omit<Talent, 'source'>[] = [
   },
   {
     id: 19,
-    name: '灵觉敏锐',
-    description: '六感超凡，对危险有本能的预感。在战斗和探险中能够提前感知到威胁。',
+    name: '危机预警',
+    description: '感知敏锐，对危险有本能的预感。在战斗和探险中能够提前感知到威胁。',
     talent_cost: 4,
     rarity: 3,
     effects: [
@@ -356,7 +356,7 @@ export const LOCAL_TALENTS: Omit<Talent, 'source'>[] = [
   },
   {
     id: 20,
-    name: '夜猫子',
+    name: '夜行优化',
     description: '夜晚精神百倍，训练效率提升。但白天会感到困倦。',
     talent_cost: 1,
     rarity: 2,
@@ -378,20 +378,20 @@ export const LOCAL_TALENTS: Omit<Talent, 'source'>[] = [
   },
   {
     id: 22,
-    name: '剑骨天成',
-    description: '天生剑骨，与剑有莫名的契合。剑法威力倍增，领悟剑意速度极快。',
+    name: '刃系适配',
+    description: '天生与刃系武装高度契合，近战输出倍增，战术掌握速度极快。',
     talent_cost: 10,
     rarity: 5,
     effects: [
       { 类型: '成长六维', 目标: '体质', 数值: 2 },
-      { 类型: '技能加成', 技能: '剑法', 数值: 0.25 },
-      { 类型: '特殊能力', 名称: '剑意感悟', 数值: 0.2 }
+      { 类型: '技能加成', 技能: '刃系战术', 数值: 0.25 },
+      { 类型: '特殊能力', 名称: '刃系直觉', 数值: 0.2 }
     ]
   },
   {
     id: 23,
-    name: '天生道体',
-    description: '传说中的核心架构，天生契合世界规则，训练任何模块都事半功倍。',
+    name: '核心架构体',
+    description: '传说中的核心架构，天生契合系统规则，训练任何模块都事半功倍。',
     talent_cost: 18,
     rarity: 5,
     effects: [
@@ -426,7 +426,7 @@ export const LOCAL_TALENTS: Omit<Talent, 'source'>[] = [
   },
   {
     id: 26,
-    name: '天生魔心',
+    name: '暗域心智',
     description: '心智偏向暗域路线，训练黑市模块速度极快，但容易过载失控。合规模块训练困难。',
     talent_cost: 5,
     rarity: 4,
@@ -438,7 +438,7 @@ export const LOCAL_TALENTS: Omit<Talent, 'source'>[] = [
   },
   {
     id: 27,
-    name: '装配宗师',
+    name: '装配总监',
     description: '对装配有非凡的天赋，打造的装备品质更高，成功率更高。',
     talent_cost: 9,
     rarity: 4,
@@ -450,7 +450,7 @@ export const LOCAL_TALENTS: Omit<Talent, 'source'>[] = [
   },
   {
     id: 28,
-    name: '孤星命格',
+    name: '黑星命格',
     description: '黑星命格，注定孤独一生。资源感知极低，但在绝境中更容易晋升。',
     talent_cost: -3,
     rarity: 3,
@@ -461,7 +461,7 @@ export const LOCAL_TALENTS: Omit<Talent, 'source'>[] = [
   },
   {
     id: 29,
-    name: '先知梦境',
+    name: '预兆梦境',
     description: '偶尔能在梦中窥见未来的片段，提前规避危险或把握机缘。',
     talent_cost: 8,
     rarity: 5,
@@ -473,7 +473,7 @@ export const LOCAL_TALENTS: Omit<Talent, 'source'>[] = [
   },
   {
     id: 30,
-    name: '长生体质',
+    name: '延寿体质',
     description: '天生寿命悠长，比常人更不易衰老，有更多时间追求专精。',
     talent_cost: 12,
     rarity: 5,
