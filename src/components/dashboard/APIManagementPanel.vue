@@ -115,23 +115,15 @@
       <div class="settings-section">
         <div class="section-header">
           <h4 class="section-title">⚙️ {{ t('功能分配') }}</h4>
-          <span class="mode-badge" :class="isTavernEnvFlag ? 'tavern' : 'web'">
-            {{ isTavernEnvFlag ? '酒馆模式' : '网页模式' }}
-          </span>
+
         </div>
 
         <!-- 模式说明 -->
         <div class="mode-hint" :class="isTavernEnvFlag ? 'tavern' : 'web'">
-          <div class="hint-icon">{{ isTavernEnvFlag ? '🍺' : '🌐' }}</div>
-          <div class="hint-content" v-if="isTavernEnvFlag">
-            <strong>酒馆模式：</strong>主游戏流程（main）<em>永远</em>使用酒馆配置的API。
-            辅助功能如需使用独立API，请在下方分配非"默认API"的配置。
-            <br/>
-            <span class="hint-example">提示：未配置独立API的辅助功能也会走酒馆API，实现请求合并。</span>
-          </div>
-          <div class="hint-content" v-else>
-            <strong>网页模式：</strong>所有功能都通过配置的自定义API调用。
-            可为不同功能分配不同的API，实现灵活调度。
+          <div class="hint-icon">{{'🌐' }}</div>
+          <div class="hint-content" >
+            <strong>所有功能都通过配置的自定义API调用。
+            可为不同功能分配不同的API，实现灵活调度。</strong>
             <br/>
             <span class="hint-example">提示：配置了相同API的功能会自动合并请求，节省调用次数。</span>
           </div>

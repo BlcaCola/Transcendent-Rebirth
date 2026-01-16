@@ -1,6 +1,12 @@
 <template>
   <div class="login-container">
     <div class="login-panel">
+      <div class="login-status">
+        <span class="status-dot" :class="backendReady ? 'online' : 'offline'"></span>
+        <span class="status-text">{{ backendReady ? 'LINK OK' : 'LINK OFF' }}</span>
+        <span class="status-divider"></span>
+        <span class="status-mode">{{ isRegisterMode ? $t('注册模式') : $t('登录模式') }}</span>
+      </div>
       <h2 class="title">{{ isRegisterMode ? $t('注册账号') : $t('登录/注册') }}</h2>
       <p v-if="backendReady" class="subtitle">
         {{ isRegisterMode ? $t('注册新用户名，踏入异世界。') : $t('登录账户，以便同步云端数据。') }}
@@ -440,7 +446,9 @@ const handleLogin = async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, rgba(0, 217, 255, 0.05), rgba(157, 0, 255, 0.03));
+  background: radial-gradient(1200px 600px at 10% 10%, rgba(0, 240, 255, 0.08), transparent 60%),
+    radial-gradient(900px 500px at 90% 20%, rgba(138, 43, 255, 0.08), transparent 55%),
+    linear-gradient(160deg, #05070f 0%, #0b0f1a 45%, #0a1122 100%);
   position: relative;
   overflow: hidden;
 }
@@ -453,50 +461,95 @@ const handleLogin = async () => {
   right: 0;
   bottom: 0;
   background-image:
-    linear-gradient(0deg, transparent 24%, rgba(0, 217, 255, 0.02) 25%, rgba(0, 217, 255, 0.02) 26%, transparent 27%, transparent 74%, rgba(0, 217, 255, 0.02) 75%, rgba(0, 217, 255, 0.02) 76%, transparent 77%, transparent),
-    linear-gradient(90deg, transparent 24%, rgba(0, 217, 255, 0.02) 25%, rgba(0, 217, 255, 0.02) 26%, transparent 27%, transparent 74%, rgba(0, 217, 255, 0.02) 75%, rgba(0, 217, 255, 0.02) 76%, transparent 77%, transparent);
-  background-size: 50px 50px;
+    linear-gradient(0deg, transparent 24%, rgba(0, 240, 255, 0.03) 25%, rgba(0, 240, 255, 0.03) 26%, transparent 27%, transparent 74%, rgba(0, 240, 255, 0.03) 75%, rgba(0, 240, 255, 0.03) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(0, 240, 255, 0.03) 25%, rgba(0, 240, 255, 0.03) 26%, transparent 27%, transparent 74%, rgba(0, 240, 255, 0.03) 75%, rgba(0, 240, 255, 0.03) 76%, transparent 77%, transparent);
+  background-size: 48px 48px;
   pointer-events: none;
   z-index: 0;
+}
+
+.login-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 35%, transparent 65%, rgba(255, 255, 255, 0.03));
+  mix-blend-mode: screen;
+  opacity: 0.35;
+  pointer-events: none;
 }
 
 .login-panel {
   width: 100%;
   max-width: 400px;
   padding: 2.5rem;
-  background: linear-gradient(135deg, rgba(15, 21, 53, 0.95), rgba(10, 14, 39, 0.95));
-  border: 2px solid var(--tech-primary);
-  border-radius: 4px;
+  background: linear-gradient(135deg, rgba(8, 12, 22, 0.96), rgba(10, 14, 28, 0.92));
+  border: 1px solid rgba(0, 240, 255, 0.5);
+  border-radius: 10px;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 25px 50px rgba(0, 217, 255, 0.2), inset 0 0 40px rgba(0, 217, 255, 0.1);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), 0 0 30px rgba(0, 240, 255, 0.25);
   position: relative;
   z-index: 1;
+  clip-path: polygon(0 0, 96% 0, 100% 8%, 100% 100%, 4% 100%, 0 92%);
 }
 
 .login-panel::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--tech-primary), transparent);
+  inset: 0;
+  border: 1px solid rgba(138, 43, 255, 0.4);
+  border-radius: 10px;
+  pointer-events: none;
+  clip-path: polygon(0 0, 96% 0, 100% 8%, 100% 100%, 4% 100%, 0 92%);
+}
+
+.login-status {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(0, 240, 255, 0.75);
+  margin-bottom: 1.25rem;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff2d6f;
+  box-shadow: 0 0 10px rgba(255, 45, 111, 0.8);
+}
+
+.status-dot.online {
+  background: #00f0ff;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.9);
+}
+
+.status-divider {
+  width: 1px;
+  height: 12px;
+  background: rgba(0, 240, 255, 0.3);
+}
+
+.status-mode {
+  color: rgba(255, 122, 0, 0.85);
 }
 
 .title {
   text-align: center;
   font-family: var(--font-family-serif);
-  font-size: 2rem;
-  color: var(--tech-primary);
+  font-size: 1.9rem;
+  color: #00f0ff;
   margin-top: 0;
   margin-bottom: 0.5rem;
-  text-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+  text-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
 }
 
 .subtitle {
   text-align: center;
-  color: rgba(0, 217, 255, 0.7);
+  color: rgba(138, 43, 255, 0.7);
   margin-bottom: 2rem;
 }
 
@@ -508,17 +561,17 @@ const handleLogin = async () => {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
-  color: var(--tech-primary);
+  color: rgba(0, 240, 255, 0.9);
   font-size: 0.9rem;
 }
 
 .form-group input {
   width: 100%;
   padding: 0.8rem 1rem;
-  background: linear-gradient(135deg, rgba(10, 14, 39, 0.6), rgba(15, 21, 53, 0.6));
-  border: 1px solid var(--tech-border);
-  border-radius: 4px;
-  color: var(--tech-primary);
+  background: linear-gradient(135deg, rgba(6, 9, 18, 0.8), rgba(12, 16, 32, 0.85));
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  border-radius: 6px;
+  color: #00f0ff;
   font-size: 1rem;
   box-sizing: border-box;
   transition: all 0.3s ease;
@@ -530,9 +583,9 @@ const handleLogin = async () => {
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--tech-primary);
-  box-shadow: 0 0 20px rgba(0, 217, 255, 0.3), inset 0 0 10px rgba(0, 217, 255, 0.1);
-  background: linear-gradient(135deg, rgba(10, 14, 39, 0.8), rgba(15, 21, 53, 0.8));
+  border-color: rgba(0, 240, 255, 0.9);
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.35), inset 0 0 12px rgba(0, 240, 255, 0.15);
+  background: linear-gradient(135deg, rgba(6, 9, 18, 0.95), rgba(14, 18, 38, 0.95));
 }
 
 .email-input-row {
@@ -549,14 +602,14 @@ const handleLogin = async () => {
   white-space: nowrap;
   flex-shrink: 0;
   min-width: 100px;
-  border: 2px solid var(--tech-primary);
-  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(157, 0, 255, 0.1));
-  color: var(--tech-primary);
-  border-radius: 4px;
+  border: 1px solid rgba(0, 240, 255, 0.8);
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(138, 43, 255, 0.12));
+  color: #00f0ff;
+  border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 0 15px rgba(0, 217, 255, 0.2);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
 }
 
 .btn-small:hover:not(:disabled) {
@@ -657,14 +710,14 @@ const handleLogin = async () => {
 
 .btn {
   padding: 0.8rem 1.5rem;
-  border-radius: 4px;
-  border: 2px solid var(--tech-primary);
-  background: linear-gradient(135deg, rgba(0, 217, 255, 0.15), rgba(157, 0, 255, 0.1));
-  color: var(--tech-primary);
+  border-radius: 6px;
+  border: 1px solid rgba(0, 240, 255, 0.8);
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.18), rgba(138, 43, 255, 0.12));
+  color: #00f0ff;
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: 600;
-  box-shadow: 0 0 15px rgba(0, 217, 255, 0.2);
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.25);
 }
 
 .btn:hover:not(:disabled) {

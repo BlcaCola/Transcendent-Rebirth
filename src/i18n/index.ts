@@ -37,7 +37,7 @@ const autoTranslateMap: Record<string, string> = {
   '当前版本已封锁联机入口，不影响单机闭关体验': 'Online locked', '已授权': 'Authorized', '未授权': 'Unauthorized',
 
   // === 角色状态 ===
-  '角色状态': 'Character', '修行状态': 'Cultivation', '核心数值': 'Vitals', '气血': 'Qi', '灵气': 'Spiritual',
+  '角色信息': 'Character', '修行状态': 'Cultivation', '核心数值': 'Vitals', '气血': 'Qi', '灵气': 'Spiritual',
   '神识': 'Consciousness', '寿元': 'Lifespan', '境界状态': 'Realm', '境界进度': 'Progress',
   '声望': 'Reputation', '天赋神通': 'Talents', '状态效果': 'Effects', '籍籍无名': 'Unknown',
   '等待仙缘，引气入体': 'Awaiting fate, drawing qi', '暂无天赋神通': 'No talents yet',
@@ -50,7 +50,7 @@ const autoTranslateMap: Record<string, string> = {
   '名动一方': 'Locally Famous', '声名远播': 'Well-Known', '小有名气': 'Slightly Famous',
 
   // === 左侧栏 ===
-  '游戏功能': 'Functions', '修行管理': 'Cultivation', '背包物品': 'Inventory', '查看道具装备': 'Items',
+  '游戏菜单': 'Functions', '修行管理': 'Cultivation', '背包物品': 'Inventory', '查看道具装备': 'Items',
   '人物详情': 'Character', '查看修为境界': 'View realm', '修炼功法': 'Techniques', '功法修炼技能': 'Methods',
   '三千大道': 'Three Thousand Dao', '修炼万法道途': 'Myriad paths', '红尘俗事': 'Worldly Affairs',
   '人物关系': 'Relationships', '人情世故网络': 'Social network', '宗门信息': 'Sect', '门派势力详情': 'Faction',

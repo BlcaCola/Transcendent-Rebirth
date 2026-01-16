@@ -1,37 +1,36 @@
 <template>
   <div class="game-view">
+    <div class="cyber-backdrop"></div>
+    <div class="cyber-scanlines"></div>
     <!-- 顶部栏 -->
-    <TopBar></TopBar>
+    <TopBar @open-character-info="openRightOverlay"></TopBar>
 
     <!-- 主要内容区域 -->
     <div v-if="isDataReady" class="game-content" :class="{ 'panel-mode': isPanelOpen }">
-      <!-- 左侧功能栏 -->
-      <div class="left-sidebar" :class="{ collapsed: leftSidebarCollapsed }">
-        <div class="sidebar-wrapper">
-          <LeftSidebar />
-        </div>
-      </div>
-
-      <!-- Mobile Overlay -->
-      <div
-        v-if="isMobile && (!leftSidebarCollapsed || !rightSidebarCollapsed)"
-        class="mobile-sidebar-overlay"
-        @click="closeSidebars"
-      ></div>
-
-      <!-- 左侧收缩按钮 -->
-      <button
-        class="collapse-btn left"
-        :class="{ collapsed: leftSidebarCollapsed }"
-        @click="leftSidebarCollapsed = !leftSidebarCollapsed"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline :points="leftSidebarCollapsed ? '9,18 15,12 9,6' : '15,18 9,12 15,6'"/>
-        </svg>
-      </button>
-
       <!-- 主游戏区域 -->
       <div class="main-content">
+        <!-- 左侧菜单全屏覆盖层 -->
+        <div v-if="showLeftMenuOverlay" class="fullscreen-overlay" @click.self="closeLeftOverlay">
+          <div class="fullscreen-shell">
+            <div class="fullscreen-header">
+              <span class="fullscreen-title">{{ $t('游戏菜单') }}</span>
+              <button class="fullscreen-close" @click="closeLeftOverlay">{{ $t('关闭') }}</button>
+            </div>
+            <LeftSidebar :fullscreen="true" />
+          </div>
+        </div>
+
+        <!-- 角色信息全屏覆盖层 -->
+        <div v-if="showRightInfoOverlay" class="fullscreen-overlay" @click.self="closeRightOverlay">
+          <div class="fullscreen-shell">
+            <div class="fullscreen-header">
+              <span class="fullscreen-title">{{ $t('查看角色信息') }}</span>
+              <button class="fullscreen-close" @click="closeRightOverlay">{{ $t('关闭') }}</button>
+            </div>
+            <RightSidebar :fullscreen="true" />
+          </div>
+        </div>
+
         <!-- 功能面板覆盖层 -->
         <div v-if="isPanelOpen" class="panel-overlay">
           <div class="panel-header compact" aria-label="功能面板导航">
@@ -83,29 +82,6 @@
         </div>
       </div>
 
-      <!-- 右侧收缩按钮 -->
-      <button
-        class="collapse-btn right"
-        :class="{ collapsed: rightSidebarCollapsed }"
-        @click="rightSidebarCollapsed = !rightSidebarCollapsed"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline :points="rightSidebarCollapsed ? '15,18 9,12 15,6' : '9,18 15,12 9,6'"/>
-        </svg>
-      </button>
-
-      <!-- 右侧区域: 角色信息栏 -->
-      <div
-        class="right-panel-area"
-        :class="{ collapsed: rightSidebarCollapsed }"
-        v-show="!isPanelOpen"
-      >
-        <div class="sidebar-wrapper">
-          <ErrorBoundary>
-            <RightSidebar />
-          </ErrorBoundary>
-        </div>
-      </div>
     </div>
 
     <!-- 数据未就绪时的提示 -->
@@ -150,7 +126,6 @@ import TopBar from '@/components/dashboard/TopBar.vue'
 import LeftSidebar from '@/components/dashboard/LeftSidebar.vue'
 import RightSidebar from '@/components/dashboard/RightSidebar.vue'
 import CharacterManagement from '@/components/character-creation/CharacterManagement.vue';
-import ErrorBoundary from '@/components/common/ErrorBoundary.vue';
 import SectMigrationModal from '@/components/dashboard/components/SectMigrationModal.vue';
 
 const characterStore = useCharacterStore();
@@ -159,27 +134,23 @@ const uiStore = useUIStore();
 const router = useRouter();
 const route = useRoute();
 
-// 侧边栏收缩状态
-const leftSidebarCollapsed = ref(false);
-const rightSidebarCollapsed = ref(false);
+const showLeftMenuOverlay = ref(false);
+const showRightInfoOverlay = ref(false);
 
-// 移动端适配
-const isMobile = ref(false);
-
-// 检测设备并设置初始状态
-const checkDeviceAndSetup = () => {
-  isMobile.value = window.innerWidth <= 768;
-
-  // 移动端默认收缩侧边栏
-  if (isMobile.value) {
-    leftSidebarCollapsed.value = true;
-    rightSidebarCollapsed.value = true;
-  }
+const openLeftOverlay = () => {
+  showLeftMenuOverlay.value = true;
 };
 
-const closeSidebars = () => {
-  leftSidebarCollapsed.value = true;
-  rightSidebarCollapsed.value = true;
+const closeLeftOverlay = () => {
+  showLeftMenuOverlay.value = false;
+};
+
+const openRightOverlay = () => {
+  showRightInfoOverlay.value = true;
+};
+
+const closeRightOverlay = () => {
+  showRightInfoOverlay.value = false;
 };
 
 const lastMigrationPromptKey = ref<string | null>(null);
@@ -226,11 +197,6 @@ const noDataRequiredRoutes = new Set([
   'Settings', 'Prompts', 'APIManagement'
 ]);
 
-// 右侧相关面板（应该影响右侧收缩按钮）
-const rightPanelRoutes = new Set([
-  'Memory', 'Relationships', 'Cultivation', 'Techniques', 'ThousandDao', 'Settings', 'Save',
-  'Sect', 'SectOverview', 'SectMembers', 'SectLibrary', 'SectContribution'
-]);
 
 type IconComponent = typeof Package;
 
@@ -363,17 +329,21 @@ const applySettings = () => {
 // 组件挂载时应用设置
 onMounted(async () => {
   applySettings();
-  checkDeviceAndSetup();
 
-  // 监听窗口大小变化
-  window.addEventListener('resize', checkDeviceAndSetup);
+  panelBus.on('open-left-menu', openLeftOverlay);
+  panelBus.on('close-left-menu', closeLeftOverlay);
+  panelBus.on('open-right-info', openRightOverlay);
+  panelBus.on('close-right-info', closeRightOverlay);
 
   // 🔴 启动游戏内定期授权验证（每30分钟验证一次）
 });
 
 // 组件卸载时清理
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', checkDeviceAndSetup);
+  panelBus.off('open-left-menu', openLeftOverlay);
+  panelBus.off('close-left-menu', closeLeftOverlay);
+  panelBus.off('open-right-info', openRightOverlay);
+  panelBus.off('close-right-info', closeRightOverlay);
 
   // 🔴 停止定期授权验证
 });
@@ -391,35 +361,45 @@ watch(
 );
 
 // 监听面板状态变化，智能调整布局
-watch(isPanelOpen, (isOpen) => {
-  if (isOpen) {
-    const currentRoute = String(route.name);
-
-    // 移动端：打开任何面板时都自动收起左侧边栏
-    if (isMobile.value) {
-      leftSidebarCollapsed.value = true;
-    }
-
-    // 只有右侧相关面板才收起右侧边栏
-    if (rightPanelRoutes.has(currentRoute)) {
-      rightSidebarCollapsed.value = true;
-    }
-    // 左侧功能面板不影响侧边栏状态
-  }
-  // 注意：我们不在面板关闭时自动展开侧边栏，让用户保持之前的偏好
-});
 </script>
 
 <style scoped>
 .game-view {
   width: 100%;
   height: 100%;
-  background: var(--color-background);
+  background: #05070f;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 14px;
   display: grid;
   grid-template-rows: auto 1fr;
   overflow: hidden;
+  position: relative;
+}
+
+.cyber-backdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(1200px 600px at 10% 10%, rgba(0, 240, 255, 0.08), transparent 60%),
+    radial-gradient(900px 500px at 90% 20%, rgba(138, 43, 255, 0.08), transparent 55%),
+    linear-gradient(160deg, #05070f 0%, #0b0f1a 45%, #0a1122 100%);
+  z-index: 0;
+}
+
+.cyber-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.03),
+    rgba(255, 255, 255, 0.03) 1px,
+    transparent 1px,
+    transparent 5px
+  );
+  opacity: 0.35;
+  mix-blend-mode: screen;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .game-content {
@@ -430,52 +410,14 @@ watch(isPanelOpen, (isOpen) => {
   padding: 0;
   position: relative;
   min-height: 0;
-  background: var(--color-background);
+  background: transparent;
+  z-index: 2;
 }
 
-.left-sidebar {
-  width: 260px;
-  min-width: 260px;
-  background: var(--color-surface);
-  transition: all 0.3s ease;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  border-right: 1px solid var(--color-border);
-  flex-shrink: 0;
-}
-
-.left-sidebar.collapsed {
-  width: 0;
-  min-width: 0;
-  overflow: hidden;
-}
-
-.right-panel-area {
-  width: 280px;
-  background: var(--color-surface);
-  transition: all 0.3s ease;
-  border-left: 1px solid var(--color-border);
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.right-panel-area.collapsed {
-  width: 0;
-  overflow: hidden;
-}
-
-.sidebar-wrapper {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
 
 .main-content {
   flex: 1;
-  background: var(--color-background);
+  background: transparent;
   margin: 0;
   display: flex;
   flex-direction: column;
@@ -483,63 +425,6 @@ watch(isPanelOpen, (isOpen) => {
   position: relative;
 }
 
-/* 收缩按钮样式 */
-.collapse-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 24px;
-  height: 48px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 20;
-  color: var(--color-text-secondary);
-}
-
-.collapse-btn:hover {
-  background: var(--color-surface-light);
-  color: var(--color-text);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* 左侧收缩按钮 */
-.collapse-btn.left {
-  left: 260px;
-  border-radius: 0 8px 8px 0;
-  transition: left 0.3s ease, background 0.2s ease;
-}
-
-/* 左侧栏收缩时，按钮移动到最左侧 */
-.collapse-btn.left.collapsed {
-  left: 0;
-}
-
-/* 右侧收缩按钮 */
-.collapse-btn.right {
-  right: 280px;
-  border-radius: 8px 0 0 8px;
-  transition: right 0.3s ease, background 0.2s ease;
-}
-
-/* 右侧栏收缩时，按钮移动到最右侧 */
-.right-panel-area.collapsed ~ .collapse-btn.right,
-.collapse-btn.right.collapsed {
-  right: 0;
-}
-
-/* 面板覆盖模式样式 - 只隐藏右侧栏，保留左侧栏 */
-.game-content.panel-mode .right-panel-area {
-  display: none;
-}
-
-.game-content.panel-mode .collapse-btn.right {
-  display: none;
-}
 
 .panel-overlay {
   position: absolute;
@@ -549,11 +434,12 @@ watch(isPanelOpen, (isOpen) => {
   bottom: 0;
   width: 100%;
   height: 100%;
-  background: var(--color-background);
+  background: rgba(5, 7, 15, 0.9);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   z-index: 100;
+  backdrop-filter: blur(12px);
 }
 
 .panel-header { position: relative; display: flex; align-items: center; gap: 8px; padding: 6px 12px; min-height: 30px; height: auto; background: transparent; border-bottom: none; flex-shrink: 0; }
@@ -588,6 +474,54 @@ watch(isPanelOpen, (isOpen) => {
 
 .panel-header.compact { padding: 6px 10px; position: sticky; top: 0; z-index: 2; background: var(--color-background); }
 .panel-content.compact { padding: 6px 10px 10px 10px; }
+
+.fullscreen-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 7, 15, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  backdrop-filter: blur(10px);
+}
+
+.fullscreen-shell {
+  width: min(1100px, 92vw);
+  height: min(90vh, 860px);
+  background: rgba(6, 10, 20, 0.95);
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.fullscreen-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+  background: rgba(0, 240, 255, 0.08);
+}
+
+.fullscreen-title {
+  color: #00f0ff;
+  font-size: 0.9rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.fullscreen-close {
+  border: 1px solid rgba(255, 45, 111, 0.6);
+  background: rgba(255, 45, 111, 0.12);
+  color: #ff2d6f;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
 
 /* 数据加载提示样式 */
 .data-loading {
@@ -751,129 +685,6 @@ watch(isPanelOpen, (isOpen) => {
     font-size: 13px;
   }
 
-  /* 移动端侧边栏浮动显示，不占用主内容空间 */
-  .left-sidebar {
-    position: fixed;
-    top: 0; /* 从顶部开始 */
-    left: 0;
-    bottom: 0;
-    height: 100%;
-    width: 280px;
-    z-index: 1000;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
-    overflow: hidden;
-    background: var(--color-surface); /* 和右侧栏一样的背景色 */
-  }
-
-  .left-sidebar:not(.collapsed) {
-    transform: translateX(0);
-  }
-
-  .left-sidebar .sidebar-wrapper {
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 100%;
-    -webkit-overflow-scrolling: touch;
-    box-sizing: border-box;
-  }
-
-  .right-panel-area {
-    position: fixed;
-    top: 0; /* 从顶部开始 */
-    right: 0;
-    bottom: 0;
-    height: 100%;
-    width: 260px;
-    z-index: 1000;
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
-    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
-    overflow: hidden;
-    background: var(--color-surface); /* 和左侧栏一样的背景色 */
-  }
-
-  .right-panel-area:not(.collapsed) {
-    transform: translateX(0);
-  }
-
-  .right-panel-area .sidebar-wrapper {
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 100%;
-    -webkit-overflow-scrolling: touch;
-    box-sizing: border-box;
-  }
-
-  /* 移动端背景遮罩层 */
-  .mobile-sidebar-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999; /* Below sidebars (1000) but above everything else */
-  }
-
-  /* 移动端收缩按钮样式 - 参考电脑版样式 */
-  .collapse-btn {
-    position: fixed;
-    z-index: 1001;
-    width: 20px;
-    height: 44px;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    color: var(--color-text-secondary);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    touch-action: manipulation;
-    top: 50%;
-    transform: translateY(-50%);
-    transition: all 0.3s ease;
-  }
-
-  .collapse-btn svg {
-    width: 14px;
-    height: 14px;
-  }
-
-  .collapse-btn:active {
-    background: var(--color-surface-light);
-    color: var(--color-text);
-  }
-
-  /* 左侧按钮：默认在左边缘，跟随侧边栏一起移动 */
-  .collapse-btn.left {
-    left: 0;
-    border-radius: 0 8px 8px 0;
-    border-left: none;
-    transform: translateX(0) translateY(-50%);
-    transition: transform 0.3s ease, background 0.2s ease;
-  }
-
-  /* 左侧栏展开时，按钮跟随移动 260px */
-  .left-sidebar:not(.collapsed) ~ .collapse-btn.left {
-    transform: translateX(260px) translateY(-50%);
-  }
-
-  /* 右侧按钮：默认在右边缘，跟随侧边栏一起移动 */
-  .collapse-btn.right {
-    right: 0;
-    border-radius: 8px 0 0 8px;
-    border-right: none;
-    transform: translateX(0) translateY(-50%);
-    transition: transform 0.3s ease, background 0.2s ease;
-  }
-
-  /* 右侧栏展开时（按钮没有 collapsed 类），按钮跟随移动 -260px */
-  .collapse-btn.right:not(.collapsed) {
-    transform: translateX(-260px) translateY(-50%);
-  }
-
   /* 主内容区域占满屏幕 */
   .main-content {
     width: 100%;
@@ -1012,27 +823,8 @@ watch(isPanelOpen, (isOpen) => {
   background: rgb(30, 41, 59);
 }
 
-[data-theme="dark"] .left-sidebar,
-[data-theme="dark"] .right-panel-area {
-  background: rgba(30, 41, 59, 0.95);
-  border-color: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-}
-
 [data-theme="dark"] .main-content {
   background: rgb(30, 41, 59);
-}
-
-[data-theme="dark"] .collapse-btn {
-  background: rgba(30, 41, 59, 0.9);
-  border-color: rgba(255, 255, 255, 0.1);
-  color: #94a3b8;
-}
-
-[data-theme="dark"] .collapse-btn:hover {
-  background: rgba(51, 65, 85, 0.95);
-  color: #f1f5f9;
-  border-color: rgba(147, 197, 253, 0.3);
 }
 
 [data-theme="dark"] .panel-overlay {
@@ -1134,24 +926,6 @@ watch(isPanelOpen, (isOpen) => {
 @media (max-width: 480px) {
   .game-view {
     font-size: 12px;
-  }
-
-  .left-sidebar {
-    width: 260px;
-  }
-
-  /* 左侧栏展开时，按钮跟随移动 260px（匹配侧边栏宽度） */
-  .left-sidebar:not(.collapsed) ~ .collapse-btn.left {
-    transform: translateX(260px) translateY(-50%);
-  }
-
-  .right-panel-area {
-    width: 220px;
-  }
-
-  /* 右侧栏展开时，按钮跟随移动 -220px（匹配侧边栏宽度） */
-  .collapse-btn.right:not(.collapsed) {
-    transform: translateX(-220px) translateY(-50%);
   }
 
   /* 小屏幕上面板全屏显示 */

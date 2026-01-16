@@ -1,205 +1,104 @@
 ﻿
 <template>
-  <div class="right-sidebar">
-    <div class="sidebar-header">
-      <h3 class="sidebar-title">
-        <User :size="18" class="title-icon" />
-        <span>{{ t('角色状态') }}</span>
-      </h3>
+  <div :class="['right-sidebar', { fullscreen: props.fullscreen }]">
+    <div class="profile-header" v-if="isDataLoaded && characterInfo">
+      <div class="profile-id">
+        <span class="profile-name">{{ characterInfo?.名字 || t('无名者') }}</span>
+        <span class="profile-realm">{{ formatRealmDisplay(playerStatus?.境界?.名称) }}</span>
+      </div>
+      <div class="profile-meta">
+        <span class="meta-item">{{ t('寿元') }}：{{ currentAge }}</span>
+        <span class="meta-item">{{ t('声望') }}：{{ getReputationDisplay() }}</span>
+      </div>
     </div>
 
-    <div v-if="isDataLoaded && characterInfo" class="sidebar-content">
-      <!-- 核心数值 -->
-      <div class="vitals-section">
-        <h3 class="section-title">
-          <Heart :size="14" class="section-icon" />
-          <span>{{ t('核心数值') }}</span>
-        </h3>
-        <div class="vitals-list">
-          <div class="vital-item">
-            <div class="vital-info">
-              <span class="vital-name">
-                <Droplet :size="12" class="vital-icon blood" />
-                <span>{{ t('气血') }}</span>
-              </span>
-              <span class="vital-text">{{ playerStatus?.气血?.当前 }} / {{ playerStatus?.气血?.上限 }}</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill health" :style="{ width: getVitalPercent('气血') + '%' }"></div>
-            </div>
+    <div v-if="isDataLoaded && characterInfo" class="info-grid">
+      <div class="info-card">
+        <div class="card-title">{{ t('生命体征') }}</div>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <span class="stat-label">{{ t('气血') }}</span>
+            <span class="stat-value">{{ playerStatus?.气血?.当前 }} / {{ playerStatus?.气血?.上限 }}</span>
+            <div class="stat-bar"><span class="stat-fill health" :style="{ width: getVitalPercent('气血') + '%' }"></span></div>
           </div>
-
-          <div class="vital-item">
-            <div class="vital-info">
-              <span class="vital-name">
-                <Sparkles :size="12" class="vital-icon mana" />
-                <span>{{ t('灵气') }}</span>
-              </span>
-              <span class="vital-text">{{ playerStatus?.灵气?.当前 }} / {{ playerStatus?.灵气?.上限 }}</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill mana" :style="{ width: getVitalPercent('灵气') + '%' }"></div>
-            </div>
+          <div class="stat-item">
+            <span class="stat-label">{{ t('灵气') }}</span>
+            <span class="stat-value">{{ playerStatus?.灵气?.当前 }} / {{ playerStatus?.灵气?.上限 }}</span>
+            <div class="stat-bar"><span class="stat-fill mana" :style="{ width: getVitalPercent('灵气') + '%' }"></span></div>
           </div>
-
-          <div class="vital-item">
-            <div class="vital-info">
-              <span class="vital-name">
-                <Brain :size="12" class="vital-icon spirit" />
-                <span>{{ t('神识') }}</span>
-              </span>
-              <span class="vital-text">{{ playerStatus?.神识?.当前 }} / {{ playerStatus?.神识?.上限 }}</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill spirit" :style="{ width: getVitalPercent('神识') + '%' }"></div>
-            </div>
+          <div class="stat-item">
+            <span class="stat-label">{{ t('神识') }}</span>
+            <span class="stat-value">{{ playerStatus?.神识?.当前 }} / {{ playerStatus?.神识?.上限 }}</span>
+            <div class="stat-bar"><span class="stat-fill spirit" :style="{ width: getVitalPercent('神识') + '%' }"></span></div>
           </div>
-
-          <div class="vital-item">
-            <div class="vital-info">
-              <span class="vital-name">
-                <Clock :size="12" class="vital-icon lifespan" />
-                <span>{{ t('寿元') }}</span>
-              </span>
-              <span class="vital-text">{{ currentAge }} / {{ playerStatus?.寿命?.上限 }}</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill lifespan" :style="{ width: getLifespanPercent() + '%' }"></div>
-            </div>
+          <div class="stat-item">
+            <span class="stat-label">{{ t('寿元') }}</span>
+            <span class="stat-value">{{ currentAge }} / {{ playerStatus?.寿命?.上限 }}</span>
+            <div class="stat-bar"><span class="stat-fill lifespan" :style="{ width: getLifespanPercent() + '%' }"></span></div>
           </div>
         </div>
       </div>
 
-      <!-- 境界状态 -->
-      <div class="cultivation-section">
-        <h3 class="section-title">
-          <Star :size="14" class="section-icon" />
-          <span>{{ t('境界状态') }}</span>
-        </h3>
-        <div class="realm-display">
-          <div class="realm-info">
-            <span class="realm-name">{{ formatRealmDisplay(playerStatus?.境界?.名称) }}</span>
-            <span v-if="playerStatus?.境界?.突破描述" class="realm-breakthrough">{{ playerStatus?.境界?.突破描述 }}</span>
-          </div>
-          <!-- 凡人境界显示等待引气入体 -->
-          <div v-if="playerStatus?.境界?.名称 === '凡人'" class="realm-mortal">
-            <span class="mortal-text">{{ t('等待仙缘，引气入体') }}</span>
-          </div>
-          <!-- 修炼境界显示进度条 -->
+      <div class="info-card">
+        <div class="card-title">{{ t('修为进度') }}</div>
+        <div class="realm-block">
+          <span class="realm-name">{{ formatRealmDisplay(playerStatus?.境界?.名称) }}</span>
+          <span v-if="playerStatus?.境界?.突破描述" class="realm-desc">{{ playerStatus?.境界?.突破描述 }}</span>
+          <div v-if="playerStatus?.境界?.名称 === '凡人'" class="realm-hint">{{ t('等待仙缘，引气入体') }}</div>
           <div v-else class="realm-progress">
-            <div class="progress-bar">
-              <div
-                class="progress-fill cultivation"
-                :class="getRealmProgressClass()"
-                :style="{ width: realmProgressPercent + '%' }"
-              ></div>
-            </div>
-            <span class="progress-text" :class="getRealmProgressClass()">
-              {{ realmProgressPercent }}%
-              <span v-if="realmProgressPercent >= 100" class="breakthrough-hint">可突破!</span>
-              <span v-else-if="realmProgressPercent >= 90" class="sprint-hint">可冲刺</span>
-            </span>
-          </div>
-        </div>
-
-        <!-- 声望显示 -->
-        <div class="reputation-display">
-          <div class="reputation-item">
-            <div class="reputation-info">
-              <span class="reputation-label">
-                <Star :size="12" class="vital-icon reputation" />
-                <span>{{ t('声望') }}</span>
-              </span>
-              <span class="reputation-value" :class="getReputationClass()">
-                {{ getReputationDisplay() }}
-              </span>
-            </div>
+            <div class="stat-bar"><span class="stat-fill cultivation" :class="getRealmProgressClass()" :style="{ width: realmProgressPercent + '%' }"></span></div>
+            <span class="realm-percent" :class="getRealmProgressClass()">{{ realmProgressPercent }}%</span>
           </div>
         </div>
       </div>
 
-
-      <!-- 天赋神通 -->
-      <div class="collapsible-section talents-section">
-        <div class="section-header" @click="talentsCollapsed = !talentsCollapsed">
-          <h3 class="section-title">
-            <Star :size="14" class="section-icon gold" />
-            <span>{{ t('天赋神通') }}</span>
-          </h3>
-          <button class="collapse-toggle" :class="{ 'collapsed': talentsCollapsed }">
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M8 10l4-4H4l4 4z"/>
-            </svg>
-          </button>
-        </div>
-        <div v-show="!talentsCollapsed" class="talents-list">
-          <div
+      <div class="info-card">
+        <div class="card-title">{{ t('天赋神通') }}</div>
+        <div class="chip-grid">
+          <button
             v-for="talent in characterInfo.天赋"
             :key="typeof talent === 'string' ? talent : talent.name"
-            class="talent-card clickable"
+            class="chip"
             @click="showTalentDetail(typeof talent === 'string' ? talent : talent.name)"
           >
-            <div class="talent-header">
-              <span class="talent-name">{{ typeof talent === 'string' ? talent : talent.name }}</span>
-            </div>
-          </div>
-
-          <!-- 空状态显示 -->
-          <div v-if="!characterInfo.天赋 || characterInfo.天赋.length === 0" class="empty-talents">
-            <div class="empty-text">{{ t('暂无天赋神通') }}</div>
+            {{ typeof talent === 'string' ? talent : talent.name }}
+          </button>
+          <div v-if="!characterInfo.天赋 || characterInfo.天赋.length === 0" class="empty-text">
+            {{ t('暂无天赋神通') }}
           </div>
         </div>
       </div>
 
-      <!-- 状态效果 -->
-      <div class="collapsible-section status-section">
-        <div class="section-header" @click="statusCollapsed = !statusCollapsed">
-          <h3 class="section-title">
-            <Zap :size="14" class="section-icon" />
-            <span>{{ t('状态效果') }}</span>
-          </h3>
-          <button class="collapse-toggle" :class="{ 'collapsed': statusCollapsed }">
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M8 10l4-4H4l4 4z"/>
-            </svg>
+      <div class="info-card">
+        <div class="card-title">{{ t('状态效果') }}</div>
+        <div v-if="statusEffects.length === 0" class="empty-text">{{ t('清净无为') }}</div>
+        <div v-else class="status-grid">
+          <button
+            v-for="(effect, index) in statusEffects"
+            :key="effect.状态名称 || `effect-${index}`"
+            class="status-card"
+            :class="[(String(effect.类型 || '').toLowerCase() === 'buff') ? 'buff' : 'debuff']"
+            @click="showStatusDetail(effect)"
+          >
+            <span class="status-name">{{ effect.状态名称 || '未知状态' }}</span>
+            <span class="status-desc" v-if="effect.状态描述">{{ effect.状态描述 }}</span>
+            <span class="status-meta" v-if="effect.强度">{{ t('强度') }} {{ effect.强度 }}</span>
+            <span class="status-meta" v-if="formatTimeDisplay(effect.时间)">{{ formatTimeDisplay(effect.时间) }}</span>
           </button>
-        </div>
-        <div v-show="!statusCollapsed" class="status-effects">
-          <div v-if="statusEffects.length === 0" class="empty-status">
-            <span class="empty-text">{{ t('清净无为') }}</span>
-          </div>
-          <div v-else class="status-tags-container">
-            <div
-              v-for="(effect, index) in statusEffects"
-              :key="effect.状态名称 || `effect-${index}`"
-              class="status-tag clickable"
-              :class="[(String(effect.类型 || '').toLowerCase() === 'buff') ? 'buff' : 'debuff']"
-              @click="showStatusDetail(effect)"
-              :title="`${effect.状态名称 || '未知状态'}${effect.状态描述 ? `\n${effect.状态描述}` : ''}${effect.强度 ? `\n强度: ${effect.强度}` : ''}${formatTimeDisplay(effect.时间) ? `\n${formatTimeDisplay(effect.时间)}` : ''}`"
-            >
-              <span class="tag-icon">{{ String(effect.类型 || '').toLowerCase() === 'buff' ? t('增') : t('减') }}</span>
-              <span class="tag-name">{{ effect.状态名称 || '未知状态' }}</span>
-              <span v-if="effect.强度" class="tag-intensity">{{ effect.强度 }}</span>
-              <span v-if="formatTimeDisplay(effect.时间)" class="tag-time">{{ formatTimeDisplay(effect.时间) }}</span>
-            </div>
-          </div>
         </div>
       </div>
     </div>
 
-    <!-- 无角色数据 -->
     <div v-else class="no-character">
       <div class="no-char-text">{{ t('请选择角色开启修仙之旅') }}</div>
     </div>
 
-    <!-- 详情模态框 -->
     <DetailModal />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { User, Sparkles, Heart, Droplet, Brain, Clock, Star, Zap } from 'lucide-vue-next';
+import { computed } from 'vue';
 import { LOCAL_TALENTS } from '@/data/creationData';
 import DetailModal from '@/components/common/DetailModal.vue';
 import StatusDetailCard from './components/StatusDetailCard.vue';
@@ -211,6 +110,7 @@ import { calculateAgeFromBirthdate } from '@/utils/lifespanCalculator';
 import { useI18n } from '@/i18n';
 
 const { t } = useI18n();
+const props = defineProps<{ fullscreen?: boolean }>();
 
 
 const gameStateStore = useGameStateStore();
@@ -242,10 +142,6 @@ const currentAge = computed(() => {
   // 兜底：返回寿命当前值
   return gameStateStore.attributes?.寿命?.当前 || 0;
 });
-
-// 收缩状态
-const talentsCollapsed = ref(false);
-const statusCollapsed = ref(false);
 
 // 模态框状态（通过 uiStore 管理，不再需要本地状态）
 
@@ -427,933 +323,150 @@ const getReputationClass = (): string => {
 .right-sidebar {
   width: 100%;
   height: 100%;
-  padding: 16px;
+  padding: 18px;
   box-sizing: border-box;
   font-family: var(--font-family-sans-serif);
   display: flex;
   flex-direction: column;
-  background: var(--color-surface);
+  gap: 14px;
+  background: rgba(6, 10, 20, 0.96);
+  color: #e2e8f0;
 }
 
-.sidebar-header {
-  margin-bottom: 16px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid var(--color-border);
-  background: transparent;
+.right-sidebar.fullscreen {
+  height: 100%;
+  overflow: hidden;
 }
 
-.sidebar-title {
-  margin: 0;
+.profile-header {
+  padding: 12px 14px;
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 12px;
+  background: rgba(0, 240, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profile-id {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-text);
-  text-align: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-.title-icon {
-  color: var(--color-primary);
-  flex-shrink: 0;
-}
-.title-badge {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 9999px;
-  background: var(--color-primary);
-  color: #fff;
-  font-weight: 600;
-  font-size: 12px;
-  letter-spacing: 0.2px;
+.profile-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #00f0ff;
 }
 
-/* 移除深色主题硬编码，使用CSS变量自动适配 */
+.profile-realm {
+  font-size: 0.8rem;
+  color: rgba(138, 43, 255, 0.9);
+}
 
-.sidebar-content {
+.profile-meta {
+  display: flex;
+  gap: 14px;
+  font-size: 0.75rem;
+  color: rgba(226, 232, 240, 0.7);
+}
+
+.info-grid {
   flex: 1;
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
-}
-
-.sidebar-content::-webkit-scrollbar {
-  width: 4px;
-}
-
-.sidebar-content::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.sidebar-content::-webkit-scrollbar-thumb {
-  background: transparent;
-  border-radius: 2px;
-}
-
-[data-theme="dark"] .sidebar-content::-webkit-scrollbar-thumb {
-  background: transparent;
-}
-
-/* 角色基本信息样式 */
-.character-info-section {
-  margin-bottom: 16px;
-  padding: 12px;
-  background: var(--color-surface-light);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-}
-
-.character-basic {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  grid-template-columns: 1fr;
+  gap: 12px;
 }
 
-.character-basic .detail-item {
-  background: var(--color-surface-hover);
-  border-radius: 6px;
-  padding: 8px;
-  font-size: 0.75rem;
-}
-
-.character-basic .detail-label {
-  color: var(--color-text-secondary);
-  font-weight: 500;
-}
-
-.character-basic .detail-value {
-  color: var(--color-text);
-  font-weight: 600;
-}
-
-/* 角色状态区域样式 */
-.character-state-section {
-  margin-bottom: 16px;
-  padding: 12px;
-  background: var(--color-surface-light);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-}
-
-.character-states {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.state-item {
-  background: var(--color-surface-hover);
-  border-radius: 6px;
-  padding: 8px;
-}
-
-.state-label {
-  font-size: 0.75rem;
-  color: var(--color-text-secondary);
-  font-weight: 500;
-  margin-bottom: 4px;
-  display: block;
-}
-
-.state-content {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.state-text {
-  font-size: 0.7rem;
-  color: var(--color-text-muted);
-  text-align: center;
-}
-
-.progress-fill.cultivation {
-  background: linear-gradient(90deg, #8b5cf6, #a78bfa);
-}
-
-/* 境界进度条 - 冲刺状态（90-99%）黄色 */
-.progress-fill.cultivation.realm-sprint {
-  background: linear-gradient(90deg, #f59e0b, #fbbf24);
-  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
-}
-
-/* 境界进度条 - 突破状态（100%）红色 */
-.progress-fill.cultivation.realm-breakthrough {
-  background: linear-gradient(90deg, #ef4444, #f87171);
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
-  animation: breakthrough-pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes breakthrough-pulse {
-  0%, 100% {
-    box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 16px rgba(239, 68, 68, 0.7);
-  }
-}
-
-/* 进度文本颜色变化 */
-.progress-text.realm-sprint {
-  color: #f59e0b;
-  font-weight: 600;
-}
-
-.progress-text.realm-breakthrough {
-  color: #ef4444;
-  font-weight: 700;
-}
-
-/* 突破和冲刺提示 */
-.breakthrough-hint {
-  font-size: 0.6rem;
-  color: #ef4444;
-  font-weight: 700;
-  margin-left: 4px;
-  animation: hint-blink 1s ease-in-out infinite;
-}
-
-.sprint-hint {
-  font-size: 0.6rem;
-  color: #f59e0b;
-  font-weight: 600;
-  margin-left: 4px;
-}
-
-@keyframes hint-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-/* 收缩区域通用样式 */
-.collapsible-section {
-  margin-bottom: 16px;
-  padding: 0;
-  background: var(--color-surface-light);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  cursor: pointer;
-  transition: background 0.2s ease;
-  border-radius: 8px 8px 0 0;
-}
-
-.section-header:hover {
-  background: var(--color-surface-hover);
-}
-
-.collapse-toggle {
-  background: none;
-  border: none;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.collapse-toggle:hover {
-  color: var(--color-text);
-  background: var(--color-surface-hover);
-}
-
-.collapse-toggle svg {
-  transform: rotate(0deg);
-  transition: transform 0.2s ease;
-}
-
-.collapse-toggle.collapsed svg {
-  transform: rotate(-90deg);
-}
-
-.status-details {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.current-status {
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid var(--color-border);
-}
-
-.current-status .status-details {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 0;
-}
-
-.detail-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  padding: 6px 8px;
-  background: var(--color-surface-hover);
-  border-radius: 4px;
-  font-size: 0.75rem;
-}
-
-.detail-label {
-  color: var(--color-text-secondary);
-  font-weight: 500;
-}
-
-.detail-value {
-  color: var(--color-text);
-  font-weight: 600;
-}
-
-/* 六维灵根区域样式 */
-.attributes-section {
-  margin-bottom: 16px;
-  padding: 12px;
-  background: var(--color-surface-light);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-}
-
-.attributes-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.attribute-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  transition: all 0.2s ease;
-}
-
-.attribute-item:hover {
-  background: var(--color-surface-hover);
-  border-color: var(--color-border-hover);
-}
-
-.attr-info {
-  flex: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.attr-name {
-  font-size: 0.75rem;
-  color: var(--color-text-secondary);
-  font-weight: 500;
-}
-
-.attr-value {
-  font-size: 0.85rem;
-  color: var(--color-text);
-  font-weight: 700;
-}
-
-.attr-quality {
-  font-size: 0.65rem;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-weight: 600;
-  border: 1px solid;
-}
-
-/* 属性品质颜色 */
-.quality-purple .attr-quality {
-  background: #8b5cf6;
-  color: white;
-  border-color: #8b5cf6;
-}
-
-.quality-orange .attr-quality {
-  background: #f59e0b;
-  color: white;
-  border-color: #f59e0b;
-}
-
-.quality-blue .attr-quality {
-  background: #3b82f6;
-  color: white;
-  border-color: #3b82f6;
-}
-
-.quality-green .attr-quality {
-  background: #10b981;
-  color: white;
-  border-color: #10b981;
-}
-
-.quality-gray .attr-quality {
-  background: #6b7280;
-  color: white;
-  border-color: #6b7280;
-}
-
-/* 灵根和声望信息 */
-.spiritual-info {
-  border-top: 1px solid var(--color-border);
-  padding-top: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.info-row {
-  display: flex;
-}
-
-.info-item {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 8px;
-  background: var(--color-surface);
-  border-radius: 4px;
-  font-size: 0.75rem;
-}
-
-.info-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--color-text-secondary);
-  font-weight: 500;
-}
-
-.info-icon {
-  flex-shrink: 0;
-}
-
-.info-icon.spiritual {
-  color: var(--color-accent);
-}
-
-.info-icon.reputation {
-  color: var(--color-warning);
-}
-
-.info-value {
-  color: var(--color-text);
-  font-weight: 600;
-}
-
-/* 图标颜色 */
-.section-icon.attributes {
-  color: var(--color-accent);
-}
-
-/* 通用区块样式 */
-.ai-chat-section,
-.info-section,
-.cultivation-section,
-.vitals-section,
-.attributes-section,
-.location-section,
-.wealth-section {
-  margin-bottom: 16px;
-  padding: 12px;
-  background: var(--color-surface-light);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-}
-
-/* 天赋神通特定样式 */
-.talents-list {
-  padding: 0 16px 16px;
+.info-card {
+  background: rgba(8, 12, 22, 0.9);
+  border: 1px solid rgba(0, 240, 255, 0.18);
+  border-radius: 12px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-/* 空状态样式 */
-.empty-talents,
-.empty-status {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  text-align: center;
-  gap: 0.5rem;
-}
-
-.empty-text {
-  color: var(--color-text-secondary);
-  font-size: 0.95rem;
-  font-weight: 500;
-  margin-bottom: 0.25rem;
-}
-
-/* 状态效果特定样式 */
-.status-effects {
-  padding: 0 16px 16px;
-}
-
-/* 新的标签式状态效果样式 - 紧凑且美观 */
-.status-tags-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 16px;
-}
-
-.status-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: 1px solid;
-  backdrop-filter: blur(4px);
-  white-space: nowrap;
-  max-width: 100%;
-  overflow: hidden;
-}
-
-.status-tag.buff {
-  background: linear-gradient(135deg, rgba(var(--color-success-rgb), 0.2), rgba(var(--color-success-rgb), 0.1));
-  border-color: rgba(var(--color-success-rgb), 0.4);
-  color: var(--color-success);
-}
-
-.status-tag.debuff {
-  background: linear-gradient(135deg, rgba(var(--color-error-rgb), 0.2), rgba(var(--color-error-rgb), 0.1));
-  border-color: rgba(var(--color-error-rgb), 0.4);
-  color: var(--color-danger);
-}
-
-.status-tag:hover {
-  transform: translateY(-1px) scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.status-tag.buff:hover {
-  background: linear-gradient(135deg, rgba(var(--color-success-rgb), 0.3), rgba(var(--color-success-rgb), 0.15));
-  border-color: rgba(var(--color-success-rgb), 0.6);
-  box-shadow: 0 4px 12px rgba(var(--color-success-rgb), 0.3);
-}
-
-.status-tag.debuff:hover {
-  background: linear-gradient(135deg, rgba(var(--color-error-rgb), 0.3), rgba(var(--color-error-rgb), 0.15));
-  border-color: rgba(var(--color-error-rgb), 0.6);
-  box-shadow: 0 4px 12px rgba(var(--color-error-rgb), 0.3);
-}
-
-.tag-icon {
+.card-title {
   font-size: 0.8rem;
-  flex-shrink: 0;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(0, 240, 255, 0.8);
 }
 
-.tag-name {
-  font-weight: 600;
-  flex-shrink: 0;
-}
-
-.tag-intensity {
-  font-size: 0.65rem;
-  background: rgba(var(--color-warning-rgb), 0.8);
-  color: var(--color-text);
-  padding: 1px 4px;
-  border-radius: 8px;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-
-.tag-time {
-  font-size: 0.65rem;
-  opacity: 0.8;
-  font-weight: 400;
-  flex-shrink: 0;
-}
-/* 标题样式 - 图标和文字在一行 */
-.section-title {
-  margin: 0;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--color-text);
-  padding-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.section-title span {
-  flex: 1;
-}
-
-.section-icon {
-  color: var(--color-primary);
-  opacity: 0.8;
-  flex-shrink: 0;
-}
-
-.section-icon.gold {
-  color: var(--color-warning);
-}
-
-.vital-icon {
-  flex-shrink: 0;
-}
-
-.vital-icon.blood { color: var(--vital-health); }
-.vital-icon.mana { color: var(--vital-lingqi); }
-.vital-icon.spirit { color: var(--vital-spirit); }
-.vital-icon.lifespan { color: var(--vital-lifespan); }
-.vital-icon.reputation { color: var(--color-warning); }
-
-/* 声望显示样式 */
-.reputation-display {
-  margin-top: 8px;
-  border-top: 1px solid var(--color-border);
-  padding-top: 8px;
-}
-
-.reputation-item {
-  background: var(--color-surface);
-  border-radius: 6px;
-  padding: 8px;
-  border: 1px solid var(--color-border);
-  transition: all 0.2s ease;
-}
-
-.reputation-item:hover {
-  background: var(--color-surface-hover);
-  border-color: var(--color-border-hover);
-}
-
-.reputation-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.reputation-label {
-  font-size: 0.75rem;
-  color: var(--color-text-secondary);
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.reputation-value {
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  transition: all 0.3s ease;
-}
-
-/* 声望等级配色 */
-.reputation-neutral {
-  color: var(--color-text-secondary);
-  background: rgba(128, 128, 128, 0.1);
-  border: 1px solid rgba(128, 128, 128, 0.3);
-}
-
-/* 正面声望 */
-.reputation-minor {
-  color: #10b981;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-}
-
-.reputation-known {
-  color: #3b82f6;
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.3);
-}
-
-.reputation-notable {
-  color: #8b5cf6;
-  background: rgba(139, 92, 246, 0.1);
-  border: 1px solid rgba(139, 92, 246, 0.3);
-}
-
-.reputation-renowned {
-  color: #f59e0b;
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.3);
-}
-
-.reputation-famous {
-  color: #f97316;
-  background: rgba(249, 115, 22, 0.1);
-  border: 1px solid rgba(249, 115, 22, 0.3);
-}
-
-.reputation-legendary {
-  color: #dc2626;
-  background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(239, 68, 68, 0.1));
-  border: 1px solid rgba(220, 38, 38, 0.4);
-  box-shadow: 0 0 8px rgba(220, 38, 38, 0.3);
-}
-
-/* 负面声望（恶名） */
-.reputation-evil-minor {
-  color: #6b7280;
-  background: rgba(107, 114, 128, 0.1);
-  border: 1px solid rgba(107, 114, 128, 0.3);
-}
-
-.reputation-evil-low {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-}
-
-.reputation-evil-medium {
-  color: #dc2626;
-  background: rgba(220, 38, 38, 0.1);
-  border: 1px solid rgba(220, 38, 38, 0.3);
-}
-
-.reputation-evil-high {
-  color: #991b1b;
-  background: rgba(153, 27, 27, 0.1);
-  border: 1px solid rgba(153, 27, 27, 0.3);
-}
-
-.reputation-evil-legendary {
-  color: #7f1d1d;
-  background: linear-gradient(135deg, rgba(127, 29, 29, 0.2), rgba(153, 27, 27, 0.1));
-  border: 1px solid rgba(127, 29, 29, 0.4);
-  box-shadow: 0 0 8px rgba(127, 29, 29, 0.4);
-}
-
-.reputation-number {
-  font-size: 0.7rem;
-  color: var(--color-text-secondary);
-  opacity: 0.8;
-}
-
-/* 点击提示样式 */
-.clickable {
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.clickable:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  border-color: rgba(var(--color-accent-rgb), 0.5);
-}
-
-/* 天赋卡片样式 - 增强美观性 */
-.talent-card {
-  background: linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.15), rgba(var(--color-accent-rgb), 0.1));
-  border: 1px solid rgba(var(--color-accent-rgb), 0.3);
-  border-left: 4px solid var(--color-accent);
-  border-radius: 12px;
-  padding: 16px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(8px);
-  position: relative;
-  overflow: hidden;
-}
-
-.talent-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg,
-    rgba(var(--color-accent-rgb), 0.1) 0%,
-    rgba(var(--color-accent-rgb), 0.05) 50%,
-    rgba(var(--color-accent-rgb), 0.1) 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-
-.talent-card:hover::before {
-  opacity: 1;
-}
-
-.talent-card:hover {
-  background: linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.2), rgba(var(--color-accent-rgb), 0.15));
-  border-color: rgba(var(--color-accent-rgb), 0.5);
-  transform: translateX(6px) translateY(-2px);
-  box-shadow: 0 8px 32px rgba(var(--color-accent-rgb), 0.25), 0 0 0 1px rgba(var(--color-accent-rgb), 0.2);
-}
-
-.talent-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-  z-index: 1;
-}
-
-.talent-name {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--color-accent);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-.talent-level {
-  font-size: 0.75rem;
-  color: var(--color-warning);
-  font-weight: 600;
-  background: linear-gradient(135deg, rgba(var(--color-warning-rgb), 0.2), rgba(var(--color-warning-rgb), 0.1));
-  padding: 4px 10px;
-  border-radius: 12px;
-  border: 1px solid rgba(var(--color-warning-rgb), 0.3);
-  backdrop-filter: blur(4px);
-}
-
-.talent-progress {
-  margin-top: 10px;
-  position: relative;
-  z-index: 1;
-}
-
-.progress-fill.talent {
-  background: linear-gradient(90deg, var(--color-accent), var(--color-accent-hover), rgba(var(--color-accent-rgb), 0.9));
-  box-shadow: 0 2px 8px rgba(var(--color-accent-rgb), 0.3);
-}
-
-/* 生命体征样式 */
-.vitals-list {
-  display: flex;
-  flex-direction: column;
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
 
-.vital-item {
-  background: var(--color-surface);
-  border-radius: 8px;
-  padding: 12px;
-  border: 1px solid var(--color-border);
-  transition: all 0.2s ease;
-}
-
-.vital-item:hover {
-  background: var(--color-surface-hover);
-  border-color: var(--color-border-hover);
-}
-
-.vital-info {
+.stat-item {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.vital-name {
-  font-size: 0.8rem;
-  color: var(--color-text-secondary);
-  font-weight: 500;
-  display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 6px;
+  padding: 8px;
+  border: 1px solid rgba(0, 240, 255, 0.12);
+  border-radius: 10px;
+  background: rgba(6, 9, 18, 0.85);
 }
 
-.vital-text {
-  font-size: 0.75rem;
-  color: var(--color-text);
+.stat-label {
+  font-size: 0.7rem;
+  color: rgba(226, 232, 240, 0.7);
+}
+
+.stat-value {
+  font-size: 0.8rem;
   font-weight: 600;
 }
 
-.progress-bar {
+.stat-bar {
   height: 6px;
-  background: var(--color-surface-light);
-  border-radius: 3px;
+  border-radius: 999px;
+  background: rgba(0, 240, 255, 0.1);
   overflow: hidden;
-  position: relative;
 }
 
-.progress-fill {
+.stat-fill {
   height: 100%;
-  border-radius: 3px;
-  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 999px;
+  transition: width 0.4s ease;
 }
 
+.stat-fill.health { background: #ff2d6f; }
+.stat-fill.mana { background: #00f0ff; }
+.stat-fill.spirit { background: #8a2bff; }
+.stat-fill.lifespan { background: #f59e0b; }
+.stat-fill.cultivation { background: #00ffa7; }
+.stat-fill.cultivation.realm-sprint { background: #f59e0b; }
+.stat-fill.cultivation.realm-breakthrough { background: #ff2d6f; }
 
-.progress-fill.health { background: var(--vital-health); }
-.progress-fill.mana { background: var(--vital-lingqi); }
-.progress-fill.spirit { background: var(--vital-spirit); }
-/* 寿元进度条统一紫色 */
-.progress-fill.lifespan { background: var(--vital-lifespan); }
-
-/* 修为状态样式 */
-.realm-display {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-
-.realm-info {
+.realm-block {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 8px;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
 .realm-name {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--color-accent);
+  font-size: 0.95rem;
+  color: #00ffa7;
 }
 
-.realm-breakthrough {
-  font-size: 0.7rem;
-  color: var(--color-text-secondary);
-  line-height: 1.4;
-  opacity: 0.8;
-}
-
-.realm-level {
+.realm-desc {
   font-size: 0.75rem;
-  color: var(--color-text-secondary);
+  color: rgba(226, 232, 240, 0.6);
 }
 
-/* 凡人境界特殊样式 */
-.realm-mortal {
-  padding: 8px;
-  background: rgba(var(--color-primary-rgb), 0.05);
-  border-radius: 4px;
-  text-align: center;
-  border: 1px dashed rgba(var(--color-primary-rgb), 0.3);
-}
-
-.mortal-text {
-  font-size: 0.8rem;
-  color: var(--color-text-secondary);
-  font-style: italic;
-  opacity: 0.8;
+.realm-hint {
+  font-size: 0.75rem;
+  color: rgba(226, 232, 240, 0.6);
+  padding: 6px 8px;
+  border: 1px dashed rgba(0, 240, 255, 0.3);
+  border-radius: 8px;
 }
 
 .realm-progress {
@@ -1362,349 +475,97 @@ const getReputationClass = (): string => {
   gap: 4px;
 }
 
-.progress-text {
-  font-size: 0.65rem;
-  color: var(--color-text-muted);
-  text-align: center;
+.realm-percent {
+  font-size: 0.7rem;
+  color: rgba(226, 232, 240, 0.8);
 }
 
-/* 状态效果样式 */
-.status-effects {
+.realm-percent.realm-sprint { color: #f59e0b; }
+.realm-percent.realm-breakthrough { color: #ff2d6f; }
+
+.chip-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
 }
 
-.status-effect {
-  padding: 4px 8px;
-  border-radius: 12px;
+.chip {
+  background: rgba(0, 240, 255, 0.12);
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  color: #00f0ff;
+  padding: 6px 10px;
+  border-radius: 999px;
   font-size: 0.7rem;
-  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+.chip:hover {
+  background: rgba(0, 240, 255, 0.25);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.25);
+}
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.status-card {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 2px;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  background: rgba(6, 9, 18, 0.85);
+  color: rgba(226, 232, 240, 0.9);
+  cursor: pointer;
 }
 
-.status-effect.buff {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+.status-card.buff {
+  border-color: rgba(0, 255, 167, 0.45);
 }
 
-.status-effect.debuff {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: white;
-  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+.status-card.debuff {
+  border-color: rgba(255, 45, 111, 0.45);
 }
 
-.status-effect:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+.status-name {
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
-.effect-name {
+.status-desc {
+  font-size: 0.7rem;
+  color: rgba(226, 232, 240, 0.6);
+}
+
+.status-meta {
   font-size: 0.65rem;
+  color: rgba(226, 232, 240, 0.5);
 }
 
-.effect-time {
-  font-size: 0.6rem;
-  opacity: 0.8;
+.empty-text {
+  font-size: 0.75rem;
+  color: rgba(226, 232, 240, 0.6);
 }
 
-/* 无角色数据样式 */
 .no-character {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  gap: 10px;
+  flex: 1;
 }
 
 .no-char-text {
   font-size: 0.9rem;
-  color: var(--color-text-muted);
-  font-style: italic;
+  color: rgba(226, 232, 240, 0.6);
 }
 
-/* 响应式设计 */
-@media (max-width: 640px) {
-  .right-sidebar {
-    padding: 12px;
-  }
-
-  .sidebar-title {
-    font-size: 0.9rem;
-  }
-
-  .section-title {
-    font-size: 0.8rem;
-  }
-
-  .vitals-list {
-    gap: 8px;
-  }
-
-  .vital-item {
-    padding: 6px;
-  }
-
-  .vital-name {
-    font-size: 0.7rem;
-  }
-
-  .vital-text {
-    font-size: 0.65rem;
-  }
-
-  .talent-card {
-    padding: 10px;
-  }
-
-  .talent-name {
-    font-size: 0.8rem;
-  }
-
-  .status-effect-card {
-    padding: 8px 10px;
-  }
-
-  .effect-name {
-    font-size: 0.75rem;
-  }
-
-  .status-tags-container {
-    gap: 6px;
-    padding: 8px;
-  }
-
-  .status-tag {
-    font-size: 0.7rem;
-    padding: 4px 8px;
-    gap: 4px;
-  }
-
-  .tag-intensity {
-    font-size: 0.6rem;
-    padding: 1px 3px;
-  }
-
-  .tag-time {
-    font-size: 0.6rem;
-  }
-
-  .detail-item {
-    padding: 5px 6px;
-    font-size: 0.7rem;
-  }
-
-  .attributes-grid {
-    gap: 6px;
-  }
-
-  .attribute-item {
-    padding: 6px;
-  }
-
-  .attr-name {
-    font-size: 0.7rem;
-  }
-
-  .attr-value {
-    font-size: 0.8rem;
-  }
-
-  .attr-quality {
-    font-size: 0.6rem;
-    padding: 1px 4px;
-  }
-
-  .info-item {
-    padding: 5px 6px;
-    font-size: 0.7rem;
-  }
-
-  .realm-name {
-    font-size: 0.8rem;
-  }
-
-  .progress-bar {
-    height: 5px;
-  }
-}
-
-@media (max-width: 480px) {
-  .right-sidebar {
-    padding: 8px;
-  }
-
-  .sidebar-header {
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-  }
-
-  .vitals-section,
-  .cultivation-section,
-  .collapsible-section {
-    margin-bottom: 12px;
-    padding: 10px;
-  }
-
-  .attributes-section {
-    margin-bottom: 12px;
-    padding: 10px;
-  }
-
-  .attributes-grid {
-    gap: 4px;
-  }
-
-  .attribute-item {
-    padding: 5px;
-  }
-
-  .attr-name {
-    font-size: 0.65rem;
-  }
-
-  .attr-value {
-    font-size: 0.75rem;
-  }
-
-  .attr-quality {
-    font-size: 0.55rem;
-    padding: 1px 3px;
-  }
-
-  .status-details {
+@media (max-width: 768px) {
+  .stat-grid {
     grid-template-columns: 1fr;
-  }
-
-  .talents-list {
-    padding: 0 12px 12px;
-  }
-
-  .status-effects {
-    padding: 0 12px 12px;
-  }
-
-  .status-tags-container {
-    gap: 4px;
-    padding: 6px;
-  }
-
-  .status-tag {
-    font-size: 0.65rem;
-    padding: 3px 6px;
-    gap: 3px;
-  }
-
-  .tag-intensity {
-    font-size: 0.55rem;
-    padding: 1px 2px;
-  }
-
-  .tag-time {
-    font-size: 0.55rem;
-  }
-}
-
-/* 平板设备优化 */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .right-sidebar {
-    padding: 14px;
-  }
-
-  .vital-item {
-    padding: 7px;
-  }
-
-  .talent-card {
-    padding: 11px;
-  }
-}
-
-/* 大屏幕优化 */
-@media (min-width: 1440px) {
-  .right-sidebar {
-    padding: 20px;
-  }
-
-  .sidebar-title {
-    font-size: 1.1rem;
-  }
-
-  .section-title {
-    font-size: 0.9rem;
-  }
-
-  .vital-name {
-    font-size: 0.8rem;
-  }
-
-  .talent-name {
-    font-size: 0.9rem;
-  }
-
-  .effect-name {
-    font-size: 0.85rem;
-  }
-
-  .status-tags-container {
-    gap: 10px;
-    padding: 16px;
-  }
-
-  .status-tag {
-    font-size: 0.8rem;
-    padding: 8px 12px;
-  }
-}
-
-/* 深色主题适配：使用CSS变量自动适配 */
-@media (prefers-color-scheme: dark) {
-  .right-sidebar {
-    background: var(--color-surface);
-  }
-
-  .vitals-section,
-  .cultivation-section,
-  .collapsible-section {
-    background: var(--color-surface-light);
-  }
-
-  .status-tag.buff {
-    background: linear-gradient(135deg, rgba(var(--color-success-rgb), 0.15), rgba(var(--color-success-rgb), 0.08));
-    border-color: rgba(var(--color-success-rgb), 0.3);
-    color: var(--color-success);
-  }
-
-  .status-tag.debuff {
-    background: linear-gradient(135deg, rgba(var(--color-error-rgb), 0.15), rgba(var(--color-error-rgb), 0.08));
-    border-color: rgba(var(--color-error-rgb), 0.3);
-    color: var(--color-danger);
-  }
-
-  .status-tag.buff:hover {
-    background: linear-gradient(135deg, rgba(var(--color-success-rgb), 0.25), rgba(var(--color-success-rgb), 0.12));
-    border-color: rgba(var(--color-success-rgb), 0.5);
-    color: var(--color-success);
-    box-shadow: 0 4px 12px rgba(var(--color-success-rgb), 0.2);
-  }
-
-  .status-tag.debuff:hover {
-    background: linear-gradient(135deg, rgba(var(--color-error-rgb), 0.25), rgba(var(--color-error-rgb), 0.12));
-    border-color: rgba(var(--color-error-rgb), 0.5);
-    color: var(--color-danger);
-    box-shadow: 0 4px 12px rgba(var(--color-error-rgb), 0.2);
-  }
-
-  .tag-intensity {
-    background: rgba(var(--color-warning-rgb), 0.9);
-    color: var(--color-text);
   }
 }
 </style>

@@ -13,50 +13,50 @@
 :root {
   /* ========== 科技色彩系统 ========== */
   /* 替换传统色彩为科技色彩 */
-  --tech-primary: #00d9ff;      /* 亮青色 */
-  --tech-primary-dark: #0099cc; /* 深青色 */
-  --tech-secondary: #9d00ff;    /* 紫色 */
-  --tech-accent: #00ffaa;       /* 翠绿色 */
-  --tech-warning: #ff6b00;      /* 橙色 */
-  --tech-danger: #ff0055;       /* 玫红色 */
+  --tech-primary: #00f0ff;      /* 霓虹青 */
+  --tech-primary-dark: #00b9c7; /* 深霓虹青 */
+  --tech-secondary: #8a2bff;    /* 赛博紫 */
+  --tech-accent: #00ffa7;       /* 荧光绿 */
+  --tech-warning: #ff7a00;      /* 电橙 */
+  --tech-danger: #ff2d6f;       /* 荧粉 */
   --tech-success: #00ff88;      /* 绿色 */
-  --tech-background: #0a0e27;   /* 深蓝黑 */
-  --tech-surface: #0f1535;      /* 稍亮的深蓝 */
-  --tech-border: #1a2a5e;       /* 蓝色边框 */
-  --tech-glow: rgba(0, 217, 255, 0.3);
-  --tech-glow-strong: rgba(0, 217, 255, 0.6);
+  --tech-background: #05070f;   /* 深黑蓝 */
+  --tech-surface: #0b0f1a;      /* 深夜紫灰 */
+  --tech-border: #17324f;       /* 冷蓝边框 */
+  --tech-glow: rgba(0, 240, 255, 0.25);
+  --tech-glow-strong: rgba(0, 240, 255, 0.55);
 }
 
 :root[data-theme='light'] {
   /* 浅色主题的科技风格 */
-  --tech-primary: #00d9ff;
-  --tech-primary-dark: #0088bb;
-  --tech-secondary: #7d2fd9;
-  --tech-accent: #00cc66;
-  --tech-warning: #ff6b00;
-  --tech-danger: #ff0055;
-  --tech-success: #00dd66;
-  --tech-background: #f5f7ff;
-  --tech-surface: #eef2ff;
-  --tech-border: #c5d3ff;
-  --tech-glow: rgba(0, 217, 255, 0.2);
-  --tech-glow-strong: rgba(0, 217, 255, 0.4);
+  --tech-primary: #00cde0;
+  --tech-primary-dark: #00a6b5;
+  --tech-secondary: #6d2bd4;
+  --tech-accent: #00c977;
+  --tech-warning: #ff7a00;
+  --tech-danger: #ff2d6f;
+  --tech-success: #00d36f;
+  --tech-background: #f4f6fb;
+  --tech-surface: #edf1fa;
+  --tech-border: #c6d1f0;
+  --tech-glow: rgba(0, 205, 224, 0.18);
+  --tech-glow-strong: rgba(0, 205, 224, 0.35);
 }
 
 :root[data-theme='dark'] {
   /* 暗色主题的科技风格 */
-  --tech-primary: #00d9ff;
-  --tech-primary-dark: #0099cc;
-  --tech-secondary: #b366ff;
-  --tech-accent: #00ffaa;
-  --tech-warning: #ff7700;
-  --tech-danger: #ff3366;
+  --tech-primary: #00f0ff;
+  --tech-primary-dark: #00b9c7;
+  --tech-secondary: #a36bff;
+  --tech-accent: #00ffa7;
+  --tech-warning: #ff7a00;
+  --tech-danger: #ff2d6f;
   --tech-success: #00ff88;
-  --tech-background: #0a0e27;
-  --tech-surface: #0f1535;
-  --tech-border: #1a3a6e;
-  --tech-glow: rgba(0, 217, 255, 0.3);
-  --tech-glow-strong: rgba(0, 217, 255, 0.6);
+  --tech-background: #05070f;
+  --tech-surface: #0b0f1a;
+  --tech-border: #17324f;
+  --tech-glow: rgba(0, 240, 255, 0.25);
+  --tech-glow-strong: rgba(0, 240, 255, 0.55);
 }
 
 /* ========== 全局样式覆盖 ========== */
@@ -70,12 +70,28 @@
   width: 100%;
   height: 100%;
   background-image:
-    linear-gradient(0deg, transparent 24%, rgba(0, 217, 255, 0.03) 25%, rgba(0, 217, 255, 0.03) 26%, transparent 27%, transparent 74%, rgba(0, 217, 255, 0.03) 75%, rgba(0, 217, 255, 0.03) 76%, transparent 77%, transparent),
-    linear-gradient(90deg, transparent 24%, rgba(0, 217, 255, 0.03) 25%, rgba(0, 217, 255, 0.03) 26%, transparent 27%, transparent 74%, rgba(0, 217, 255, 0.03) 75%, rgba(0, 217, 255, 0.03) 76%, transparent 77%, transparent);
-  background-size: 50px 50px;
+    linear-gradient(0deg, transparent 24%, rgba(0, 240, 255, 0.03) 25%, rgba(0, 240, 255, 0.03) 26%, transparent 27%, transparent 74%, rgba(0, 240, 255, 0.03) 75%, rgba(0, 240, 255, 0.03) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(0, 240, 255, 0.03) 25%, rgba(0, 240, 255, 0.03) 26%, transparent 27%, transparent 74%, rgba(0, 240, 255, 0.03) 75%, rgba(0, 240, 255, 0.03) 76%, transparent 77%, transparent);
+  background-size: 48px 48px;
   pointer-events: none;
   z-index: -1;
   animation: grid-animation 20s linear infinite;
+}
+
+#app::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.03),
+    rgba(255, 255, 255, 0.03) 1px,
+    transparent 1px,
+    transparent 5px
+  );
+  pointer-events: none;
+  opacity: 0.35;
+  z-index: -1;
 }
 
 @keyframes grid-animation {

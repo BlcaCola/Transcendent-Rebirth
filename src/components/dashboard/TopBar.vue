@@ -28,6 +28,9 @@
     </div>
 
     <div class="right-section">
+      <button class="info-btn" @click="emit('open-character-info')">
+        {{ t('查看角色信息') }}
+      </button>
       <button @click="toggleFullscreen" class="fullscreen-btn">
         <Maximize v-if="!isFullscreen" :size="16" />
         <Minimize v-else :size="16" />
@@ -46,6 +49,9 @@ import { getFullscreenElement, requestFullscreen, exitFullscreen, explainFullscr
 import type { GameTime } from '@/types/game'
 
 const { t } = useI18n()
+const emit = defineEmits<{
+  (e: 'open-character-info'): void;
+}>()
 
 /**
  * 从GameTime获取分钟数
@@ -455,6 +461,27 @@ onMounted(() => {
   justify-content: flex-end;
 }
 
+.info-btn {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 240, 255, 0.45);
+  background: rgba(0, 240, 255, 0.08);
+  color: #00f0ff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.info-btn:hover {
+  background: rgba(0, 240, 255, 0.16);
+  border-color: rgba(0, 240, 255, 0.8);
+  box-shadow: 0 0 14px rgba(0, 240, 255, 0.35);
+}
+
 .fullscreen-btn {
   width: 30px;
   height: 30px;
@@ -587,6 +614,12 @@ onMounted(() => {
   .right-section {
     gap: 6px;
     flex: 0 0 auto;
+  }
+
+  .info-btn {
+    height: 26px;
+    padding: 0 8px;
+    font-size: 0.65rem;
   }
 }
 
@@ -819,5 +852,11 @@ onMounted(() => {
   background: #334155;
   border-color: #64748b;
   color: #e2e8f0;
+}
+
+[data-theme='dark'] .info-btn {
+  background: rgba(0, 240, 255, 0.08);
+  border-color: rgba(0, 240, 255, 0.4);
+  color: #00f0ff;
 }
 </style>

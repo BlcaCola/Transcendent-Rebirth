@@ -90,7 +90,7 @@
       <!-- 游戏功能 -->
       <div class="settings-section">
         <div class="section-header">
-          <h4 class="section-title">🎮 {{ t('游戏功能') }}</h4>
+          <h4 class="section-title">🎮 {{ t('游戏菜单') }}</h4>
         </div>
         <div class="settings-list">
           <!-- 用户名修改 -->

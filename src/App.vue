@@ -138,14 +138,8 @@
           <p class="help-desc">AI驱动的沉浸式文字冒险游戏</p>
           <p class="help-desc">有任何问题请联系：support@advapute.com</p>
 
-          <a href="https://advapute.com/" target="_blank" class="help-link-card">
-            <Globe :size="18" />
-            <span>查看我们的官网</span>
-            <ArrowRight :size="16" />
-          </a>
-
           <div class="help-warning">
-            <span>⚠️ 请您尽量使用推荐配置，如需自行调整请确保您了解游戏原理，<strong>禁止COT</strong></span>
+            <span>⚠️ 注意！请您尽量使用推荐配置，如需自行调整请确保您了解游戏原理</span>
           </div>
 
         </div>

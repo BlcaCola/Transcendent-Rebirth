@@ -173,6 +173,14 @@
           <ChevronDown :size="16" />
         </button>
 
+        <button
+          @click="openGameMenu"
+          :disabled="!hasActiveCharacter"
+          class="menu-button"
+        >
+          {{ t('游戏菜单') }}
+        </button>
+
         <div class="input-container">
           <!-- 图片预览区域 -->
           <div v-if="selectedImages.length > 0" class="image-preview-container">
@@ -1516,6 +1524,10 @@ const handleInput = () => {
   nextTick(() => {
     adjustTextareaHeight();
   });
+};
+
+const openGameMenu = () => {
+  panelBus.emit('open-left-menu');
 };
 
 // 初始化/重新初始化面板以适应当前存档
@@ -2889,8 +2901,42 @@ const syncGameState = async () => {
   color: #9ca3af;
 }
 
+.menu-button {
+  min-width: 84px;
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.25), rgba(138, 43, 255, 0.2));
+  color: #00f0ff;
+  border: 1px solid rgba(0, 240, 255, 0.6);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  min-height: 32px;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  margin-right: 8px;
+}
+
+.menu-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.4), rgba(138, 43, 255, 0.35));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 240, 255, 0.3);
+}
+
+.menu-button:disabled {
+  background: rgba(148, 163, 184, 0.25);
+  color: rgba(148, 163, 184, 0.8);
+  border-color: rgba(148, 163, 184, 0.4);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 .send-button {
-  width: 42px;
+  min-width: 84px;
   background: linear-gradient(135deg, #3b82f6, #2563eb);
   color: white;
   border: none;
@@ -3087,6 +3133,12 @@ const syncGameState = async () => {
 [data-theme="dark"] .send-button:disabled {
   background: #374151;
   color: #64748b;
+}
+
+[data-theme="dark"] .menu-button {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.18), rgba(138, 43, 255, 0.18));
+  border-color: rgba(0, 240, 255, 0.5);
+  color: #00f0ff;
 }
 
 /* 短期记忆深色主题 */

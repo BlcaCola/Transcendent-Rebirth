@@ -427,3 +427,24 @@ KeyError: '"account_id"'
 2026-01-15 19:21:44.537 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
 2026-01-15 19:21:44.537 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
 2026-01-15 19:21:44.537 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-16 20:58:35.291 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-16 20:58:35.399 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-16 20:58:37.094 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-16 20:58:37.095 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-16 20:58:37.096 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-16 20:58:37.096 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-16 20:58:37.096 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-17 00:06:43.798 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-17 00:06:43.843 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-17 00:06:45.184 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-17 00:06:45.184 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-17 00:06:45.185 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-17 00:06:45.185 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-17 00:06:45.185 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
+2026-01-17 00:44:25.115 | INFO     | server.main:lifespan:32 - 🚀 正在初始化数据库...
+2026-01-17 00:44:25.152 | INFO     | server.main:lifespan:34 - ✅ 数据库初始化完成
+2026-01-17 00:44:25.180 | INFO     | server.main:lifespan:55 - 📝 管理员账号已存在: blcacola
+2026-01-17 00:44:25.181 | INFO     | server.main:lifespan:61 - 🎮 超凡新生后端服务 v1.0.0 启动成功
+2026-01-17 00:44:25.181 | INFO     | server.main:lifespan:62 - 📍 服务地址: http://0.0.0.0:12345
+2026-01-17 00:44:25.181 | INFO     | server.main:lifespan:63 - 📖 API文档: http://0.0.0.0:12345/docs
+2026-01-17 00:44:25.182 | INFO     | server.main:lifespan:64 - 🎨 管理后台: http://0.0.0.0:12345/admin
