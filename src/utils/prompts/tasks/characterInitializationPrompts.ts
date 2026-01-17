@@ -183,16 +183,28 @@ export function buildCharacterSelectionsSummary(
   // 提取数据
   const { name, gender, race, age, world, talentTier, origin, spiritRoot, talents, attributes, difficultyPrompt } = userSelections;
 
+  const safeName = name || '未命名';
+  const safeGender = gender || '未知';
+  const safeRace = race || '未知';
+  const safeAge = typeof age === 'number' ? age : Number(age || 0);
+
+  const worldName = (world as World | undefined)?.name || (world as any)?.名称 || (typeof world === 'string' ? world : '未选择世界');
+  const worldEra = (world as World | undefined)?.era || (world as any)?.纪元 || '';
+  const worldDesc = (world as World | undefined)?.description || (world as any)?.描述 || '';
+
+  const tierName = (talentTier as TalentTier | undefined)?.name || (talentTier as any)?.名称 || (typeof talentTier === 'string' ? talentTier : '未选择');
+  const tierDesc = (talentTier as TalentTier | undefined)?.description || (talentTier as any)?.描述 || '';
+
   const originIsObj = typeof origin === 'object' && origin !== null;
   const spiritRootIsObj = typeof spiritRoot === 'object' && spiritRoot !== null;
 
   // 格式化天赋列表
-  const talentsList = talents.length > 0
-    ? talents.map(t => `- ${t.name}: ${t.description}`).join('\n')
+  const talentsList = (talents || []).length > 0
+    ? (talents || []).map(t => `- ${t?.name || t?.名称 || '未命名'}: ${t?.description || t?.描述 || ''}`.trim()).join('\n')
     : '无';
 
   // 格式化属性
-  const attrList = Object.entries(attributes).map(([k, v]) => `${k}:${v}`).join(', ');
+  const attrList = Object.entries(attributes || {}).map(([k, v]) => `${k}:${v}`).join(', ');
 
   // 格式化地点
   const continents = worldContext?.availableContinents
@@ -208,26 +220,26 @@ export function buildCharacterSelectionsSummary(
 # 玩家角色数据
 
 ## 基础信息
-姓名: ${name} | 性别: ${gender} | 种族: ${race} | 年龄: ${age}岁
+姓名: ${safeName} | 性别: ${safeGender} | 种族: ${safeRace} | 年龄: ${safeAge}岁
 
 ## 世界
-${world.name} (${world.era})
-${world.description}
+${worldName}${worldEra ? ` (${worldEra})` : ''}
+${worldDesc}
 
 ## 天资
-${talentTier.name}: ${talentTier.description}
+${tierName}${tierDesc ? `: ${tierDesc}` : ''}
 
 ## 出身
-${originIsObj ? (origin as Origin).name : origin}: ${originIsObj ? (origin as Origin).description : '(随机，需AI生成)'}
+${originIsObj ? ((origin as Origin).name || (origin as any).名称 || '未选择') : (origin ?? '未选择')}: ${originIsObj ? ((origin as Origin).description || (origin as any).描述 || '') : '(随机，需AI生成)'}
 
 ## 改造核心
-${spiritRootIsObj ? `${(spiritRoot as SpiritRoot).name} (${(spiritRoot as SpiritRoot).tier})` : spiritRoot}: ${spiritRootIsObj ? (spiritRoot as SpiritRoot).description : '(随机，需AI生成)'}
+${spiritRootIsObj ? `${(spiritRoot as SpiritRoot).name || (spiritRoot as any).名称 || '未选择'} (${(spiritRoot as SpiritRoot).tier || (spiritRoot as any).品级 || '未知'})` : (spiritRoot ?? '未选择')}: ${spiritRootIsObj ? ((spiritRoot as SpiritRoot).description || (spiritRoot as any).描述 || '') : '(随机，需AI生成)'}
 
 ## 天赋
 ${talentsList}
 
 ## 初始六维
-${attrList}
+${attrList || '未设置'}
 
 ---
 

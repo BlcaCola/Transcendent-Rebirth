@@ -402,7 +402,7 @@ async function generateWorld(baseInfo: CharacterBaseInfo, world: World): Promise
   };
 
   console.log('[初始化流程] 开始调用世界生成器...');
-  uiStore.updateLoadingText('🌍 世界生成: 调用AI生成世界架构...');
+  uiStore.updateLoadingText('🌍 生成中: AI正在为你生成独特的世界...');
   const enhancedWorldGenerator = new EnhancedWorldGenerator(enhancedConfig);
 
   const startTime = Date.now();
