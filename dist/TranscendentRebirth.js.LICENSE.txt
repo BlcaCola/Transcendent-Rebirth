@@ -1,0 +1,16 @@
+/*!
+ * pinia v3.0.4
+ * (c) 2025 Eduardo San Martin Morote
+ * @license MIT
+ */
+
+/*! #__NO_SIDE_EFFECTS__ */
+
+/*! https://mths.be/punycode v1.4.1 by @mathias */
+
+/**
+ * @license lucide-vue-next v0.541.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
