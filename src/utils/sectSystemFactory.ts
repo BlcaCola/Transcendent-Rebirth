@@ -109,7 +109,7 @@ const THEME_SHOP_POOL: Record<string, ItemTemplate[]> = {
     { name: '污染晶体', type: '材料', quality: '改装下', description: '暗网辅材，能量不稳定。', icon: 'O' },
   ],
   merchant: [
-    { name: '折扣令', type: '杂项', quality: '民用', description: '兑换商会折扣的令牌。', icon: 'O' },
+    { name: '折扣密钥', type: '杂项', quality: '民用', description: '兑换商会折扣的密钥。', icon: 'O' },
     { name: '情报芯片', type: '杂项', quality: '改装下', description: '记录周边势力动态的芯片。', icon: 'O' },
     { name: '通行许可', type: '杂项', quality: '改装中', description: '可通行部分管控关卡。', icon: 'O' },
   ],

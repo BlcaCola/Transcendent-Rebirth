@@ -193,20 +193,20 @@ request.delete = <T>(url: string, options: Omit<RequestInit, 'method'> = {}) =>
 export async function verifyStoredToken(): Promise<boolean> {
   const token = localStorage.getItem('access_token');
   if (!isBackendConfigured()) {
-    console.log('[验证令牌] 未配置后端，跳过验证');
+    console.log('[验证密码] 未配置后端，跳过验证');
     return false;
   }
-  console.log('[验证令牌] 从localStorage获取到的token:', token ? `${token.substring(0, 20)}...` : 'null');
+  console.log('[验证密码] 从localStorage获取到的token:', token ? `${token.substring(0, 20)}...` : 'null');
 
   if (!token) {
-    console.log('[验证令牌] 未找到令牌，直接返回false');
+    console.log('[验证密码] 未找到密码，直接返回false');
     return false;
   }
 
   try {
-    console.log('[验证令牌] 开始发送验证请求到 /api/v1/auth/me');
+    console.log('[验证密码] 开始发送验证请求到 /api/v1/auth/me');
     const userData = await request<{ user_name?: string }>('/api/v1/auth/me', { method: 'GET' });
-    console.log('[验证令牌] 验证成功，用户数据:', userData);
+    console.log('[验证密码] 验证成功，用户数据:', userData);
 
     if (userData && userData.user_name) {
         localStorage.setItem('username', userData.user_name);
@@ -214,8 +214,8 @@ export async function verifyStoredToken(): Promise<boolean> {
     }
     throw new Error('无效的用户数据');
   } catch (error) {
-    console.error('[验证令牌] 验证失败，错误详情:', error);
-    console.warn('[验证令牌] 注意：暂时保留令牌，不自动清除');
+    console.error('[验证密码] 验证失败，错误详情:', error);
+    console.warn('[验证密码] 注意：暂时保留密码，不自动清除');
     return false;
   }
 }

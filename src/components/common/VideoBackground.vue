@@ -22,7 +22,7 @@ import { getVideo, setVideo } from '@/utils/videoCache'
 const props = withDefaults(defineProps<{
   src?: string
 }>(), {
-  src: 'video/video.mp4'
+  src: 'https://raw.githubusercontent.com/BlcaCola/Transcendent-Rebirth/main/video/video.mp4'
 })
 
 const videoRef = ref<HTMLVideoElement>()

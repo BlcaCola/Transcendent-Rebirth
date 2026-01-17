@@ -20,13 +20,13 @@
         </div>
 
         <div class="form-group">
-          <label for="password">{{ $t('令牌') }}</label>
-          <input type="password" id="password" v-model="password" :placeholder="$t('请输入您的身份令牌')" required />
+          <label for="password">{{ $t('密码') }}</label>
+          <input type="password" id="password" v-model="password" :placeholder="$t('请输入您的身份密码')" required />
         </div>
 
         <div v-if="isRegisterMode" class="form-group">
-          <label for="confirmPassword">{{ $t('确认令牌') }}</label>
-          <input type="password" id="confirmPassword" v-model="confirmPassword" :placeholder="$t('请再次输入令牌')" required />
+          <label for="confirmPassword">{{ $t('确认密码') }}</label>
+          <input type="password" id="confirmPassword" v-model="confirmPassword" :placeholder="$t('请再次输入密码')" required />
         </div>
 
         <!-- 邮箱字段（注册时显示） -->
@@ -272,7 +272,7 @@ const handleRegister = async () => {
     return;
   }
   if (password.value !== confirmPassword.value) {
-    error.value = '两次输入的令牌不一致！';
+    error.value = '两次输入的密码不一致！';
     return;
   }
 

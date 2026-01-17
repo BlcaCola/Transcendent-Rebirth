@@ -23,8 +23,8 @@ const autoTranslateMap: Record<string, string> = {
   '收起': 'Collapse', '详情': 'Details', '帮助': 'Help', '关于': 'About', '跳过': 'Skip', '重试': 'Retry',
   '世界信息': 'World Info',
   // === 登录注册 ===
-  '用户名': 'Username', '令牌': 'Password', '确认令牌': 'Confirm Password', '请输入您的用户名': 'Enter username',
-  '请输入您的身份令牌': 'Enter password', '请再次输入令牌': 'Re-enter password', '注册账号': 'Register',
+  '用户名': 'Username', '密码': 'Password', '确认密码': 'Confirm Password', '请输入您的用户名': 'Enter username',
+  '请输入您的身份密码': 'Enter password', '请再次输入密码': 'Re-enter password', '注册账号': 'Register',
   '登录/注册': 'Login', '注册': 'Register', '登入': 'Login', '已有用户名？立即登入': 'Have account? Login',
   '没有账号？立即注册': 'New? Register', '注册新用户名，踏入霓虹之路。': 'Register to begin the neon journey',
   '登录账户，以便同步云端数据。': 'Login to sync progress',
