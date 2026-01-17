@@ -411,7 +411,6 @@ watch(
   position: relative;
   min-height: 0;
   background: transparent;
-  z-index: 2;
 }
 
 
@@ -482,7 +481,7 @@ watch(
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 200;
+  z-index: 1200;
   backdrop-filter: blur(10px);
 }
 

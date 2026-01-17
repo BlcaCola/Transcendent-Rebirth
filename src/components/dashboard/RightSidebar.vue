@@ -18,22 +18,22 @@
         <div class="stat-grid">
           <div class="stat-item">
             <span class="stat-label">{{ t('生命值') }}</span>
-            <span class="stat-value">{{ playerStatus?.生命值?.当前 }} / {{ playerStatus?.生命值?.上限 }}</span>
+            <span class="stat-value">{{ vitalPairs.生命值.current }} / {{ vitalPairs.生命值.max }}</span>
             <div class="stat-bar"><span class="stat-fill health" :style="{ width: getVitalPercent('生命值') + '%' }"></span></div>
           </div>
           <div class="stat-item">
             <span class="stat-label">{{ t('电量') }}</span>
-            <span class="stat-value">{{ playerStatus?.电量?.当前 }} / {{ playerStatus?.电量?.上限 }}</span>
+            <span class="stat-value">{{ vitalPairs.电量.current }} / {{ vitalPairs.电量.max }}</span>
             <div class="stat-bar"><span class="stat-fill mana" :style="{ width: getVitalPercent('电量') + '%' }"></span></div>
           </div>
           <div class="stat-item">
             <span class="stat-label">{{ t('带宽') }}</span>
-            <span class="stat-value">{{ playerStatus?.带宽?.当前 }} / {{ playerStatus?.带宽?.上限 }}</span>
+            <span class="stat-value">{{ vitalPairs.带宽.current }} / {{ vitalPairs.带宽.max }}</span>
             <div class="stat-bar"><span class="stat-fill spirit" :style="{ width: getVitalPercent('带宽') + '%' }"></span></div>
           </div>
           <div class="stat-item">
             <span class="stat-label">{{ t('寿命') }}</span>
-            <span class="stat-value">{{ currentAge }} / {{ playerStatus?.寿命?.上限 }}</span>
+            <span class="stat-value">{{ currentAge }} / {{ lifespanMax }}</span>
             <div class="stat-bar"><span class="stat-fill lifespan" :style="{ width: getLifespanPercent() + '%' }"></span></div>
           </div>
         </div>
@@ -143,6 +143,38 @@ const currentAge = computed(() => {
   return gameStateStore.attributes?.寿命?.当前 || 0;
 });
 
+const getVitalPair = (type: '生命值' | '电量' | '带宽') => {
+  const status = playerStatus.value as any;
+  const raw = status?.[type];
+  const current = Number(
+    raw && typeof raw === 'object'
+      ? (raw.当前 ?? raw.current ?? raw.value ?? raw.当前值 ?? raw.数值)
+      : raw
+  ) || 0;
+  const max = Number(
+    raw && typeof raw === 'object'
+      ? (raw.上限 ?? raw.max ?? raw.最大 ?? raw.最大值 ?? raw.上限值)
+      : status?.[`${type}上限`]
+  ) || 0;
+  return { current, max };
+};
+
+const vitalPairs = computed(() => ({
+  生命值: getVitalPair('生命值'),
+  电量: getVitalPair('电量'),
+  带宽: getVitalPair('带宽'),
+}));
+
+const lifespanMax = computed(() => {
+  const status = playerStatus.value as any;
+  const raw = status?.寿命;
+  return Number(
+    raw && typeof raw === 'object'
+      ? (raw.上限 ?? raw.max ?? raw.最大 ?? raw.最大值 ?? raw.上限值)
+      : status?.寿命上限
+  ) || 0;
+});
+
 // 模态框状态（通过 uiStore 管理，不再需要本地状态）
 
 // 时间显示格式化
@@ -184,17 +216,15 @@ const getRealmProgressClass = (): string => {
 
 // 计算生命体征百分比
 const getVitalPercent = (type: '生命值' | '电量' | '带宽') => {
-  if (!gameStateStore.attributes) return 0;
-  const vital = (gameStateStore.attributes as any)[type];
-  if (!vital?.当前 || !vital?.上限) return 0;
-  return Math.round((vital.当前 / vital.上限) * 100);
+  const vital = getVitalPair(type);
+  if (!vital.max) return 0;
+  return Math.round((vital.current / vital.max) * 100);
 };
 
 // 计算寿命百分比（使用计算后的年龄）
 const getLifespanPercent = () => {
-  const maxLifespan = gameStateStore.attributes?.寿命?.上限;
-  if (!maxLifespan) return 0;
-  return Math.round((currentAge.value / maxLifespan) * 100);
+  if (!lifespanMax.value) return 0;
+  return Math.round((currentAge.value / lifespanMax.value) * 100);
 };
 
 // 获取模块数据
@@ -432,6 +462,7 @@ const getReputationClass = (): string => {
 }
 
 .stat-fill {
+  display: block;
   height: 100%;
   border-radius: 999px;
   transition: width 0.4s ease;
