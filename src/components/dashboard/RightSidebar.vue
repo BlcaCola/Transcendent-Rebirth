@@ -7,7 +7,7 @@
         <span class="profile-realm">{{ formatRealmDisplay(playerStatus?.阶位?.名称) }}</span>
       </div>
       <div class="profile-meta">
-        <span class="meta-item">{{ t('寿命') }}：{{ currentAge }}</span>
+        <span class="meta-item">{{ t('年龄') }}：{{ currentAge }}</span>
         <span class="meta-item">{{ t('声望') }}：{{ getReputationDisplay() }}</span>
       </div>
     </div>
