@@ -7,10 +7,38 @@ export function normalizeBackendUrl(input: string): string {
   return url;
 }
 
-export function getBackendServerUrl(): string {
-  if (typeof BACKEND_BASE_URL === 'string') {
-    return normalizeBackendUrl(BACKEND_BASE_URL);
+function getRuntimeBackendUrl(): string {
+  if (typeof window === 'undefined') return '';
+
+  const win = window as Window & { __BACKEND_BASE_URL?: string };
+  if (typeof win.__BACKEND_BASE_URL === 'string') {
+    const value = win.__BACKEND_BASE_URL.trim();
+    if (value) return normalizeBackendUrl(value);
   }
+
+  const meta = document.querySelector('meta[name="backend-base-url"]') as HTMLMetaElement | null;
+  if (meta?.content) {
+    const value = meta.content.trim();
+    if (value) return normalizeBackendUrl(value);
+  }
+
+  try {
+    const stored = localStorage.getItem('BACKEND_BASE_URL');
+    if (stored) {
+      const value = stored.trim();
+      if (value) return normalizeBackendUrl(value);
+    }
+  } catch {
+    // ignore storage access errors
+  }
+
+  return '';
+}
+
+export function getBackendServerUrl(): string {
+  const runtimeUrl = getRuntimeBackendUrl();
+  if (runtimeUrl) return runtimeUrl;
+  if (typeof BACKEND_BASE_URL === 'string') return normalizeBackendUrl(BACKEND_BASE_URL);
   return '';
 }
 

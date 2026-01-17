@@ -14,6 +14,7 @@ declare const BACKEND_BASE_URL: string;
 type TavernHelper = import('./utils/tavernCore').TavernHelper;
 interface Window {
   TavernHelper?: TavernHelper;
+  __BACKEND_BASE_URL?: string;
 
   // Cloudflare Turnstile
   turnstile?: {
