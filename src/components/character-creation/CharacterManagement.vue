@@ -312,25 +312,22 @@
                             <div class="stat">
                               <span class="label">生命值</span>
                               <span class="value"
-                                >{{ normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.生命值?.当前 ?? 0 }}/{
-                                  normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.生命值?.上限 ?? 0
-                                }}</span
+                                >{{ normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.生命值?.当前 ?? 0 }}
+                                / {{ normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.生命值?.上限 ?? 0 }}</span
                               >
                             </div>
                             <div class="stat">
                               <span class="label">电量</span>
                               <span class="value"
-                                >{{ normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.电量?.当前 ?? 0 }}/{
-                                  normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.电量?.上限 ?? 0
-                                }}</span
+                                >{{ normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.电量?.当前 ?? 0 }}
+                                / {{ normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.电量?.上限 ?? 0 }}</span
                               >
                             </div>
                             <div class="stat">
                               <span class="label">带宽</span>
                               <span class="value"
-                                >{{ normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.带宽?.当前 ?? 0 }}/{
-                                  normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.带宽?.上限 ?? 0
-                                }}</span
+                                >{{ normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.带宽?.当前 ?? 0 }}
+                                / {{ normalizeSaveDataV3(slot.存档数据)?.角色?.属性?.带宽?.上限 ?? 0 }}</span
                               >
                             </div>
                             <div class="stat">
@@ -395,25 +392,22 @@
                       <div class="stat">
                         <span class="label">生命值</span>
                         <span class="value"
-                          >{{ normalizeSaveDataV3(selectedCharacter.存档列表['云端运行'].存档数据)?.角色?.属性?.生命值?.当前 ?? 0 }}/{
-                            normalizeSaveDataV3(selectedCharacter.存档列表['云端运行'].存档数据)?.角色?.属性?.生命值?.上限 ?? 0
-                          }}</span
+                            >{{ normalizeSaveDataV3(selectedCharacter.存档列表['云端运行'].存档数据)?.角色?.属性?.生命值?.当前 ?? 0 }}
+                            / {{ normalizeSaveDataV3(selectedCharacter.存档列表['云端运行'].存档数据)?.角色?.属性?.生命值?.上限 ?? 0 }}</span
                         >
                       </div>
                       <div class="stat">
                         <span class="label">电量</span>
                         <span class="value"
-                          >{{ normalizeSaveDataV3(selectedCharacter.存档列表['云端运行'].存档数据)?.角色?.属性?.电量?.当前 ?? 0 }}/{
-                            normalizeSaveDataV3(selectedCharacter.存档列表['云端运行'].存档数据)?.角色?.属性?.电量?.上限 ?? 0
-                          }}</span
+                            >{{ normalizeSaveDataV3(selectedCharacter.存档列表['云端运行'].存档数据)?.角色?.属性?.电量?.当前 ?? 0 }}
+                            / {{ normalizeSaveDataV3(selectedCharacter.存档列表['云端运行'].存档数据)?.角色?.属性?.电量?.上限 ?? 0 }}</span
                         >
                       </div>
                       <div class="stat">
                         <span class="label">带宽</span>
                         <span class="value"
-                          >{{ normalizeSaveDataV3(selectedCharacter.存档列表['云端运行'].存档数据)?.角色?.属性?.带宽?.当前 ?? 0 }}/{
-                            normalizeSaveDataV3(selectedCharacter.存档列表['云端运行'].存档数据)?.角色?.属性?.带宽?.上限 ?? 0
-                          }}</span
+                            >{{ normalizeSaveDataV3(selectedCharacter.存档列表['云端运行'].存档数据)?.角色?.属性?.带宽?.当前 ?? 0 }}
+                            / {{ normalizeSaveDataV3(selectedCharacter.存档列表['云端运行'].存档数据)?.角色?.属性?.带宽?.上限 ?? 0 }}</span
                         >
                       </div>
                       <div class="stat">
